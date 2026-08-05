@@ -605,70 +605,68 @@ export default function App() {
         {activeTab === 'keys' && (
           <div className="space-y-8">
             
-            {/* 2. INTERACTIVE KEY GENERATOR CARD */}
-            <div className="glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/30 glow-purple relative overflow-hidden">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800/80">
-                <div className="flex items-center space-x-3">
-                  <div className="p-3 bg-purple-500/10 border border-purple-500/40 rounded-2xl text-purple-400 shadow-glow-purple">
-                    <Sparkles className="w-6 h-6 animate-pulse" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white tracking-wide font-mono">Interactive License Key Generator</h3>
-                    <p className="text-xs text-slate-400 font-mono">Issue hardware-bound license passes with automated token calculation</p>
-                  </div>
+            {/* 2. ISSUE LICENSE PASS CARD */}
+            <div className="glass-card rounded-2xl p-6 sm:p-7 border border-slate-800/80 bg-slate-950/60 shadow-xl relative overflow-hidden">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-5 border-b border-slate-800/70">
+                <div>
+                  <h3 className="text-xl font-bold text-white tracking-tight">Issue License Pass</h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Select duration, quantity, and reference details to generate hardware license passes.
+                  </p>
                 </div>
 
-                <div className="flex items-center space-x-2 bg-slate-900/90 border border-amber-500/40 px-3.5 py-2 rounded-2xl font-mono text-xs glow-amber">
-                  <Coins className="w-4 h-4 text-amber-400" />
-                  <span className="text-slate-400">Current Cost Rate:</span>
-                  <span className="text-amber-300 font-extrabold">{calculatedCostPerKey} Tokens / key</span>
+                <div className="flex items-center space-x-2 bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-xl text-xs text-slate-300 self-start sm:self-auto font-mono">
+                  <Coins className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="text-slate-400">Rate:</span>
+                  <span className="text-amber-300 font-semibold">{calculatedCostPerKey} Tokens/key</span>
                 </div>
               </div>
 
-              {/* Real-time Token Cost Calculator Inputs */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {/* Form Fields Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
                 
                 {/* Duration Selector */}
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider font-mono flex items-center space-x-1.5">
-                    <Clock className="w-3.5 h-3.5 text-purple-400" />
+                  <label className="text-xs font-medium text-slate-300 block mb-2 flex items-center space-x-1.5">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
                     <span>License Duration</span>
                   </label>
-                  <select
-                    value={durationOption}
-                    onChange={(e) => setDurationOption(e.target.value)}
-                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white font-mono outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition"
-                  >
-                    <option value="1 Day">1 Day Pass (10 Tokens)</option>
-                    <option value="7 Days">7 Days Pass (70 Tokens)</option>
-                    <option value="30 Days">30 Days Pass (250 Tokens)</option>
-                    <option value="Lifetime">Lifetime Pass (300 Tokens)</option>
-                    <option value="Custom">Custom Days (10 Tokens/day)</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={durationOption}
+                      onChange={(e) => setDurationOption(e.target.value)}
+                      className="w-full appearance-none bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 pr-10 text-sm text-white focus:outline-none focus:border-violet-500/80 focus:ring-1 focus:ring-violet-500/40 transition cursor-pointer font-mono"
+                    >
+                      <option value="1 Day">1 Day Pass (10 Tokens)</option>
+                      <option value="7 Days">7 Days Pass (70 Tokens)</option>
+                      <option value="30 Days">30 Days Pass (250 Tokens)</option>
+                      <option value="Lifetime">Lifetime Pass (300 Tokens)</option>
+                      <option value="Custom">Custom Days (10 Tokens/day)</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
 
                   {durationOption === 'Custom' && (
-                    <div className="mt-3 p-3 bg-purple-950/30 border border-purple-500/50 rounded-xl">
-                      <label className="text-[11px] font-semibold text-purple-300 block mb-1 font-mono">
-                        Enter Custom Days Count:
-                      </label>
+                    <div className="mt-2.5">
                       <input
                         type="number"
                         min="1"
                         max="3650"
                         value={customDays}
                         onChange={(e) => setCustomDays(e.target.value)}
-                        placeholder="e.g. 4 days..."
-                        className="w-full bg-slate-900 border border-purple-500/60 rounded-xl px-3.5 py-2 text-sm text-purple-100 font-mono outline-none focus:border-purple-400"
+                        placeholder="Number of days..."
+                        className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-violet-500/80 transition font-mono"
                       />
                     </div>
                   )}
                 </div>
 
-                {/* Multi-Key Quantity Selector */}
+                {/* Multi-Key Quantity */}
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider font-mono flex items-center space-x-1.5">
-                    <Layers className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Multi-Key Quantity Selector</span>
+                  <label className="text-xs font-medium text-slate-300 block mb-2 flex items-center space-x-1.5">
+                    <Layers className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Quantity</span>
                   </label>
                   <input
                     type="number"
@@ -676,21 +674,20 @@ export default function App() {
                     max="50"
                     value={genCount}
                     onChange={(e) => setGenCount(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}
-                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white font-mono outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition"
+                    className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500/80 focus:ring-1 focus:ring-violet-500/40 transition font-mono"
                   />
 
-                  {/* Quick Quantity Pills */}
-                  <div className="flex items-center space-x-1.5 mt-2.5">
-                    <span className="text-[10px] text-slate-400 font-mono uppercase mr-1">Quick:</span>
+                  {/* Preset Chips */}
+                  <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
                     {[1, 5, 10, 25, 50].map((q) => (
                       <button
                         key={q}
                         type="button"
                         onClick={() => setGenCount(q)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-mono transition border ${
+                        className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium transition border ${
                           genCount === q
-                            ? 'bg-purple-600 border-purple-400 text-white shadow-glow-purple'
-                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                            ? 'bg-violet-600 border-violet-500 text-white shadow-sm'
+                            : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
                         }`}
                       >
                         {q}x
@@ -698,44 +695,44 @@ export default function App() {
                     ))}
                   </div>
 
-                  {/* Master Key Toggle for Owner / Manager */}
+                  {/* Master Key Option */}
                   {isUnlimited && (
-                    <label className="flex items-center space-x-2 text-xs text-amber-300 font-bold mt-3.5 cursor-pointer font-mono bg-amber-950/30 border border-amber-700/50 p-2.5 rounded-xl hover:bg-amber-950/50 transition">
+                    <label className="flex items-center space-x-2 text-xs text-amber-300 font-medium mt-3 cursor-pointer bg-amber-950/20 border border-amber-800/30 p-2 rounded-xl hover:bg-amber-950/40 transition">
                       <input
                         type="checkbox"
                         checked={isMasterKey}
                         onChange={(e) => setIsMasterKey(e.target.checked)}
-                        className="rounded border-amber-600 bg-slate-900 text-amber-500 w-4 h-4 cursor-pointer focus:ring-amber-500"
+                        className="rounded border-amber-600/60 bg-slate-900 text-amber-500 w-4 h-4 focus:ring-amber-500"
                       />
-                      <span>Master Key Mode (Unlimited Device Binds)</span>
+                      <span>Master Key (Unlimited Devices)</span>
                     </label>
                   )}
                 </div>
 
-                {/* Customer Note / Reseller Reference */}
+                {/* Customer Note / Tag */}
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider font-mono flex items-center space-x-1.5">
-                    <FileText className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Customer Note / Reference Tag</span>
+                  <label className="text-xs font-medium text-slate-300 block mb-2 flex items-center space-x-1.5">
+                    <FileText className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Customer Note / Tag</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="Customer name or reseller reference..."
+                    placeholder="e.g. John Doe / Order #1042"
                     value={genNote}
                     onChange={(e) => setGenNote(e.target.value)}
-                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition font-mono"
+                    className="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/80 focus:ring-1 focus:ring-violet-500/40 transition font-mono"
                   />
-                  <p className="text-[10px] text-slate-400 font-mono mt-2">
-                    Optional reference stored alongside generated license record.
+                  <p className="text-[11px] text-slate-500 mt-2">
+                    Optional reference tag stored with issued key.
                   </p>
                 </div>
               </div>
 
-              {/* Drag & Drop Payment Screenshot Uploader */}
+              {/* Drag & Drop Screenshot Uploader */}
               <div className="mb-6">
-                <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider font-mono flex items-center space-x-2">
-                  <ImageIcon className="w-4 h-4 text-cyan-400" />
-                  <span>Payment Screenshot Uploader (Drag & Drop)</span>
+                <label className="text-xs font-medium text-slate-300 block mb-2 flex items-center space-x-2">
+                  <ImageIcon className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Payment Screenshot</span>
                 </label>
 
                 <div
@@ -743,12 +740,12 @@ export default function App() {
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
-                  className={`relative cursor-pointer rounded-2xl p-4 border-2 border-dashed transition-all flex flex-col sm:flex-row items-center justify-between gap-4 ${
+                  className={`relative cursor-pointer rounded-xl p-4 border border-dashed transition-all ${
                     isDragging
-                      ? 'border-cyan-400 bg-cyan-950/40 shadow-glow-cyan'
+                      ? 'border-violet-400 bg-violet-950/20'
                       : paymentScreenshot
-                      ? 'border-emerald-500/50 bg-slate-900/90'
-                      : 'border-slate-800 bg-slate-900/50 hover:border-purple-500/50 hover:bg-slate-900/80'
+                      ? 'border-emerald-500/40 bg-slate-900/60'
+                      : 'border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900/70'
                   }`}
                 >
                   <input
@@ -759,141 +756,142 @@ export default function App() {
                     className="hidden"
                   />
 
-                  <div className="flex items-center space-x-3">
-                    <div className="p-3 rounded-xl bg-purple-950/60 border border-purple-700/50 text-purple-300">
-                      <Upload className="w-5 h-5 animate-bounce" />
+                  {!paymentScreenshot ? (
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2.5 rounded-lg bg-slate-800/80 text-slate-400 border border-slate-700/50">
+                          <Upload className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-slate-200">
+                            Drop payment receipt here or <span className="text-violet-400 underline">browse file</span>
+                          </p>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Supports PNG, JPG up to 5MB
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs font-bold text-white font-mono">
-                        {paymentScreenshot ? 'Payment Receipt Attached' : 'Drag & Drop Payment Screenshot Here'}
-                      </p>
-                      <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                        Supports PNG, JPG up to 5MB • Click to browse file system
-                      </p>
-                    </div>
-                  </div>
-
-                  {paymentScreenshot && (
+                  ) : (
                     <div
-                      className="flex items-center space-x-3 bg-slate-950 border border-emerald-500/40 rounded-xl p-2 pr-4 shadow-lg"
+                      className="flex items-center justify-between gap-3"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={paymentScreenshot}
-                        alt="Payment Receipt Preview"
-                        className="w-12 h-12 object-cover rounded-lg border border-emerald-500/40"
-                      />
-                      <div>
-                        <span className="text-xs text-emerald-300 font-mono font-bold block">Live Preview</span>
-                        <span className="text-[10px] text-slate-400 font-mono">Image attached</span>
+                      <div className="flex items-center space-x-3">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={paymentScreenshot}
+                          alt="Payment Receipt Preview"
+                          className="w-11 h-11 object-cover rounded-lg border border-slate-700/80 flex-shrink-0"
+                        />
+                        <div>
+                          <span className="text-xs font-medium text-emerald-400 block">Payment Receipt Attached</span>
+                          <span className="text-[11px] text-slate-500">Included with license record</span>
+                        </div>
                       </div>
                       <button
                         type="button"
                         onClick={() => setPaymentScreenshot(null)}
-                        className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-rose-950/60 transition"
-                        title="Remove Screenshot"
+                        className="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-rose-950/40 transition"
+                        title="Remove image"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Real-time Token Cost Estimator Summary Banner */}
-              <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-inner">
-                <div>
-                  <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
-                    Real-Time Token Calculation Summary
+              {/* Real-Time Token Calculation Summary */}
+              <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm font-mono">
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <span className="text-xs text-slate-400 uppercase tracking-wider">Calculation:</span>
+                  <span className="text-slate-400 text-xs">
+                    {genCount} × {calculatedCostPerKey} =
                   </span>
-                  <div className="text-sm text-slate-200 mt-1 flex flex-wrap items-center gap-2 font-mono">
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-purple-300 font-bold">{genCount} Key(s)</span>
-                    <span>×</span>
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-cyan-300 font-bold">{calculatedCostPerKey} Tokens</span>
-                    <span>=</span>
-                    <span className="text-2xl font-extrabold text-amber-400 tracking-wide font-mono px-3 py-1 rounded-xl bg-amber-950/40 border border-amber-500/40 glow-amber">
-                      {totalEstimatedCost} Tokens Total
-                    </span>
-                  </div>
+                  <span className="font-bold text-amber-400 text-base">
+                    {totalEstimatedCost} Tokens
+                  </span>
                 </div>
 
                 {!isUnlimited && (
-                  <div className="text-left md:text-right font-mono border-t md:border-t-0 border-slate-800 pt-3 md:pt-0">
-                    <span className="text-xs text-slate-400 block uppercase">Your Reseller Token Balance</span>
-                    <span className={`text-xl font-extrabold ${isInsufficientTokens ? 'text-rose-400' : 'text-emerald-400'}`}>
+                  <div className="text-xs text-slate-400 flex items-center space-x-2">
+                    <span>Balance:</span>
+                    <span className={`font-bold ${isInsufficientTokens ? 'text-rose-400' : 'text-emerald-400'}`}>
                       {currentResellerTokens} Tokens
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* Insufficient Token Warning Badge for Resellers */}
+              {/* Insufficient Token Warning Banner */}
               {isInsufficientTokens && (
-                <div className="mb-6 bg-rose-950/90 border border-rose-500/70 rounded-2xl p-4 text-rose-200 flex items-center space-x-3.5 glow-red animate-pulse">
-                  <AlertTriangle className="w-7 h-7 text-rose-400 flex-shrink-0" />
-                  <div className="text-xs font-mono">
-                    <strong className="text-rose-300 block text-sm font-extrabold uppercase">Insufficient Token Balance Warning!</strong>
-                    You currently have <span className="font-bold text-white px-1.5 py-0.5 rounded bg-rose-900/60">{currentResellerTokens} tokens</span>, but this request requires <span className="font-bold text-white px-1.5 py-0.5 rounded bg-rose-900/60">{totalEstimatedCost} tokens</span>. You need <span className="underline font-extrabold text-amber-300">{neededMoreTokens} more tokens</span> from your Manager/Owner to proceed.
+                <div className="mb-6 bg-rose-950/30 border border-rose-900/50 rounded-xl p-4 text-rose-200 flex items-start space-x-3 text-xs">
+                  <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold block text-rose-300 text-sm">Insufficient Token Balance</span>
+                    <p className="text-slate-300 mt-1">
+                      You have <span className="font-bold text-white">{currentResellerTokens} tokens</span>, but this request requires <span className="font-bold text-white">{totalEstimatedCost} tokens</span>. Please request <span className="font-bold text-amber-300">{neededMoreTokens} more tokens</span> from your Manager or Owner.
+                    </p>
                   </div>
                 </div>
               )}
 
-              {/* Submit Action Button */}
+              {/* Action Button */}
               <button
                 onClick={handleGenerateKeys}
                 disabled={isGenerating || isInsufficientTokens}
-                className={`w-full py-4 rounded-2xl font-bold transition-all shadow-glow-purple flex items-center justify-center space-x-2 text-sm uppercase tracking-wider font-mono ${
+                className={`w-full py-3.5 rounded-xl font-medium transition-all shadow-sm active:scale-[0.99] flex items-center justify-center space-x-2 text-sm ${
                   isInsufficientTokens
-                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/80 shadow-none'
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/60'
                     : isMasterKey
-                    ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 shadow-glow-amber active:scale-98'
-                    : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white shadow-glow-purple active:scale-98'
+                    ? 'bg-amber-600 hover:bg-amber-500 text-slate-950 font-semibold'
+                    : 'bg-violet-600 hover:bg-violet-500 text-white'
                 }`}
               >
-                {isGenerating ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+                {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
                 <span>
                   {isGenerating
-                    ? 'Processing License Generation...'
+                    ? 'Generating License Keys...'
                     : isInsufficientTokens
-                    ? 'Generation Disabled - Insufficient Tokens'
+                    ? 'Insufficient Tokens'
                     : isMasterKey
-                    ? `Issue ${genCount} Master Key(s) (Unlimited Devices)`
-                    : `Issue ${genCount} License Key(s) for ${totalEstimatedCost} Tokens`}
+                    ? `Issue ${genCount} Master Key(s)`
+                    : `Issue ${genCount} License Key${genCount > 1 ? 's' : ''} (${totalEstimatedCost} Tokens)`}
                 </span>
               </button>
 
-              {/* Generated Result Display */}
+              {/* Generated Results */}
               {genSuccessKeys.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-purple-900/50 animate-in fade-in duration-300">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                    <span className="text-xs font-semibold uppercase text-emerald-400 flex items-center space-x-2 font-mono">
-                      <CheckCircle className="w-4 h-4 text-emerald-400 animate-pulse" />
-                      <span>Successfully Issued {genSuccessKeys.length} License Key(s)</span>
+                <div className="mt-6 pt-5 border-t border-slate-800/80">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <span className="text-xs font-semibold text-emerald-400 flex items-center space-x-1.5">
+                      <CheckCircle className="w-4 h-4 text-emerald-400" />
+                      <span>Issued {genSuccessKeys.length} License Key{genSuccessKeys.length > 1 ? 's' : ''}</span>
                     </span>
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(genSuccessKeys.join('\n'));
                         alert('All generated keys copied to clipboard!');
                       }}
-                      className="text-xs text-purple-300 hover:text-white flex items-center justify-center space-x-1.5 bg-purple-950/60 hover:bg-purple-900 px-4 py-2 rounded-xl border border-purple-500/40 transition font-mono shadow-md"
+                      className="text-xs text-slate-300 hover:text-white flex items-center space-x-1 bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-800 transition font-mono"
                     >
                       <Copy className="w-3.5 h-3.5" />
-                      <span>Copy All Issued Keys</span>
+                      <span>Copy All</span>
                     </button>
                   </div>
-                  <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                     {genSuccessKeys.map((k, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between bg-slate-950 border border-purple-500/50 rounded-xl px-4 py-3 text-xs font-mono text-purple-200 hover:border-purple-400 transition"
+                        className="flex items-center justify-between bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-violet-200"
                       >
-                        <span className="font-bold text-white select-all">{k}</span>
+                        <span className="font-semibold text-white select-all">{k}</span>
                         <button
                           onClick={() => copyToClipboard(k, `gen-${i}`)}
-                          className="p-1.5 rounded-lg bg-purple-950 hover:bg-purple-800 text-purple-300 hover:text-white transition"
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
                         >
-                          {copiedKeyId === `gen-${i}` ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                          {copiedKeyId === `gen-${i}` ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                     ))}
