@@ -31874,14 +31874,16 @@ var authLimiter = rate_limit_default({
   max: 500,
   message: { error: "Too many authentication attempts. Try again later." },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  validate: { trustProxy: false }
 });
 var apiLimiter = rate_limit_default({
   windowMs: 5 * 60 * 1000,
   max: 200,
   message: { error: "Too many requests. Try again later." },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  validate: { trustProxy: false }
 });
 
 // src/routes/auth.routes.ts
@@ -32220,7 +32222,7 @@ var errorHandler = (err, req, res, next) => {
 var import_dotenv = __toESM(require_main(), 1);
 import_dotenv.default.config();
 var app = import_express6.default();
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 app.use(import_cors.default({
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
