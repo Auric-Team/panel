@@ -1,0 +1,195 @@
+import { Request, Response, NextFunction } from 'express';
+import { db } from '../db/sqlite';
+import crypto from 'crypto';
+import { AppError } from '../utils/errors';
+import { LogsService } from '../services/logs.service';
+import { AuthRequest } from '../middlewares/auth';
+
+export const verifyKey = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const reqKey = req.body.key;
+    const reqHwid = req.body.hwid;
+    const timestamp = req.body.timestamp;
+    const signature = req.body.signature || req.body.hash;
+
+    if (!reqKey || !reqHwid) {
+      return res.status(400).json({ status: 'invalid', message: 'Key and HWID are required' });
+    }
+
+    if (timestamp && signature) {
+      const requestTime = typeof timestamp === 'number' ? timestamp : parseInt(timestamp, 10);
+      const nowTime = Date.now();
+      const timeDiff = Math.abs(nowTime - requestTime);
+
+      if (isNaN(requestTime) || timeDiff > 10 * 60 * 1000) {
+        return res.status(403).json({ status: 'invalid', message: 'Request timestamp expired' });
+      }
+
+      const salt = process.env.API_SALT || 'AXIOS_SECURE_SALT_2026';
+      const payloadStr = `${reqKey}${reqHwid}${timestamp}${salt}`;
+      const expectedHash = crypto.createHash('sha256').update(payloadStr).digest('hex');
+
+      const secret = process.env.PAYLOAD_SECRET || 'AXIOS_PAYLOAD_SECRET';
+      const expectedHmac = crypto.createHmac('sha256', secret).update(`${reqKey}${reqHwid}${timestamp}`).digest('hex');
+
+      if (signature.toLowerCase() !== expectedHash.toLowerCase() && signature.toLowerCase() !== expectedHmac.toLowerCase()) {
+        return res.status(403).json({ status: 'invalid', message: 'Invalid payload integrity hash' });
+      }
+    }
+
+    const keyItem: any = db.prepare('SELECT * FROM keys WHERE UPPER(key) = UPPER(?)').get(reqKey.trim());
+
+    if (!keyItem) {
+      LogsService.logAction('system', 'client', 'KEY_VERIFY_FAILED', `Invalid key: ${reqKey}`);
+      return res.status(404).json({ status: 'invalid', message: 'Key does not exist' });
+    }
+
+    const now = new Date();
+    if (
+      keyItem.status === 'expired' ||
+      (keyItem.expiresAt !== 'never' && new Date(keyItem.expiresAt) < now)
+    ) {
+      if (keyItem.status !== 'expired') {
+        db.prepare("UPDATE keys SET status = 'expired' WHERE id = ?").run(keyItem.id);
+      }
+      return res.status(403).json({ status: 'expired', message: 'Key has expired' });
+    }
+
+    if (keyItem.status === 'revoked' || keyItem.status === 'banned') {
+      return res.status(403).json({ status: 'revoked', message: 'Key has been revoked or banned' });
+    }
+
+    if (!keyItem.hwid) {
+      db.prepare('UPDATE keys SET hwid = ?, activatedAt = ? WHERE id = ?').run(
+        reqHwid,
+        now.toISOString(),
+        keyItem.id
+      );
+      LogsService.logAction('system', 'client', 'KEY_ACTIVATED', `Key ${keyItem.key} bound to HWID ${reqHwid}`);
+      return res.json({
+        status: 'authenticated',
+        message: 'Key successfully activated and bound to device',
+        expiresAt: keyItem.expiresAt,
+      });
+    }
+
+    if (keyItem.hwid === reqHwid) {
+      return res.json({
+        status: 'authenticated',
+        message: 'Key authenticated',
+        expiresAt: keyItem.expiresAt,
+      });
+    } else {
+      LogsService.logAction('system', 'client', 'KEY_HWID_MISMATCH', `Key ${keyItem.key} HWID mismatch. Exp: ${keyItem.hwid}, Got: ${reqHwid}`);
+      return res.status(403).json({ status: 'mismatch', message: 'Key is bound to another device' });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getKeys = (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { role, id } = req.user!;
+    let keys: any[] = [];
+    
+    if (role === 'owner') {
+      keys = db.prepare('SELECT * FROM keys ORDER BY createdAt DESC').all();
+    } else if (role === 'manager') {
+      keys = db.prepare(`
+        SELECT k.* FROM keys k
+        LEFT JOIN users u ON k.createdById = u.id
+        WHERE k.createdById = ? OR u.createdBy = ?
+        ORDER BY k.createdAt DESC
+      `).all(id, id);
+    } else {
+      keys = db.prepare('SELECT * FROM keys WHERE createdById = ? ORDER BY createdAt DESC').all(id);
+    }
+
+    return res.json(keys);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { durationDays, count, note } = req.body;
+    const user = req.user!;
+    const numKeys = Math.max(1, parseInt(count as string) || 1);
+    const days = parseInt(durationDays as string) || 0;
+
+    const createdKeys: any[] = [];
+    const now = new Date();
+
+    const generateKeyString = (): string => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      const seg = (len: number) => Array.from({ length: len }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+      return `AXIOS-${seg(4)}-${seg(4)}-${seg(4)}`;
+    };
+
+    const insertStmt = db.prepare(`
+      INSERT INTO keys (id, key, expiresAt, createdAt, createdById, createdByUsername, note)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    for (let i = 0; i < numKeys; i++) {
+      let expiresAt = 'never';
+      if (days > 0) {
+        expiresAt = new Date(now.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
+      }
+      const newKey = {
+        id: crypto.randomUUID(),
+        key: generateKeyString(),
+        expiresAt,
+        createdAt: now.toISOString(),
+        createdById: user.id,
+        createdByUsername: user.username,
+        note: note || (days === 0 ? 'Lifetime Key' : `${days} Days Key`)
+      };
+
+      insertStmt.run(
+        newKey.id,
+        newKey.key,
+        newKey.expiresAt,
+        newKey.createdAt,
+        newKey.createdById,
+        newKey.createdByUsername,
+        newKey.note
+      );
+      createdKeys.push(newKey);
+    }
+    
+    LogsService.logAction(user.id, user.username, 'KEYS_GENERATED', `Generated ${numKeys} keys (${days} days)`);
+
+    return res.json({ success: true, count: createdKeys.length, keys: createdKeys });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resetHwid = (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.body;
+    if (!id) return next(new AppError('Key ID is required.', 400));
+
+    db.prepare('UPDATE keys SET hwid = null WHERE id = ?').run(id);
+    LogsService.logAction(req.user!.id, req.user!.username, 'KEY_HWID_RESET', `Reset HWID for key ID: ${id}`);
+    return res.json({ success: true, message: 'HWID reset successfully.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteKey = (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.body;
+    if (!id) return next(new AppError('Key ID is required.', 400));
+
+    db.prepare('DELETE FROM keys WHERE id = ?').run(id);
+    LogsService.logAction(req.user!.id, req.user!.username, 'KEY_DELETED', `Deleted key ID: ${id}`);
+    return res.json({ success: true, message: 'Key deleted successfully.' });
+  } catch (err) {
+    next(err);
+  }
+};

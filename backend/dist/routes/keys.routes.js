@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const keys_controller_1 = require("../controllers/keys.controller");
+const auth_1 = require("../middlewares/auth");
+const rateLimiter_1 = require("../middlewares/rateLimiter");
+const router = (0, express_1.Router)();
+router.post('/verify', rateLimiter_1.apiLimiter, keys_controller_1.verifyKey);
+router.use(auth_1.authenticate);
+router.get('/', keys_controller_1.getKeys);
+router.post('/generate', keys_controller_1.generateKeys);
+router.post('/reset-hwid', keys_controller_1.resetHwid);
+router.post('/delete', keys_controller_1.deleteKey);
+exports.default = router;
