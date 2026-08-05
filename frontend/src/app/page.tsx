@@ -1268,53 +1268,13 @@ export default function App() {
         {activeTab === 'analytics' && (
           <div className="space-y-8">
             
-            {/* KPI Metric Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              
-              <div className="glass-card rounded-3xl p-6 border border-purple-500/40 glow-purple">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Total Issued Keys</span>
-                  <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/40 text-purple-400">
-                    <Key className="w-5 h-5" />
-                  </div>
-                </div>
-                <p className="text-4xl font-extrabold text-white mt-4 font-mono">{keys.length}</p>
-                <span className="text-[11px] text-slate-400 font-mono mt-1 block">Lifetime license count</span>
-              </div>
-
-              <div className="glass-card rounded-3xl p-6 border border-emerald-500/40 glow-emerald">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Active Licenses</span>
-                  <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-400">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                </div>
-                <p className="text-4xl font-extrabold text-emerald-400 mt-4 font-mono">{activeKeysCount}</p>
-                <span className="text-[11px] text-emerald-300/80 font-mono mt-1 block">Currently valid & active</span>
-              </div>
-
-              <div className="glass-card rounded-3xl p-6 border border-amber-500/40 glow-amber">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Total Resellers</span>
-                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400">
-                    <Users className="w-5 h-5" />
-                  </div>
-                </div>
-                <p className="text-4xl font-extrabold text-amber-400 mt-4 font-mono">{totalResellersCount}</p>
-                <span className="text-[11px] text-amber-300/80 font-mono mt-1 block">Active reseller network</span>
-              </div>
-
-              <div className="glass-card rounded-3xl p-6 border border-cyan-500/40 glow-cyan">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Revenue Tokens</span>
-                  <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/40 text-cyan-400">
-                    <Coins className="w-5 h-5" />
-                  </div>
-                </div>
-                <p className="text-4xl font-extrabold text-cyan-300 mt-4 font-mono">{totalRevenueTokens.toLocaleString()}</p>
-                <span className="text-[11px] text-cyan-300/80 font-mono mt-1 block">Tokens consumed total</span>
-              </div>
-            </div>
+            {/* KPI Executive Stat Cards Component */}
+            <StatsOverview
+              totalKeys={keys.length}
+              activeKeys={activeKeysCount}
+              totalResellers={totalResellersCount}
+              totalRevenueTokens={totalRevenueTokens}
+            />
 
             {/* Embedded SalesChart Component */}
             <SalesChart totalRevenue={totalRevenueTokens} totalKeysSold={keys.length} />
