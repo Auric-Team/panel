@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   ShieldCheck, Users, Key, BarChart3, Lock, LogOut, Search, Plus, Trash2, 
   RefreshCw, AlertTriangle, UserPlus, ShieldAlert, CheckCircle, Cpu, Zap, 
   Activity, ArrowUpRight, DollarSign, Filter, Layers, Copy, Check, Clock, UserCheck,
-  Coins, Image as ImageIcon, ExternalLink, RotateCcw, AlertCircle, Sparkles, Upload
+  Coins, Image as ImageIcon, ExternalLink, RotateCcw, AlertCircle, Sparkles, Upload,
+  Sliders, Shield, Server, ArrowRight, Eye, ChevronDown, Award, TrendingUp, FileText, CheckSquare, X
 } from 'lucide-react';
 
 import { KeyItem, UserItem, SalesDataPoint } from '@/types/key';
@@ -31,9 +32,9 @@ export default function App() {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserItem | null>(null);
 
-  // Backend Connection
+  // Backend Connection State
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [backendUrl, setBackendUrl] = useState<string>('http://103.207.181.125:20067');
+  const [backendUrl, setBackendUrl] = useState<string>('103.207.181.125:20067');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   // Auth State
@@ -46,30 +47,33 @@ export default function App() {
   const [pending2FAUser, setPending2FAUser] = useState<any>(null);
   const [pinError, setPinError] = useState('');
 
-  // Main Dashboard State
+  // Dashboard Tabs & View State
   const [activeTab, setActiveTab] = useState<'keys' | 'users' | 'analytics'>('keys');
   const [keys, setKeys] = useState<KeyItem[]>([]);
   const [usersList, setUsersList] = useState<UserItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [copiedKeyId, setCopiedKeyId] = useState<string | null>(null);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
 
-  // Key Gen State
+  // Key Generator State
   const [durationOption, setDurationOption] = useState<string>('7 Days');
   const [customDays, setCustomDays] = useState<string>('4');
   const [genCount, setGenCount] = useState<number>(1);
   const [genNote, setGenNote] = useState<string>('');
   const [isMasterKey, setIsMasterKey] = useState<boolean>(false);
   const [paymentScreenshot, setPaymentScreenshot] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [genSuccessKeys, setGenSuccessKeys] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // User Creation State
   const [newUserUsername, setNewUserUsername] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
   const [newUserRole, setNewUserRole] = useState<'reseller' | 'manager'>('reseller');
   const [newUserPin, setNewUserPin] = useState('');
-  const [newUserTokens, setNewUserTokens] = useState(100);
+  const [newUserTokens, setNewUserTokens] = useState<number>(100);
 
   // Modals state
   const [tokenModalUser, setTokenModalUser] = useState<UserItem | null>(null);
@@ -97,7 +101,9 @@ export default function App() {
     try {
       const conn = await checkBackendConnection();
       setIsConnected(conn.isConnected);
-      setBackendUrl(conn.url || 'localhost:20067');
+      if (conn.url) {
+        setBackendUrl(conn.url.replace(/^https?:\/\//, ''));
+      }
 
       const keysRes = await fetchAllKeys(token || undefined);
       const usersRes = await fetchAllUsers(token || undefined);
@@ -107,19 +113,19 @@ export default function App() {
         return;
       }
 
-      setKeys(keysRes.keys);
-      setUsersList(usersRes.users);
+      setKeys(keysRes.keys || []);
+      setUsersList(usersRes.users || []);
 
-      // Keep active user tokens in sync if reseller
+      // Synchronize logged-in user tokens if reseller
       if (user && user.role === 'reseller') {
-        const matchingUser = usersRes.users.find((u) => u.username === user.username);
+        const matchingUser = usersRes.users?.find((u) => u.username === user.username);
         if (matchingUser) {
           setUser(matchingUser);
           localStorage.setItem('axios_user', JSON.stringify(matchingUser));
         }
       }
     } catch (err) {
-      console.error('Error fetching dashboard data:', err);
+      console.error('Error loading dashboard data:', err);
     } finally {
       setIsRefreshing(false);
     }
@@ -131,7 +137,7 @@ export default function App() {
     }
   }, [token]);
 
-  // Token Cost Calculation Logic
+  // Real-Time Token Cost Calculator Logic
   const calculatedCostPerKey = useMemo(() => {
     if (durationOption === '1 Day') return 10;
     if (durationOption === '7 Days') return 70;
@@ -152,7 +158,7 @@ export default function App() {
   const isUnlimited = user?.role === 'owner' || user?.role === 'manager';
   const currentResellerTokens = user?.tokens ?? 0;
   const isInsufficientTokens = !isUnlimited && currentResellerTokens < totalEstimatedCost;
-  const neededMoreTokens = totalEstimatedCost - currentResellerTokens;
+  const neededMoreTokens = Math.max(0, totalEstimatedCost - currentResellerTokens);
 
   // Clipboard Helper
   const copyToClipboard = (text: string, id: string) => {
@@ -161,10 +167,12 @@ export default function App() {
     setTimeout(() => setCopiedKeyId(null), 2000);
   };
 
-  // Image Upload Reader
-  const handleScreenshotUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Drag & Drop Image Uploader
+  const processImageFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file (PNG or JPG).');
+      return;
+    }
     if (file.size > 5 * 1024 * 1024) {
       alert('File size exceeds 5MB limit.');
       return;
@@ -174,6 +182,28 @@ export default function App() {
       setPaymentScreenshot(reader.result as string);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleScreenshotUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) processImageFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) processImageFile(file);
   };
 
   // Auth Handlers
@@ -231,7 +261,7 @@ export default function App() {
     localStorage.removeItem('axios_user');
   };
 
-  // Key Generation
+  // Key Generation Handler
   const handleGenerateKeys = async () => {
     if (isInsufficientTokens) return;
     setIsGenerating(true);
@@ -247,12 +277,12 @@ export default function App() {
         user
       );
 
-      setGenSuccessKeys(res.generatedStrings);
+      setGenSuccessKeys(res.generatedStrings || []);
       loadData();
       setGenNote('');
       setPaymentScreenshot(null);
     } catch (err) {
-      console.error(err);
+      console.error('Error generating keys:', err);
     } finally {
       setIsGenerating(false);
     }
@@ -265,7 +295,7 @@ export default function App() {
   };
 
   const handleDeleteKey = async (id: string) => {
-    if (!confirm('Are you sure you want to delete/revoke this key?')) return;
+    if (!confirm('Are you sure you want to revoke/delete this license key?')) return;
     await deleteKeyApi(id, token || undefined);
     loadData();
   };
@@ -289,7 +319,7 @@ export default function App() {
       setNewUserTokens(100);
       alert(`User "${newUserUsername}" successfully created!`);
     } catch (err) {
-      console.error(err);
+      console.error('Error creating reseller:', err);
     }
   };
 
@@ -298,71 +328,110 @@ export default function App() {
     loadData();
   };
 
-  // Filtering Keys
+  // License Keys Filtering (including Master Key filter)
   const filteredKeys = useMemo(() => {
     return keys.filter(k => {
+      const query = searchQuery.toLowerCase();
       const matchesSearch = 
-        k.key.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (k.createdByUsername && k.createdByUsername.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (k.note && k.note.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (k.hwid && k.hwid.toLowerCase().includes(searchQuery.toLowerCase()));
+        k.key.toLowerCase().includes(query) ||
+        (k.createdByUsername && k.createdByUsername.toLowerCase().includes(query)) ||
+        (k.note && k.note.toLowerCase().includes(query)) ||
+        (k.hwid && k.hwid.toLowerCase().includes(query));
 
-      const matchesStatus = statusFilter === 'all' || k.status === statusFilter;
+      let matchesStatus = true;
+      if (statusFilter === 'active') matchesStatus = k.status === 'active';
+      else if (statusFilter === 'expired') matchesStatus = k.status === 'expired';
+      else if (statusFilter === 'revoked') matchesStatus = k.status === 'revoked';
+      else if (statusFilter === 'master') matchesStatus = Boolean(k.isMasterKey);
+
       return matchesSearch && matchesStatus;
     });
   }, [keys, searchQuery, statusFilter]);
 
-  // Total Analytics
+  // Reseller User Filtering
+  const filteredUsers = useMemo(() => {
+    return usersList.filter(u => {
+      const query = userSearchQuery.toLowerCase();
+      return (
+        u.username.toLowerCase().includes(query) ||
+        u.role.toLowerCase().includes(query) ||
+        (u.createdBy && u.createdBy.toLowerCase().includes(query))
+      );
+    });
+  }, [usersList, userSearchQuery]);
+
+  // Executive Metric Calculations
   const totalRevenueTokens = useMemo(() => {
     return keys.reduce((sum, k) => sum + (k.costTokens || 0), 0);
   }, [keys]);
 
+  const activeKeysCount = useMemo(() => keys.filter(k => k.status === 'active').length, [keys]);
+  const expiredKeysCount = useMemo(() => keys.filter(k => k.status === 'expired').length, [keys]);
+  const boundDevicesCount = useMemo(() => keys.filter(k => k.hwid && k.hwid.trim() !== '').length, [keys]);
+  const totalResellersCount = useMemo(() => usersList.filter(u => u.role === 'reseller').length, [usersList]);
+
+  // LOGIN SCREEN FOR UNAUTHENTICATED USERS
   if (!token || !user) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden font-sans">
+        {/* Animated Neon Ambient Background Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-cyan-600/15 rounded-full blur-[140px] pointer-events-none animate-pulse"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-amber-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <div className="relative w-full max-w-md glass-card rounded-3xl p-8 shadow-2xl border border-purple-500/30 glow-purple">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-500/10 border border-purple-500/40 flex items-center justify-center text-purple-400 shadow-glow-purple">
-            <ShieldCheck className="w-10 h-10 animate-pulse" />
+        <div className="relative w-full max-w-md glass-card rounded-3xl p-8 sm:p-10 shadow-2xl border border-purple-500/30 glow-purple">
+          {/* Logo Badge */}
+          <div className="relative w-20 h-20 mx-auto mb-5">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-500 to-cyan-400 blur-md opacity-70 animate-pulse"></div>
+            <div className="relative w-full h-full rounded-2xl bg-slate-950 border border-purple-500/50 flex items-center justify-center text-purple-300 shadow-2xl">
+              <ShieldCheck className="w-10 h-10 text-cyan-400" />
+            </div>
           </div>
+
           <h2 className="text-3xl font-extrabold text-center text-white tracking-tight">AXIOS EXECUTIVE</h2>
-          <p className="text-xs text-center text-purple-300/80 mt-1 mb-8 uppercase font-mono tracking-widest">
-            Hardware Authentication & Reseller Portal
+          <p className="text-xs text-center text-purple-300/80 mt-1 mb-8 uppercase font-mono tracking-widest flex items-center justify-center space-x-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400 inline" />
+            <span>ENTERPRISE SAAS CONTROL CENTER</span>
           </p>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1.5 uppercase tracking-wider">Username</label>
+              <label className="text-xs font-semibold text-slate-300 block mb-1.5 uppercase tracking-wider font-mono">Username</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-white text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition"
-                placeholder="Enter account username..."
+                className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-white text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition font-mono"
+                placeholder="Enter executive account username..."
                 required
               />
             </div>
+
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1.5 uppercase tracking-wider">Password</label>
+              <label className="text-xs font-semibold text-slate-300 block mb-1.5 uppercase tracking-wider font-mono">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-white text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition"
+                className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-white text-sm focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition font-mono"
                 placeholder="Enter password..."
                 required
               />
             </div>
 
-            {loginError && <p className="text-red-400 text-xs font-semibold text-center animate-pulse">{loginError}</p>}
+            {loginError && (
+              <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-500/50 text-rose-200 text-xs font-semibold text-center flex items-center justify-center space-x-2 font-mono">
+                <AlertTriangle className="w-4 h-4 text-rose-400" />
+                <span>{loginError}</span>
+              </div>
+            )}
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-glow-purple active:scale-98"
+              className="w-full bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-glow-purple active:scale-98 text-sm uppercase tracking-wider flex items-center justify-center space-x-2 font-mono"
             >
-              Sign In to Dashboard
+              <span>Sign In to Executive Dashboard</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
@@ -379,66 +448,96 @@ export default function App() {
     );
   }
 
+  // MAIN DASHBOARD LAYOUT
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-16">
-      {/* Top Header Bar */}
-      <header className="border-b border-purple-900/40 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-40">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-16 selection:bg-purple-500 selection:text-white">
+      {/* 1. TOP NAVIGATION HEADER */}
+      <header className="border-b border-purple-900/40 bg-slate-950/90 backdrop-blur-2xl sticky top-0 z-40 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/40 flex items-center justify-center text-purple-400 shadow-glow-purple">
-              <Zap className="w-6 h-6 animate-pulse" />
+          
+          {/* Logo & Glowing Neon Emblem */}
+          <div className="flex items-center space-x-3.5">
+            <div className="relative group">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500 via-purple-500 to-amber-500 blur-md opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
+              <div className="relative w-11 h-11 rounded-2xl bg-slate-950 border border-purple-500/50 flex items-center justify-center text-cyan-400 shadow-glow-cyan">
+                <Zap className="w-6 h-6 animate-pulse" />
+              </div>
             </div>
             <div>
-              <h1 className="text-xl font-extrabold tracking-wider text-white flex items-center gap-2">
-                <span className="text-gradient-purple">AXIOS PANEL</span> 
-                <span className="px-2 py-0.5 text-[10px] bg-purple-950 text-purple-300 border border-purple-500/40 rounded-md uppercase font-mono tracking-widest">
-                  {user.role}
+              <h1 className="text-xl font-extrabold tracking-wider text-white flex items-center gap-2 font-mono">
+                <span className="text-gradient-cyan">AXIOS</span>
+                <span className="text-gradient-purple">EXECUTIVE</span>
+                <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] bg-purple-950 text-purple-300 border border-purple-500/40 rounded-md uppercase font-mono tracking-widest">
+                  v2.0 SAAS
                 </span>
               </h1>
-              <p className="text-[11px] text-slate-400 font-mono hidden sm:block">
-                Security Engine & Token Economy v2.0
+              <p className="text-[11px] text-slate-400 font-mono hidden md:block">
+                Hardware Licensing & Token Economy Control Panel
               </p>
             </div>
           </div>
 
-          {/* User Info & Connection Status Badge */}
+          {/* Right Header Navigation Badges */}
           <div className="flex items-center space-x-3">
-            {/* Backend Connection Status Badge */}
-            <div className="hidden lg:flex items-center space-x-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl font-mono text-xs">
-              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400 animate-ping' : 'bg-amber-400'}`} />
-              <span className="text-slate-400">Backend:</span>
-              <span className="text-cyan-300 font-bold">{backendUrl}</span>
+            
+            {/* Live Backend Connection Badge */}
+            <div className="hidden lg:flex items-center space-x-2 bg-slate-900/90 border border-slate-800 px-3.5 py-1.5 rounded-xl font-mono text-xs shadow-inner">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isConnected ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
+                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+              </span>
+              <span className="text-slate-400 hidden xl:inline">Live Sync:</span>
+              <span className="text-cyan-300 font-bold tracking-wider">{backendUrl}</span>
             </div>
 
-            {/* Token Balance Badge */}
-            <div className="flex items-center space-x-2 bg-slate-900/90 border border-amber-500/40 px-3.5 py-1.5 rounded-xl glow-amber">
-              <Coins className="w-4 h-4 text-amber-400 animate-bounce" />
+            {/* Token Balance Pill */}
+            <div className={`flex items-center space-x-2 px-4 py-1.5 rounded-xl border transition-all duration-300 ${
+              isUnlimited 
+                ? 'bg-slate-900/90 border-emerald-500/50 text-emerald-300 glow-emerald' 
+                : isInsufficientTokens
+                ? 'bg-rose-950/80 border-rose-500/60 text-rose-300 glow-red'
+                : 'bg-slate-900/90 border-amber-500/50 text-amber-300 glow-amber'
+            }`}>
+              <Coins className={`w-4 h-4 ${isUnlimited ? 'text-emerald-400' : 'text-amber-400 animate-bounce'}`} />
               <div className="text-xs font-mono">
-                <span className="text-slate-400 mr-1 hidden sm:inline">Balance:</span>
-                <span className="text-amber-300 font-extrabold">
-                  {isUnlimited ? '∞ Infinite' : `${user.tokens ?? 0} Tokens`}
+                <span className="text-slate-400 mr-1.5 hidden sm:inline">Balance:</span>
+                <span className="font-extrabold tracking-wide">
+                  {isUnlimited ? '∞ Infinite' : `${currentResellerTokens} Tokens`}
                 </span>
               </div>
             </div>
 
-            {/* User Profile Info */}
-            <div className="hidden sm:flex items-center space-x-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl text-xs font-mono">
-              <UserCheck className="w-4 h-4 text-emerald-400" />
-              <span className="text-slate-300 font-bold">{user.username}</span>
+            {/* User Profile Badge */}
+            <div className="flex items-center space-x-2 bg-slate-900/90 border border-purple-500/30 px-3.5 py-1.5 rounded-xl text-xs font-mono shadow-md">
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-[11px] font-bold">
+                {user.username.slice(0, 1).toUpperCase()}
+              </div>
+              <span className="text-slate-200 font-bold hidden sm:inline">{user.username}</span>
+              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${
+                user.role === 'owner' 
+                  ? 'bg-purple-950 text-purple-300 border border-purple-600/40' 
+                  : user.role === 'manager' 
+                  ? 'bg-indigo-950 text-indigo-300 border border-indigo-600/40' 
+                  : 'bg-amber-950 text-amber-300 border border-amber-600/40'
+              }`}>
+                {user.role}
+              </span>
             </div>
 
+            {/* Refresh Button */}
             <button
-              onClick={onRefresh => loadData()}
+              onClick={() => loadData()}
               disabled={isRefreshing}
-              className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-slate-300 transition"
-              title="Refresh Data"
+              className="p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-slate-300 transition hover:border-purple-500 active:scale-95"
+              title="Refresh Dashboard Data"
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-purple-400' : ''}`} />
             </button>
 
+            {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-1.5 text-xs bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/40 px-3 py-2 rounded-xl transition font-mono"
+              className="flex items-center space-x-1.5 text-xs bg-rose-950/40 hover:bg-rose-900/70 text-rose-300 border border-rose-800/40 px-3.5 py-2 rounded-xl transition font-mono hover:shadow-[0_0_15px_rgba(244,63,94,0.3)] active:scale-95"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Logout</span>
@@ -447,84 +546,108 @@ export default function App() {
         </div>
       </header>
 
+      {/* DASHBOARD CONTENT BODY */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8">
+        
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap gap-3 mb-8 border-b border-slate-800/80 pb-4">
-          <button
-            onClick={() => setActiveTab('keys')}
-            className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all ${
-              activeTab === 'keys'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-glow-purple'
-                : 'glass-card text-slate-400 hover:text-white'
-            }`}
-          >
-            <Key className="w-4 h-4" />
-            <span>Key Management</span>
-          </button>
-
-          {(user.role === 'owner' || user.role === 'manager') && (
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 border-b border-slate-800/80 pb-4">
+          <div className="flex flex-wrap gap-3">
             <button
-              onClick={() => setActiveTab('users')}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all ${
-                activeTab === 'users'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-glow-purple'
-                  : 'glass-card text-slate-400 hover:text-white'
+              onClick={() => setActiveTab('keys')}
+              className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all font-mono ${
+                activeTab === 'keys'
+                  ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 text-white shadow-glow-purple border border-purple-400/40'
+                  : 'glass-card text-slate-400 hover:text-white hover:border-purple-500/30'
               }`}
             >
-              <Users className="w-4 h-4" />
-              <span>Reseller Network</span>
+              <Key className="w-4 h-4 text-purple-300" />
+              <span>Key Generator & Licenses</span>
             </button>
-          )}
 
-          <button
-            onClick={() => setActiveTab('analytics')}
-            className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all ${
-              activeTab === 'analytics'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-glow-purple'
-                : 'glass-card text-slate-400 hover:text-white'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4" />
-            <span>Executive Analytics</span>
-          </button>
+            {(user.role === 'owner' || user.role === 'manager') && (
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all font-mono ${
+                  activeTab === 'users'
+                    ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 text-white shadow-glow-purple border border-purple-400/40'
+                    : 'glass-card text-slate-400 hover:text-white hover:border-purple-500/30'
+                }`}
+              >
+                <Users className="w-4 h-4 text-cyan-300" />
+                <span>Reseller Network ({usersList.length})</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all font-mono ${
+                activeTab === 'analytics'
+                  ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 text-white shadow-glow-purple border border-purple-400/40'
+                  : 'glass-card text-slate-400 hover:text-white hover:border-purple-500/30'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 text-amber-300" />
+              <span>Executive Analytics</span>
+            </button>
+          </div>
+
+          {/* Active Status Info pill */}
+          <div className="hidden lg:flex items-center space-x-2 text-xs font-mono text-slate-400 bg-slate-900/60 border border-slate-800 rounded-xl px-3.5 py-2">
+            <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            <span>Total Issued: <strong className="text-white">{keys.length} Keys</strong></span>
+            <span>•</span>
+            <span>Active: <strong className="text-emerald-400">{activeKeysCount}</strong></span>
+          </div>
         </div>
 
-        {/* TAB 1: KEYS MANAGEMENT */}
+        {/* TAB 1: KEYS GENERATOR & LICENSE MANAGEMENT */}
         {activeTab === 'keys' && (
           <div className="space-y-8">
-            {/* Key Creation Form Card */}
-            <div className="glass-card rounded-3xl p-6 border border-purple-500/30 glow-purple">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-white flex items-center space-x-2">
-                  <Plus className="w-5 h-5 text-purple-400" />
-                  <span>Issue New License Keys</span>
-                </h3>
-                <span className="text-xs font-mono text-slate-400">
-                  Tokens per key: <strong className="text-amber-400">{calculatedCostPerKey} Tokens</strong>
-                </span>
+            
+            {/* 2. INTERACTIVE KEY GENERATOR CARD */}
+            <div className="glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/30 glow-purple relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800/80">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-purple-500/10 border border-purple-500/40 rounded-2xl text-purple-400 shadow-glow-purple">
+                    <Sparkles className="w-6 h-6 animate-pulse" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white tracking-wide font-mono">Interactive License Key Generator</h3>
+                    <p className="text-xs text-slate-400 font-mono">Issue hardware-bound license passes with automated token calculation</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2 bg-slate-900/90 border border-amber-500/40 px-3.5 py-2 rounded-2xl font-mono text-xs glow-amber">
+                  <Coins className="w-4 h-4 text-amber-400" />
+                  <span className="text-slate-400">Current Cost Rate:</span>
+                  <span className="text-amber-300 font-extrabold">{calculatedCostPerKey} Tokens / key</span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+              {/* Real-time Token Cost Calculator Inputs */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                
                 {/* Duration Selector */}
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 uppercase tracking-wider">
-                    License Duration
+                  <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider font-mono flex items-center space-x-1.5">
+                    <Clock className="w-3.5 h-3.5 text-purple-400" />
+                    <span>License Duration</span>
                   </label>
                   <select
                     value={durationOption}
                     onChange={(e) => setDurationOption(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
+                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white font-mono outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition"
                   >
-                    <option value="1 Day">1 Day (10 Tokens)</option>
-                    <option value="7 Days">7 Days (70 Tokens)</option>
-                    <option value="30 Days">30 Days (250 Tokens)</option>
+                    <option value="1 Day">1 Day Pass (10 Tokens)</option>
+                    <option value="7 Days">7 Days Pass (70 Tokens)</option>
+                    <option value="30 Days">30 Days Pass (250 Tokens)</option>
                     <option value="Lifetime">Lifetime Pass (300 Tokens)</option>
                     <option value="Custom">Custom Days (10 Tokens/day)</option>
                   </select>
 
                   {durationOption === 'Custom' && (
-                    <div className="mt-2">
-                      <label className="text-[11px] font-semibold text-purple-300 block mb-1">
+                    <div className="mt-3 p-3 bg-purple-950/30 border border-purple-500/50 rounded-xl">
+                      <label className="text-[11px] font-semibold text-purple-300 block mb-1 font-mono">
                         Enter Custom Days Count:
                       </label>
                       <input
@@ -534,16 +657,17 @@ export default function App() {
                         value={customDays}
                         onChange={(e) => setCustomDays(e.target.value)}
                         placeholder="e.g. 4 days..."
-                        className="w-full bg-slate-900 border border-purple-500/60 rounded-xl px-3.5 py-2 text-sm text-purple-100 font-mono outline-none"
+                        className="w-full bg-slate-900 border border-purple-500/60 rounded-xl px-3.5 py-2 text-sm text-purple-100 font-mono outline-none focus:border-purple-400"
                       />
                     </div>
                   )}
                 </div>
 
-                {/* Key Count Multiplier */}
+                {/* Multi-Key Quantity Selector */}
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 uppercase tracking-wider">
-                    Quantity (Multi-Key)
+                  <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider font-mono flex items-center space-x-1.5">
+                    <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Multi-Key Quantity Selector</span>
                   </label>
                   <input
                     type="number"
@@ -551,69 +675,122 @@ export default function App() {
                     max="50"
                     value={genCount}
                     onChange={(e) => setGenCount(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))}
-                    className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
+                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white font-mono outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition"
                   />
 
+                  {/* Quick Quantity Pills */}
+                  <div className="flex items-center space-x-1.5 mt-2.5">
+                    <span className="text-[10px] text-slate-400 font-mono uppercase mr-1">Quick:</span>
+                    {[1, 5, 10, 25, 50].map((q) => (
+                      <button
+                        key={q}
+                        type="button"
+                        onClick={() => setGenCount(q)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-mono transition border ${
+                          genCount === q
+                            ? 'bg-purple-600 border-purple-400 text-white shadow-glow-purple'
+                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                        }`}
+                      >
+                        {q}x
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Master Key Toggle for Owner / Manager */}
                   {isUnlimited && (
-                    <label className="flex items-center space-x-2 text-xs text-amber-300 font-bold mt-3 cursor-pointer">
+                    <label className="flex items-center space-x-2 text-xs text-amber-300 font-bold mt-3.5 cursor-pointer font-mono bg-amber-950/30 border border-amber-700/50 p-2.5 rounded-xl hover:bg-amber-950/50 transition">
                       <input
                         type="checkbox"
                         checked={isMasterKey}
                         onChange={(e) => setIsMasterKey(e.target.checked)}
-                        className="rounded border-amber-600 bg-slate-900 text-amber-500 w-4 h-4 cursor-pointer"
+                        className="rounded border-amber-600 bg-slate-900 text-amber-500 w-4 h-4 cursor-pointer focus:ring-amber-500"
                       />
-                      <span>Master Key (Unlimited Devices)</span>
+                      <span>Master Key Mode (Unlimited Device Binds)</span>
                     </label>
                   )}
                 </div>
 
-                {/* Customer Note / Tag */}
+                {/* Customer Note / Reseller Reference */}
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 uppercase tracking-wider">
-                    Customer Note / Tag
+                  <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider font-mono flex items-center space-x-1.5">
+                    <FileText className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Customer Note / Reference Tag</span>
                   </label>
                   <input
                     type="text"
                     placeholder="Customer name or reseller reference..."
                     value={genNote}
                     onChange={(e) => setGenNote(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-white outline-none focus:border-purple-500"
+                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition font-mono"
                   />
+                  <p className="text-[10px] text-slate-400 font-mono mt-2">
+                    Optional reference stored alongside generated license record.
+                  </p>
                 </div>
               </div>
 
-              {/* Payment Screenshot Uploader */}
-              <div className="mb-6 p-4 bg-slate-900/60 border border-slate-800 rounded-2xl">
-                <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider flex items-center space-x-2">
+              {/* Drag & Drop Payment Screenshot Uploader */}
+              <div className="mb-6">
+                <label className="text-xs font-semibold text-slate-300 block mb-2 uppercase tracking-wider font-mono flex items-center space-x-2">
                   <ImageIcon className="w-4 h-4 text-cyan-400" />
-                  <span>Optional Payment Screenshot Uploader</span>
+                  <span>Payment Screenshot Uploader (Drag & Drop)</span>
                 </label>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                  <label className="flex-1 w-full flex items-center justify-center space-x-2 bg-slate-950 hover:bg-slate-900 border border-dashed border-purple-500/40 rounded-xl p-3 cursor-pointer transition text-xs text-slate-300 hover:border-purple-400">
-                    <Upload className="w-4 h-4 text-purple-400" />
-                    <span>Click to Drag & Drop or Browse Screenshot (PNG/JPG)</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleScreenshotUpload}
-                      className="hidden"
-                    />
-                  </label>
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`relative cursor-pointer rounded-2xl p-4 border-2 border-dashed transition-all flex flex-col sm:flex-row items-center justify-between gap-4 ${
+                    isDragging
+                      ? 'border-cyan-400 bg-cyan-950/40 shadow-glow-cyan'
+                      : paymentScreenshot
+                      ? 'border-emerald-500/50 bg-slate-900/90'
+                      : 'border-slate-800 bg-slate-900/50 hover:border-purple-500/50 hover:bg-slate-900/80'
+                  }`}
+                >
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    onChange={handleScreenshotUpload}
+                    className="hidden"
+                  />
+
+                  <div className="flex items-center space-x-3">
+                    <div className="p-3 rounded-xl bg-purple-950/60 border border-purple-700/50 text-purple-300">
+                      <Upload className="w-5 h-5 animate-bounce" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white font-mono">
+                        {paymentScreenshot ? 'Payment Receipt Attached' : 'Drag & Drop Payment Screenshot Here'}
+                      </p>
+                      <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+                        Supports PNG, JPG up to 5MB • Click to browse file system
+                      </p>
+                    </div>
+                  </div>
 
                   {paymentScreenshot && (
-                    <div className="relative flex items-center space-x-3 bg-slate-950 border border-cyan-500/50 rounded-xl p-2 pr-4">
+                    <div
+                      className="flex items-center space-x-3 bg-slate-950 border border-emerald-500/40 rounded-xl p-2 pr-4 shadow-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={paymentScreenshot}
-                        alt="Preview"
-                        className="w-10 h-10 object-cover rounded-lg border border-cyan-500/40"
+                        alt="Payment Receipt Preview"
+                        className="w-12 h-12 object-cover rounded-lg border border-emerald-500/40"
                       />
-                      <span className="text-xs text-cyan-300 font-mono font-bold">Screenshot Attached</span>
+                      <div>
+                        <span className="text-xs text-emerald-300 font-mono font-bold block">Live Preview</span>
+                        <span className="text-[10px] text-slate-400 font-mono">Image attached</span>
+                      </div>
                       <button
                         type="button"
                         onClick={() => setPaymentScreenshot(null)}
-                        className="text-slate-400 hover:text-rose-400 p-1"
+                        className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-rose-950/60 transition"
                         title="Remove Screenshot"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -623,93 +800,97 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Real-time Token Cost Estimator Preview Box */}
-              <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* Real-time Token Cost Estimator Summary Banner */}
+              <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-inner">
                 <div>
                   <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
-                    Token Cost Estimator Preview
+                    Real-Time Token Calculation Summary
                   </span>
                   <div className="text-sm text-slate-200 mt-1 flex flex-wrap items-center gap-2 font-mono">
-                    <span>{genCount} Keys</span>
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-purple-300 font-bold">{genCount} Key(s)</span>
                     <span>×</span>
-                    <span>{calculatedCostPerKey} Tokens</span>
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-cyan-300 font-bold">{calculatedCostPerKey} Tokens</span>
                     <span>=</span>
-                    <span className="text-xl font-extrabold text-amber-400">{totalEstimatedCost} Tokens Total</span>
+                    <span className="text-2xl font-extrabold text-amber-400 tracking-wide font-mono px-3 py-1 rounded-xl bg-amber-950/40 border border-amber-500/40 glow-amber">
+                      {totalEstimatedCost} Tokens Total
+                    </span>
                   </div>
                 </div>
 
                 {!isUnlimited && (
-                  <div className="text-right font-mono text-xs">
-                    <span className="text-slate-400 block">Your Token Balance</span>
-                    <span className="text-base font-bold text-amber-300">{currentResellerTokens} Tokens</span>
+                  <div className="text-left md:text-right font-mono border-t md:border-t-0 border-slate-800 pt-3 md:pt-0">
+                    <span className="text-xs text-slate-400 block uppercase">Your Reseller Token Balance</span>
+                    <span className={`text-xl font-extrabold ${isInsufficientTokens ? 'text-rose-400' : 'text-emerald-400'}`}>
+                      {currentResellerTokens} Tokens
+                    </span>
                   </div>
                 )}
               </div>
 
-              {/* Insufficient Token Warning Banner */}
+              {/* Insufficient Token Warning Badge for Resellers */}
               {isInsufficientTokens && (
-                <div className="mb-6 bg-rose-950/80 border border-rose-500/60 rounded-2xl p-4 text-rose-200 flex items-center space-x-3 glow-red animate-pulse">
-                  <AlertTriangle className="w-6 h-6 text-rose-400 flex-shrink-0" />
+                <div className="mb-6 bg-rose-950/90 border border-rose-500/70 rounded-2xl p-4 text-rose-200 flex items-center space-x-3.5 glow-red animate-pulse">
+                  <AlertTriangle className="w-7 h-7 text-rose-400 flex-shrink-0" />
                   <div className="text-xs font-mono">
-                    <strong className="text-rose-300 block text-sm">Insufficient Tokens!</strong>
-                    You have <span className="font-bold text-white">{currentResellerTokens} tokens</span> but need <span className="font-bold text-white">{totalEstimatedCost} tokens</span>. You need <span className="underline font-extrabold text-amber-300">{neededMoreTokens} more tokens</span> to generate these keys.
+                    <strong className="text-rose-300 block text-sm font-extrabold uppercase">Insufficient Token Balance Warning!</strong>
+                    You currently have <span className="font-bold text-white px-1.5 py-0.5 rounded bg-rose-900/60">{currentResellerTokens} tokens</span>, but this request requires <span className="font-bold text-white px-1.5 py-0.5 rounded bg-rose-900/60">{totalEstimatedCost} tokens</span>. You need <span className="underline font-extrabold text-amber-300">{neededMoreTokens} more tokens</span> from your Manager/Owner to proceed.
                   </div>
                 </div>
               )}
 
-              {/* Action Button */}
+              {/* Submit Action Button */}
               <button
                 onClick={handleGenerateKeys}
                 disabled={isGenerating || isInsufficientTokens}
-                className={`w-full py-3.5 rounded-2xl font-bold transition shadow-glow-purple flex items-center justify-center space-x-2 text-sm ${
+                className={`w-full py-4 rounded-2xl font-bold transition-all shadow-glow-purple flex items-center justify-center space-x-2 text-sm uppercase tracking-wider font-mono ${
                   isInsufficientTokens
-                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/80 shadow-none'
                     : isMasterKey
-                    ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 shadow-glow-amber'
-                    : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
+                    ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 shadow-glow-amber active:scale-98'
+                    : 'bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white shadow-glow-purple active:scale-98'
                 }`}
               >
                 {isGenerating ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
                 <span>
                   {isGenerating
-                    ? 'Processing Key Generation...'
+                    ? 'Processing License Generation...'
                     : isInsufficientTokens
-                    ? 'Submit Disabled - Insufficient Tokens'
+                    ? 'Generation Disabled - Insufficient Tokens'
                     : isMasterKey
-                    ? 'Issue Master Key (Unlimited Devices)'
-                    : `Issue ${genCount} Key(s) for ${totalEstimatedCost} Tokens`}
+                    ? `Issue ${genCount} Master Key(s) (Unlimited Devices)`
+                    : `Issue ${genCount} License Key(s) for ${totalEstimatedCost} Tokens`}
                 </span>
               </button>
 
               {/* Generated Result Display */}
               {genSuccessKeys.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-purple-900/40">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold uppercase text-emerald-400 flex items-center space-x-1.5">
-                      <CheckCircle className="w-4 h-4" />
-                      <span>Successfully Issued {genSuccessKeys.length} Key(s)</span>
+                <div className="mt-6 pt-6 border-t border-purple-900/50 animate-in fade-in duration-300">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                    <span className="text-xs font-semibold uppercase text-emerald-400 flex items-center space-x-2 font-mono">
+                      <CheckCircle className="w-4 h-4 text-emerald-400 animate-pulse" />
+                      <span>Successfully Issued {genSuccessKeys.length} License Key(s)</span>
                     </span>
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(genSuccessKeys.join('\n'));
-                        alert('All keys copied to clipboard!');
+                        alert('All generated keys copied to clipboard!');
                       }}
-                      className="text-xs text-purple-300 hover:text-white flex items-center space-x-1 bg-purple-900/50 hover:bg-purple-800 px-3 py-1.5 rounded-xl border border-purple-700/40 transition"
+                      className="text-xs text-purple-300 hover:text-white flex items-center justify-center space-x-1.5 bg-purple-950/60 hover:bg-purple-900 px-4 py-2 rounded-xl border border-purple-500/40 transition font-mono shadow-md"
                     >
                       <Copy className="w-3.5 h-3.5" />
                       <span>Copy All Issued Keys</span>
                     </button>
                   </div>
-                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                  <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
                     {genSuccessKeys.map((k, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between bg-slate-950 border border-purple-500/40 rounded-xl px-4 py-2 text-xs font-mono text-purple-200"
+                        className="flex items-center justify-between bg-slate-950 border border-purple-500/50 rounded-xl px-4 py-3 text-xs font-mono text-purple-200 hover:border-purple-400 transition"
                       >
-                        <span>{k}</span>
+                        <span className="font-bold text-white select-all">{k}</span>
                         <button
                           onClick={() => copyToClipboard(k, `gen-${i}`)}
-                          className="p-1 rounded bg-purple-950 hover:bg-purple-800 text-purple-300 hover:text-white transition"
+                          className="p-1.5 rounded-lg bg-purple-950 hover:bg-purple-800 text-purple-300 hover:text-white transition"
                         >
                           {copiedKeyId === `gen-${i}` ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                         </button>
@@ -720,10 +901,21 @@ export default function App() {
               )}
             </div>
 
-            {/* Keys Table & Filtering */}
-            <div className="glass-card rounded-3xl p-6 border border-slate-800">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-                <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            {/* 3. LICENSE KEYS MANAGEMENT TABLE SECTION */}
+            <div className="glass-card rounded-3xl p-6 sm:p-8 border border-slate-800">
+              
+              {/* Header & Filter Controls */}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white font-mono flex items-center space-x-2">
+                    <Key className="w-5 h-5 text-purple-400" />
+                    <span>License Keys Management</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono mt-0.5">Filter, verify hardware bindings, and inspect payment receipts</p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  {/* Search Bar */}
                   <div className="relative w-full sm:w-80">
                     <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                     <input
@@ -731,33 +923,46 @@ export default function App() {
                       placeholder="Search key, reseller, HWID, note..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white outline-none focus:border-purple-500"
+                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white outline-none focus:border-purple-500 font-mono"
                     />
                   </div>
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full sm:w-40 bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"
-                  >
-                    <option value="all">All Statuses</option>
-                    <option value="active">Active Only</option>
-                    <option value="expired">Expired Only</option>
-                    <option value="revoked">Revoked Only</option>
-                  </select>
+
+                  {/* Status Filter Pills (All, Active, Expired, Revoked, Master) */}
+                  <div className="flex rounded-xl bg-slate-900 p-1 border border-slate-800 w-full sm:w-auto font-mono text-xs overflow-x-auto">
+                    {[
+                      { id: 'all', label: 'All' },
+                      { id: 'active', label: 'Active' },
+                      { id: 'expired', label: 'Expired' },
+                      { id: 'revoked', label: 'Revoked' },
+                      { id: 'master', label: 'Master' },
+                    ].map((pill) => (
+                      <button
+                        key={pill.id}
+                        onClick={() => setStatusFilter(pill.id)}
+                        className={`px-3 py-1.5 rounded-lg font-semibold transition whitespace-nowrap ${
+                          statusFilter === pill.id
+                            ? 'bg-purple-600 text-white shadow-glow-purple'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {pill.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-xs text-slate-400 font-mono">Showing {filteredKeys.length} of {keys.length} keys</span>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-slate-800">
-                <table className="w-full text-left text-sm text-slate-300">
-                  <thead className="bg-slate-950 text-slate-400 uppercase text-[11px] tracking-wider font-mono">
+              {/* Table */}
+              <div className="overflow-x-auto rounded-2xl border border-slate-800/80">
+                <table className="w-full text-left text-xs text-slate-300">
+                  <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider font-mono border-b border-slate-800">
                     <tr>
-                      <th className="p-4">License Key String</th>
-                      <th className="p-4">Duration & Expiry</th>
+                      <th className="p-4">License Key</th>
+                      <th className="p-4">Duration & Expiry Date/Time</th>
                       <th className="p-4">Cost Tokens</th>
                       <th className="p-4">Payment Receipt</th>
                       <th className="p-4">Status</th>
-                      <th className="p-4">HWID</th>
+                      <th className="p-4">Bound HWID</th>
                       <th className="p-4">Created By</th>
                       <th className="p-4 text-right">Actions</th>
                     </tr>
@@ -765,24 +970,27 @@ export default function App() {
                   <tbody className="divide-y divide-slate-800/60 font-mono text-xs">
                     {filteredKeys.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="p-8 text-center text-slate-500 font-sans">
-                          No license keys match your criteria.
+                        <td colSpan={8} className="p-12 text-center text-slate-500 font-sans">
+                          <AlertCircle className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                          <p className="text-sm font-semibold text-slate-400">No license keys match your search or filter criteria.</p>
                         </td>
                       </tr>
                     ) : (
                       filteredKeys.map((k) => (
                         <tr key={k.id} className="hover:bg-slate-800/40 transition">
-                          {/* Key string */}
+                          
+                          {/* License Key */}
                           <td className="p-4 font-bold text-purple-300 flex items-center space-x-2">
-                            <span>{k.key}</span>
+                            <span className="truncate max-w-[200px]">{k.key}</span>
                             {(k.isMasterKey === 1 || k.isMasterKey === true) && (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-widest">
+                              <span className="px-2 py-0.5 rounded text-[9px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wider">
                                 MASTER
                               </span>
                             )}
                             <button
                               onClick={() => copyToClipboard(k.key, k.id)}
-                              className="text-slate-500 hover:text-purple-300 transition"
+                              className="text-slate-500 hover:text-purple-300 transition p-1"
+                              title="Copy Key String"
                             >
                               {copiedKeyId === k.id ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
@@ -792,38 +1000,42 @@ export default function App() {
                           <td className="p-4">
                             <span className="text-slate-200 font-bold block">{k.duration || 'Custom'}</span>
                             {!k.expiresAt || k.expiresAt === 'never' ? (
-                              <span className="text-[11px] text-emerald-400 font-semibold flex items-center space-x-1 mt-0.5">
+                              <span className="text-[10px] text-emerald-400 font-semibold flex items-center space-x-1 mt-0.5">
                                 <Clock className="w-3 h-3 text-emerald-400" />
                                 <span>Never Expires</span>
                               </span>
                             ) : (
-                              <span className="text-[11px] text-cyan-300/80 block mt-0.5 font-mono">
+                              <span className="text-[10px] text-cyan-300/80 block mt-0.5 font-mono">
                                 Exp: {new Date(k.expiresAt).toLocaleString()}
                               </span>
                             )}
                           </td>
 
                           {/* Cost Tokens */}
-                          <td className="p-4 font-bold text-amber-400">{k.costTokens || 0} Tokens</td>
+                          <td className="p-4 font-bold text-amber-400">
+                            <span className="px-2.5 py-1 rounded-lg bg-amber-950/40 border border-amber-500/30 text-amber-300">
+                              {k.costTokens || 0} Tokens
+                            </span>
+                          </td>
 
-                          {/* Payment Screenshot Badge */}
+                          {/* Payment Receipt Badge */}
                           <td className="p-4">
                             {k.paymentScreenshot ? (
                               <button
                                 onClick={() => setScreenshotModalKey(k)}
-                                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg badge-cyan hover:scale-105 transition font-sans text-xs"
+                                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl badge-cyan hover:scale-105 transition font-mono text-xs"
                               >
-                                <ImageIcon className="w-3.5 h-3.5" />
+                                <ImageIcon className="w-3.5 h-3.5 text-cyan-300" />
                                 <span>Receipt Attached</span>
                               </button>
                             ) : (
-                              <span className="text-slate-600 font-sans italic text-[11px]">None</span>
+                              <span className="text-slate-600 font-mono italic text-[11px]">No Receipt</span>
                             )}
                           </td>
 
                           {/* Status Badge */}
                           <td className="p-4">
-                            <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
                               k.status === 'active' 
                                 ? 'badge-emerald' 
                                 : k.status === 'expired' 
@@ -834,14 +1046,18 @@ export default function App() {
                             </span>
                           </td>
 
-                          {/* HWID */}
+                          {/* Bound HWID */}
                           <td className="p-4 text-slate-400">
                             {(k.isMasterKey === 1 || k.isMasterKey === true) ? (
-                              <span className="text-amber-400 font-bold bg-amber-950/40 border border-amber-700/50 px-2 py-0.5 rounded">
+                              <span className="text-amber-400 font-bold bg-amber-950/40 border border-amber-700/50 px-2 py-0.5 rounded text-[11px]">
                                 ⚡ Unlimited
                               </span>
+                            ) : k.hwid ? (
+                              <span className="text-cyan-300 font-mono truncate max-w-[120px] block" title={k.hwid}>
+                                {k.hwid}
+                              </span>
                             ) : (
-                              k.hwid || <span className="text-slate-600 italic">Unbound</span>
+                              <span className="text-slate-600 italic">Unbound</span>
                             )}
                           </td>
 
@@ -854,6 +1070,7 @@ export default function App() {
                               <button
                                 onClick={() => handleResetHwid(k.id)}
                                 className="px-3 py-1.5 text-xs bg-amber-950/50 hover:bg-amber-900/80 text-amber-300 border border-amber-800/50 rounded-xl transition"
+                                title="Reset Hardware ID Binding"
                               >
                                 Reset HWID
                               </button>
@@ -861,6 +1078,7 @@ export default function App() {
                             <button
                               onClick={() => handleDeleteKey(k.id)}
                               className="px-3 py-1.5 text-xs bg-rose-950/50 hover:bg-rose-900/80 text-rose-400 border border-rose-800/50 rounded-xl transition"
+                              title="Revoke and Delete Key"
                             >
                               Delete
                             </button>
@@ -875,61 +1093,69 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 2: RESELLER NETWORK */}
+        {/* TAB 2: RESELLER / USER MANAGEMENT SECTION */}
         {activeTab === 'users' && (user.role === 'owner' || user.role === 'manager') && (
           <div className="space-y-8">
-            {/* Create Staff / Reseller Form */}
-            <div className="glass-card rounded-3xl p-6 border border-purple-500/30 glow-purple">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
+            
+            {/* Create Staff / Reseller Account Form Card */}
+            <div className="glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/30 glow-purple">
+              <h3 className="text-xl font-bold text-white mb-5 flex items-center space-x-2 font-mono">
                 <UserPlus className="w-5 h-5 text-purple-400" />
                 <span>Create New Staff / Reseller Account</span>
               </h3>
+              
               <form onSubmit={handleCreateUser} className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
-                  <label className="text-xs font-semibold text-slate-400 block mb-1">Username</label>
+                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 font-mono">Username</label>
                   <input
                     type="text"
                     required
+                    placeholder="Enter account name..."
                     value={newUserUsername}
                     onChange={(e) => setNewUserUsername(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white outline-none"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
                   />
                 </div>
+
                 <div>
-                  <label className="text-xs font-semibold text-slate-400 block mb-1">Password</label>
+                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 font-mono">Password</label>
                   <input
                     type="password"
                     required
+                    placeholder="Enter password..."
                     value={newUserPassword}
                     onChange={(e) => setNewUserPassword(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white outline-none"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
                   />
                 </div>
+
                 <div>
-                  <label className="text-xs font-semibold text-slate-400 block mb-1">Role</label>
+                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 font-mono">Account Role</label>
                   <select
                     value={newUserRole}
                     onChange={(e) => setNewUserRole(e.target.value as any)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white outline-none"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
                   >
                     <option value="reseller">Reseller</option>
                     {user.role === 'owner' && <option value="manager">Manager</option>}
                   </select>
                 </div>
+
                 <div>
-                  <label className="text-xs font-semibold text-slate-400 block mb-1">Initial Tokens</label>
+                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 font-mono">Initial Tokens</label>
                   <input
                     type="number"
                     min="0"
                     value={newUserTokens}
                     onChange={(e) => setNewUserTokens(parseInt(e.target.value, 10) || 0)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white outline-none font-mono"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
                   />
                 </div>
+
                 <div className="flex items-end">
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2 rounded-xl transition shadow-glow-purple"
+                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 rounded-xl transition shadow-glow-purple font-mono text-sm"
                   >
                     Add Reseller
                   </button>
@@ -937,55 +1163,94 @@ export default function App() {
               </form>
             </div>
 
-            {/* Reseller Management Table */}
-            <div className="glass-card rounded-3xl p-6 border border-slate-800">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center justify-between">
-                <span>Reseller Network Accounts</span>
-                <span className="text-xs font-mono text-slate-400">Click any row to open Deep Dive Dashboard</span>
-              </h3>
+            {/* Resellers Accounts Table */}
+            <div className="glass-card rounded-3xl p-6 sm:p-8 border border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white font-mono flex items-center space-x-2">
+                    <Users className="w-5 h-5 text-cyan-400" />
+                    <span>Reseller Network Accounts</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono mt-0.5">Click any reseller row to open Deep Dive Dashboard</p>
+                </div>
+
+                {/* Reseller Search */}
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                  <input
+                    type="text"
+                    placeholder="Search reseller username/role..."
+                    value={userSearchQuery}
+                    onChange={(e) => setUserSearchQuery(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-xs text-white font-mono outline-none focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
               <div className="overflow-x-auto rounded-2xl border border-slate-800">
                 <table className="w-full text-left text-sm text-slate-300">
-                  <thead className="bg-slate-950 text-slate-400 uppercase text-[11px] tracking-wider font-mono">
+                  <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider font-mono border-b border-slate-800">
                     <tr>
                       <th className="p-4">Username</th>
                       <th className="p-4">Role</th>
-                      <th className="p-4">Creator</th>
-                      <th className="p-4">Token Balance</th>
+                      <th className="p-4">Creator Info</th>
+                      <th className="p-4">Tokens Balance Pill</th>
                       <th className="p-4">Status</th>
                       <th className="p-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/50 font-mono text-xs">
-                    {usersList.map((u) => (
+                  <tbody className="divide-y divide-slate-800/60 font-mono text-xs">
+                    {filteredUsers.map((u) => (
                       <tr
                         key={u.id}
                         onClick={() => setDashboardReseller(u)}
                         className="hover:bg-purple-950/20 transition cursor-pointer group"
                       >
-                        <td className="p-4 font-bold text-white group-hover:text-purple-300 transition">
-                          {u.username}
+                        <td className="p-4 font-bold text-white group-hover:text-purple-300 transition flex items-center space-x-2">
+                          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-600 flex items-center justify-center text-white text-xs font-bold">
+                            {u.username.slice(0, 1).toUpperCase()}
+                          </div>
+                          <span>{u.username}</span>
                         </td>
-                        <td className="p-4 font-bold uppercase text-purple-400">{u.role}</td>
+
+                        <td className="p-4 font-bold uppercase">
+                          <span className={`px-2.5 py-1 rounded-md text-[10px] ${
+                            u.role === 'owner'
+                              ? 'bg-purple-950 text-purple-300 border border-purple-600/40'
+                              : u.role === 'manager'
+                              ? 'bg-indigo-950 text-indigo-300 border border-indigo-600/40'
+                              : 'bg-slate-900 text-slate-300 border border-slate-700'
+                          }`}>
+                            {u.role}
+                          </span>
+                        </td>
+
                         <td className="p-4 text-slate-400">{u.createdBy || 'OwnerAdmin'}</td>
-                        <td className="p-4 font-bold text-amber-400">{u.tokens ?? 0} Tokens</td>
+
+                        {/* Tokens balance pill */}
                         <td className="p-4">
-                          <span
-                            className={`px-3 py-1 rounded-full text-[11px] font-bold ${
-                              u.isBlocked === 1 ? 'badge-rose' : 'badge-emerald'
-                            }`}
-                          >
+                          <span className="px-3 py-1 rounded-xl bg-amber-950/50 text-amber-300 border border-amber-500/40 font-bold glow-amber">
+                            {u.tokens ?? 0} Tokens
+                          </span>
+                        </td>
+
+                        <td className="p-4">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
+                            u.isBlocked === 1 ? 'badge-rose' : 'badge-emerald'
+                          }`}>
                             {u.isBlocked === 1 ? 'BLOCKED' : 'ACTIVE'}
                           </span>
                         </td>
+
                         <td
-                          className="p-4 text-right space-x-2"
+                          className="p-4 text-right"
                           onClick={(e) => e.stopPropagation()} // Prevent row click when clicking action button
                         >
                           <button
                             onClick={() => setTokenModalUser(u)}
-                            className="px-3 py-1.5 text-xs bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-700/60 rounded-xl font-bold transition flex-inline items-center space-x-1"
+                            className="px-3.5 py-1.5 text-xs bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-600/60 rounded-xl font-bold transition flex-inline items-center space-x-1.5 shadow-md"
                           >
-                            <Coins className="w-3.5 h-3.5 inline mr-1" />
+                            <Coins className="w-3.5 h-3.5 inline mr-1 text-amber-400" />
                             <span>Manage Tokens (+/-)</span>
                           </button>
                         </td>
@@ -998,45 +1263,65 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 3: EXECUTIVE ANALYTICS */}
+        {/* TAB 3: EXECUTIVE STATS & SALES GRAPH SECTION */}
         {activeTab === 'analytics' && (
           <div className="space-y-8">
-            {/* Top Metric Cards */}
+            
+            {/* KPI Metric Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              
               <div className="glass-card rounded-3xl p-6 border border-purple-500/40 glow-purple">
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Total Issued Keys</span>
-                <p className="text-4xl font-extrabold text-white mt-3 font-mono">{keys.length}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Total Issued Keys</span>
+                  <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/40 text-purple-400">
+                    <Key className="w-5 h-5" />
+                  </div>
+                </div>
+                <p className="text-4xl font-extrabold text-white mt-4 font-mono">{keys.length}</p>
+                <span className="text-[11px] text-slate-400 font-mono mt-1 block">Lifetime license count</span>
               </div>
 
               <div className="glass-card rounded-3xl p-6 border border-emerald-500/40 glow-emerald">
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Active Licenses</span>
-                <p className="text-4xl font-extrabold text-emerald-400 mt-3 font-mono">
-                  {keys.filter((k) => k.status === 'active').length}
-                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Active Licenses</span>
+                  <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-400">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                </div>
+                <p className="text-4xl font-extrabold text-emerald-400 mt-4 font-mono">{activeKeysCount}</p>
+                <span className="text-[11px] text-emerald-300/80 font-mono mt-1 block">Currently valid & active</span>
               </div>
 
               <div className="glass-card rounded-3xl p-6 border border-amber-500/40 glow-amber">
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Total Resellers</span>
-                <p className="text-4xl font-extrabold text-amber-400 mt-3 font-mono">
-                  {usersList.filter((u) => u.role === 'reseller').length}
-                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Total Resellers</span>
+                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400">
+                    <Users className="w-5 h-5" />
+                  </div>
+                </div>
+                <p className="text-4xl font-extrabold text-amber-400 mt-4 font-mono">{totalResellersCount}</p>
+                <span className="text-[11px] text-amber-300/80 font-mono mt-1 block">Active reseller network</span>
               </div>
 
               <div className="glass-card rounded-3xl p-6 border border-cyan-500/40 glow-cyan">
-                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Total Revenue Tokens</span>
-                <p className="text-4xl font-extrabold text-cyan-300 mt-3 font-mono">
-                  {totalRevenueTokens.toLocaleString()}
-                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-mono">Revenue Tokens</span>
+                  <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/40 text-cyan-400">
+                    <Coins className="w-5 h-5" />
+                  </div>
+                </div>
+                <p className="text-4xl font-extrabold text-cyan-300 mt-4 font-mono">{totalRevenueTokens.toLocaleString()}</p>
+                <span className="text-[11px] text-cyan-300/80 font-mono mt-1 block">Tokens consumed total</span>
               </div>
             </div>
 
-            {/* Sales Chart Component */}
+            {/* Embedded SalesChart Component */}
             <SalesChart totalRevenue={totalRevenueTokens} totalKeysSold={keys.length} />
           </div>
         )}
       </main>
 
-      {/* Modals */}
+      {/* MODALS */}
       <TokenBalanceModal
         isOpen={!!tokenModalUser}
         reseller={tokenModalUser}

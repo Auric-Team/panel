@@ -6,71 +6,137 @@
   html {
     scroll-behavior: smooth;
   }
+  
   body {
     @apply bg-slate-950 text-slate-100 font-sans antialiased selection:bg-purple-500 selection:text-white;
   }
 
-  /* Cyber Scrollbar Styling */
+  /* Futuristic Cyber Scrollbar Styling */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
+
   ::-webkit-scrollbar-track {
-    background: #090d16;
+    background: #030712;
   }
+
   ::-webkit-scrollbar-thumb {
-    background: #1e293b;
-    border-radius: 4px;
-    border: 1px solid rgba(147, 51, 234, 0.2);
+    background: linear-gradient(180deg, #3b0764 0%, #1e1b4b 100%);
+    border-radius: 9999px;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
   }
+
   ::-webkit-scrollbar-thumb:hover {
-    background: #7e22ce;
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+    background: linear-gradient(180deg, #9333ea 0%, #6366f1 100%);
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.8);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: #030712;
   }
 }
 
-/* Glassmorphism Cards */
+/* Glassmorphism Cards & Panels */
 .glass-card {
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(30, 41, 59, 0.8);
+  @apply bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-2xl;
+}
+
+.glass-panel {
+  @apply bg-slate-950/80 backdrop-blur-xl border border-slate-800/80 shadow-2xl;
 }
 
 .glass-card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  @apply transition-all duration-300 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.15)] hover:-translate-y-0.5;
 }
 
-.glass-card-hover:hover {
-  border-color: rgba(168, 85, 247, 0.4);
-  box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
-  transform: translateY(-2px);
+.glass-card-amber {
+  @apply border-amber-500/30 hover:border-amber-500/60 shadow-[0_0_25px_rgba(245,158,11,0.05)] transition-all duration-300;
 }
 
-/* Glowing Neon Badges */
-.badge-emerald {
-  @apply bg-emerald-950/70 text-emerald-400 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.25)];
+.glass-card-cyan {
+  @apply border-cyan-500/30 hover:border-cyan-500/60 shadow-[0_0_25px_rgba(6,182,212,0.05)] transition-all duration-300;
 }
 
-.badge-violet {
-  @apply bg-purple-950/70 text-purple-300 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.25)];
-}
-
+/* Modern Neon Status Badges with Glowing Dots */
+.badge-emerald,
+.badge-amber,
+.badge-rose,
+.badge-violet,
 .badge-cyan {
-  @apply bg-cyan-950/70 text-cyan-300 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.25)];
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md transition-all duration-300;
+}
+
+.badge-emerald::before,
+.badge-amber::before,
+.badge-rose::before,
+.badge-violet::before,
+.badge-cyan::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.badge-emerald {
+  @apply bg-emerald-950/70 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.25)];
+}
+.badge-emerald::before {
+  @apply bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)] animate-pulse;
 }
 
 .badge-amber {
   @apply bg-amber-950/70 text-amber-300 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.25)];
 }
+.badge-amber::before {
+  @apply bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)] animate-pulse;
+}
 
 .badge-rose {
   @apply bg-rose-950/70 text-rose-300 border border-rose-500/40 shadow-[0_0_12px_rgba(244,63,94,0.25)];
 }
+.badge-rose::before {
+  @apply bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.9)] animate-pulse;
+}
 
-/* Custom Gradient Text */
+.badge-violet {
+  @apply bg-purple-950/70 text-purple-300 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.25)];
+}
+.badge-violet::before {
+  @apply bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.9)] animate-pulse;
+}
+
+.badge-cyan {
+  @apply bg-cyan-950/70 text-cyan-300 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.25)];
+}
+.badge-cyan::before {
+  @apply bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)] animate-pulse;
+}
+
+/* Standalone Glowing Dots */
+.glowing-dot-emerald {
+  @apply w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)] animate-pulse;
+}
+.glowing-dot-amber {
+  @apply w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)] animate-pulse;
+}
+.glowing-dot-rose {
+  @apply w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.9)] animate-pulse;
+}
+.glowing-dot-violet {
+  @apply w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.9)] animate-pulse;
+}
+.glowing-dot-cyan {
+  @apply w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)] animate-pulse;
+}
+
+/* Vibrant Neon Text Gradients */
 .text-gradient-purple {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-indigo-300 to-purple-200;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-fuchsia-400 to-indigo-300;
 }
 
 .text-gradient-cyan {
@@ -85,7 +151,11 @@
   @apply bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400;
 }
 
-/* Neon Glows */
+.text-gradient-rose {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-rose-400 via-pink-400 to-red-400;
+}
+
+/* Cyber Neon Glow Shadows */
 .glow-purple {
   box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
 }
@@ -106,3 +176,48 @@
   box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
 }
 
+/* Custom Glowing Keyframe Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), inset 0 0 15px rgba(168, 85, 247, 0.2);
+    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.4));
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 35px rgba(168, 85, 247, 0.8), inset 0 0 25px rgba(168, 85, 247, 0.4);
+    filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.7));
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-shine {
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shine 3s infinite linear;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
