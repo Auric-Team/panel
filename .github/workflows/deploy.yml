@@ -1,0 +1,39 @@
+name: Auto Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+
+            # Pull latest changes from main branch
+            cd /root/panel
+            git pull origin main
+
+            # Build and Restart Backend
+            cd /root/panel/backend
+            bun install
+            bun run build
+            pm2 restart axios-backend || pm2 start dist/index.js --name "axios-backend"
+
+            # Build and Restart Frontend
+            cd /root/panel/frontend
+            bun install
+            bun run build
+            pm2 restart axios-frontend || pm2 start "bun run start" --name "axios-frontend"
+
+            pm2 save
