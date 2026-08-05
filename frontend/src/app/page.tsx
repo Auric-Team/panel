@@ -21,6 +21,7 @@ import {
 } from '@/lib/api';
 
 import { SalesChart } from '@/components/SalesChart';
+import { StatsOverview } from '@/components/StatsOverview';
 import { TokenBalanceModal } from '@/components/TokenBalanceModal';
 import { PaymentScreenshotModal } from '@/components/PaymentScreenshotModal';
 import { ResellerDashboardModal } from '@/components/ResellerDashboardModal';
