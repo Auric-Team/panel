@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { db } from '../db/sqlite';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import { AppError } from '../utils/errors';
 import { LogsService } from '../services/logs.service';
 import { AuthRequest } from '../middlewares/auth';
@@ -130,7 +132,7 @@ export const getKeys = (req: AuthRequest, res: Response, next: NextFunction) => 
 
 export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { durationDays, count, note, isMaster } = req.body;
+    const { durationDays, count, note, isMaster, paymentScreenshot } = req.body;
     const user = req.user!;
     const numKeys = Math.max(1, parseInt(count as string) || 1);
     const days = parseInt(durationDays as string) || 0;
@@ -138,6 +140,59 @@ export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction
 
     if (isMasterKeyFlag && user.role !== 'owner' && user.role !== 'manager') {
       return next(new AppError('Only Manager and Owner can create Master Keys.', 403));
+    }
+
+    let costPerKey = 0;
+    if (isMasterKeyFlag) {
+      costPerKey = 0;
+    } else if (days === 0) {
+      costPerKey = 300;
+    } else {
+      costPerKey = days * 10;
+    }
+
+    const totalCost = costPerKey * numKeys;
+
+    if (user.role === 'reseller') {
+      const userRow: any = db.prepare('SELECT COALESCE(tokens, credits, 0) as balance FROM users WHERE id = ?').get(user.id);
+      const userBalance = userRow ? Number(userRow.balance || 0) : 0;
+
+      if (userBalance < totalCost) {
+        return res.status(400).json({
+          success: false,
+          message: `Insufficient token balance. Required: ${totalCost} tokens, Current balance: ${userBalance} tokens.`
+        });
+      }
+
+      db.prepare('UPDATE users SET tokens = tokens - ?, credits = credits - ? WHERE id = ?').run(totalCost, totalCost, user.id);
+    }
+
+    let savedScreenshotUrl: string | null = null;
+    if (paymentScreenshot && typeof paymentScreenshot === 'string' && paymentScreenshot.trim() !== '') {
+      if (paymentScreenshot.startsWith('data:image/')) {
+        try {
+          const matches = paymentScreenshot.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+          if (matches && matches.length === 3) {
+            const ext = matches[1].toLowerCase() === 'jpeg' ? 'jpg' : matches[1].toLowerCase();
+            const base64Data = matches[2];
+            const fileName = `screenshot-${Date.now()}-${crypto.randomBytes(4).toString('hex')}.${ext}`;
+            const uploadsFolder = path.resolve(process.cwd(), 'uploads');
+            if (!fs.existsSync(uploadsFolder)) {
+              fs.mkdirSync(uploadsFolder, { recursive: true });
+            }
+            const filePath = path.join(uploadsFolder, fileName);
+            fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+            savedScreenshotUrl = `/uploads/${fileName}`;
+          } else {
+            savedScreenshotUrl = paymentScreenshot;
+          }
+        } catch (e) {
+          console.error('Failed to save payment screenshot file:', e);
+          savedScreenshotUrl = paymentScreenshot;
+        }
+      } else {
+        savedScreenshotUrl = paymentScreenshot;
+      }
     }
 
     const createdKeys: any[] = [];
@@ -155,8 +210,8 @@ export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction
     };
 
     const insertStmt = db.prepare(`
-      INSERT INTO keys (id, key, expiresAt, createdAt, createdById, createdByUsername, note, isMasterKey)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO keys (id, key, expiresAt, createdAt, createdById, createdByUsername, note, isMasterKey, paymentScreenshot, costTokens)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     for (let i = 0; i < numKeys; i++) {
@@ -172,7 +227,9 @@ export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction
         createdById: user.id,
         createdByUsername: user.username,
         note: note || (isMasterKeyFlag ? (days === 0 ? 'Master Key (Lifetime)' : `Master Key (${days} Days)`) : (days === 0 ? 'Lifetime Key' : `${days} Days Key`)),
-        isMasterKey: isMasterKeyFlag ? 1 : 0
+        isMasterKey: isMasterKeyFlag ? 1 : 0,
+        paymentScreenshot: savedScreenshotUrl,
+        costTokens: costPerKey
       };
 
       insertStmt.run(
@@ -183,7 +240,9 @@ export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction
         newKey.createdById,
         newKey.createdByUsername,
         newKey.note,
-        newKey.isMasterKey
+        newKey.isMasterKey,
+        newKey.paymentScreenshot,
+        newKey.costTokens
       );
       createdKeys.push(newKey);
     }

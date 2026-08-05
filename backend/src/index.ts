@@ -4,6 +4,8 @@ import { initDb } from './db/sqlite';
 import routes from './routes';
 import { errorHandler } from './middlewares/errorHandler';
 
+import fs from 'fs';
+import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,7 +19,14 @@ app.use(cors({
 }));
 app.options('*', cors());
 
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
+
+const uploadsDir = path.resolve(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsDir));
 
 // API Routes
 app.use('/api', routes);

@@ -10,10 +10,10 @@ export const getUsers = (req: AuthRequest, res: Response, next: NextFunction) =>
     const { role, id } = req.user!;
 
     if (role === 'owner') {
-      const users = db.prepare('SELECT id, username, role, createdBy, isBlocked, credits, createdAt FROM users').all();
+      const users = db.prepare('SELECT id, username, role, createdBy, isBlocked, credits, COALESCE(tokens, credits, 0) AS tokens, createdAt FROM users').all();
       return res.json(users);
     } else if (role === 'manager') {
-      const users = db.prepare('SELECT id, username, role, createdBy, isBlocked, credits, createdAt FROM users WHERE createdBy = ? OR id = ?').all(id, id);
+      const users = db.prepare('SELECT id, username, role, createdBy, isBlocked, credits, COALESCE(tokens, credits, 0) AS tokens, createdAt FROM users WHERE createdBy = ? OR id = ?').all(id, id);
       return res.json(users);
     } else {
       return next(new AppError('Access denied.', 403));
@@ -25,7 +25,7 @@ export const getUsers = (req: AuthRequest, res: Response, next: NextFunction) =>
 
 export const createUser = (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { username, password, role, pin2fa, credits } = req.body;
+    const { username, password, role, pin2fa, credits, tokens } = req.body;
     const currentUser = req.user!;
 
     if (!username || !password || !role) {
@@ -43,11 +43,12 @@ export const createUser = (req: AuthRequest, res: Response, next: NextFunction) 
 
     const userId = crypto.randomUUID();
     const now = new Date().toISOString();
+    const tokenVal = parseInt(tokens ?? credits) || 0;
 
     db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?)
-    `).run(userId, username, password, role, currentUser.id, pin2fa || null, parseInt(credits) || 0, now);
+      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?)
+    `).run(userId, username, password, role, currentUser.id, pin2fa || null, tokenVal, tokenVal, now);
 
     LogsService.logAction(currentUser.id, currentUser.username, 'USER_CREATED', `Created ${role}: ${username}`);
 
@@ -99,6 +100,68 @@ export const deleteUser = (req: AuthRequest, res: Response, next: NextFunction) 
     LogsService.logAction(currentUser.id, currentUser.username, 'USER_DELETED', `Deleted user ${targetUser.username} (${targetUser.role})`);
 
     return res.json({ success: true, message: `User ${targetUser.username} deleted successfully.` });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateTokens = (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { userId, amount, action } = req.body;
+    const currentUser = req.user!;
+
+    if (!userId || amount === undefined || !action) {
+      return next(new AppError('userId, amount, and action are required.', 400));
+    }
+
+    const parsedAmount = parseInt(amount, 10);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      return next(new AppError('Amount must be a positive number.', 400));
+    }
+
+    if (action !== 'add' && action !== 'deduct') {
+      return next(new AppError("Action must be 'add' or 'deduct'.", 400));
+    }
+
+    const targetUser: any = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+    if (!targetUser) {
+      return next(new AppError('User not found.', 404));
+    }
+
+    if (currentUser.role === 'owner') {
+      // Owner can update anyone
+    } else if (currentUser.role === 'manager') {
+      if (targetUser.role !== 'reseller' || (targetUser.createdBy !== currentUser.id && targetUser.id !== currentUser.id)) {
+        return next(new AppError('Managers can only update resellers created or managed by them.', 403));
+      }
+    } else {
+      return next(new AppError('Access denied.', 403));
+    }
+
+    const delta = action === 'add' ? parsedAmount : -parsedAmount;
+
+    db.prepare(`
+      UPDATE users 
+      SET tokens = MAX(0, COALESCE(tokens, credits, 0) + ?),
+          credits = MAX(0, COALESCE(tokens, credits, 0) + ?)
+      WHERE id = ?
+    `).run(delta, delta, userId);
+
+    const updatedUser: any = db.prepare('SELECT COALESCE(tokens, credits, 0) AS tokens FROM users WHERE id = ?').get(userId);
+    const newBalance = updatedUser ? updatedUser.tokens : 0;
+
+    LogsService.logAction(
+      currentUser.id,
+      currentUser.username,
+      'TOKENS_UPDATED',
+      `${action === 'add' ? 'Added' : 'Deducted'} ${parsedAmount} tokens for user ${targetUser.username} (${userId}). New balance: ${newBalance}`
+    );
+
+    return res.json({
+      success: true,
+      newBalance,
+      message: `Successfully ${action === 'add' ? 'added' : 'deducted'} ${parsedAmount} tokens.`
+    });
   } catch (err) {
     next(err);
   }

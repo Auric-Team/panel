@@ -7,6 +7,7 @@ export interface User {
   pin2fa: string | null;
   isBlocked: number;
   credits: number;
+  tokens?: number;
   createdAt: string;
 }
 
@@ -21,6 +22,9 @@ export interface Key {
   createdById: string;
   createdByUsername: string;
   note?: string;
+  isMasterKey?: number;
+  paymentScreenshot?: string | null;
+  costTokens?: number;
 }
 
 export interface Log {

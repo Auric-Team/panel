@@ -49,6 +49,18 @@ const verifyKey = (req, res, next) => {
         if (keyItem.status === 'revoked' || keyItem.status === 'banned') {
             return res.status(403).json({ status: 'revoked', message: 'Key has been revoked or banned' });
         }
+        if (keyItem.isMasterKey === 1 || keyItem.isMasterKey === true) {
+            if (!keyItem.activatedAt) {
+                sqlite_1.db.prepare('UPDATE keys SET activatedAt = ? WHERE id = ?').run(now.toISOString(), keyItem.id);
+            }
+            logs_service_1.LogsService.logAction('system', 'client', 'MASTER_KEY_VERIFIED', `Master key ${keyItem.key} authenticated for HWID ${reqHwid}`);
+            return res.json({
+                status: 'authenticated',
+                message: 'Master key authenticated (Unlimited devices)',
+                expiresAt: keyItem.expiresAt,
+                isMasterKey: true
+            });
+        }
         if (!keyItem.hwid) {
             sqlite_1.db.prepare('UPDATE keys SET hwid = ?, activatedAt = ? WHERE id = ?').run(reqHwid, now.toISOString(), keyItem.id);
             logs_service_1.LogsService.logAction('system', 'client', 'KEY_ACTIVATED', `Key ${keyItem.key} bound to HWID ${reqHwid}`);
@@ -102,20 +114,51 @@ const getKeys = (req, res, next) => {
 exports.getKeys = getKeys;
 const generateKeys = (req, res, next) => {
     try {
-        const { durationDays, count, note } = req.body;
+        const { durationDays, count, note, isMaster, paymentScreenshot } = req.body;
         const user = req.user;
         const numKeys = Math.max(1, parseInt(count) || 1);
         const days = parseInt(durationDays) || 0;
+        const isMasterKeyFlag = isMaster === true || isMaster === 'true' || isMaster === 1;
+        if (isMasterKeyFlag && user.role !== 'owner' && user.role !== 'manager') {
+            return next(new errors_1.AppError('Only Manager and Owner can create Master Keys.', 403));
+        }
+        let costPerKey = 0;
+        if (isMasterKeyFlag) {
+            costPerKey = 0;
+        }
+        else if (days === 0) {
+            costPerKey = 300;
+        }
+        else {
+            costPerKey = days * 10;
+        }
+        const totalCost = costPerKey * numKeys;
+        if (user.role === 'reseller') {
+            const userRow = sqlite_1.db.prepare('SELECT COALESCE(tokens, credits, 0) as balance FROM users WHERE id = ?').get(user.id);
+            const userBalance = userRow ? Number(userRow.balance || 0) : 0;
+            if (userBalance < totalCost) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Insufficient token balance. Required: ${totalCost} tokens, Current balance: ${userBalance} tokens.`
+                });
+            }
+            sqlite_1.db.prepare('UPDATE users SET tokens = tokens - ?, credits = credits - ? WHERE id = ?').run(totalCost, totalCost, user.id);
+        }
         const createdKeys = [];
         const now = new Date();
-        const generateKeyString = () => {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const generateKeyString = (isMasterKey) => {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
             const seg = (len) => Array.from({ length: len }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
-            return `AXIOS-${seg(4)}-${seg(4)}-${seg(4)}`;
+            if (isMasterKey) {
+                return `free-key-${seg(4)}`;
+            }
+            const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const segUpper = (len) => Array.from({ length: len }, () => upperChars.charAt(Math.floor(Math.random() * upperChars.length))).join('');
+            return `AXIOS-${segUpper(4)}-${segUpper(4)}-${segUpper(4)}`;
         };
         const insertStmt = sqlite_1.db.prepare(`
-      INSERT INTO keys (id, key, expiresAt, createdAt, createdById, createdByUsername, note)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO keys (id, key, expiresAt, createdAt, createdById, createdByUsername, note, isMasterKey, paymentScreenshot, costTokens)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
         for (let i = 0; i < numKeys; i++) {
             let expiresAt = 'never';
@@ -124,17 +167,20 @@ const generateKeys = (req, res, next) => {
             }
             const newKey = {
                 id: crypto_1.default.randomUUID(),
-                key: generateKeyString(),
+                key: generateKeyString(isMasterKeyFlag),
                 expiresAt,
                 createdAt: now.toISOString(),
                 createdById: user.id,
                 createdByUsername: user.username,
-                note: note || (days === 0 ? 'Lifetime Key' : `${days} Days Key`)
+                note: note || (isMasterKeyFlag ? (days === 0 ? 'Master Key (Lifetime)' : `Master Key (${days} Days)`) : (days === 0 ? 'Lifetime Key' : `${days} Days Key`)),
+                isMasterKey: isMasterKeyFlag ? 1 : 0,
+                paymentScreenshot: paymentScreenshot || null,
+                costTokens: costPerKey
             };
-            insertStmt.run(newKey.id, newKey.key, newKey.expiresAt, newKey.createdAt, newKey.createdById, newKey.createdByUsername, newKey.note);
+            insertStmt.run(newKey.id, newKey.key, newKey.expiresAt, newKey.createdAt, newKey.createdById, newKey.createdByUsername, newKey.note, newKey.isMasterKey, newKey.paymentScreenshot, newKey.costTokens);
             createdKeys.push(newKey);
         }
-        logs_service_1.LogsService.logAction(user.id, user.username, 'KEYS_GENERATED', `Generated ${numKeys} keys (${days} days)`);
+        logs_service_1.LogsService.logAction(user.id, user.username, 'KEYS_GENERATED', `Generated ${numKeys} ${isMasterKeyFlag ? 'Master ' : ''}keys (${days} days)`);
         return res.json({ success: true, count: createdKeys.length, keys: createdKeys });
     }
     catch (err) {

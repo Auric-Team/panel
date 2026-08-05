@@ -1,62 +1,13 @@
-import { KeyItem, StatsOverview } from '@/types/key';
+import { KeyItem, UserItem, StatsOverview, SalesDataPoint } from '@/types/key';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://103.207.181.125:20067';
 
-// Initial fallback mock keys to ensure dashboard works out of the box
-const MOCK_KEYS: KeyItem[] = [
-  {
-    id: 'key-1',
-    key: 'AXIOS-9F2B-8C4A-710E',
-    status: 'active',
-    hwid: 'HWID-88A9-BF31-2C90',
-    duration: '30 Days',
-    createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
-    expiresAt: new Date(Date.now() + 25 * 86400000).toISOString(),
-    note: 'VIP - Alex',
-  },
-  {
-    id: 'key-2',
-    key: 'AXIOS-4A1C-9D03-1E5F',
-    status: 'active',
-    hwid: null,
-    duration: '7 Days',
-    createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
-    expiresAt: new Date(Date.now() + 6 * 86400000).toISOString(),
-    note: 'Trial - GamingZone',
-  },
-  {
-    id: 'key-3',
-    key: 'AXIOS-77E0-33F1-99B2',
-    status: 'expired',
-    hwid: 'HWID-11B3-44C5-66D7',
-    duration: '1 Day',
-    createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
-    expiresAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-    note: 'Streamer Pass',
-  },
-  {
-    id: 'key-4',
-    key: 'AXIOS-LIFE-9999-XXXX',
-    status: 'active',
-    hwid: 'HWID-EEFF-0011-2233',
-    duration: 'Lifetime',
-    createdAt: new Date(Date.now() - 30 * 86400000).toISOString(),
-    expiresAt: null,
-    note: 'Owner Key',
-  },
-  {
-    id: 'key-5',
-    key: 'AXIOS-8812-7A9B-004C',
-    status: 'revoked',
-    hwid: 'HWID-9988-7766-5544',
-    duration: '30 Days',
-    createdAt: new Date(Date.now() - 10 * 86400000).toISOString(),
-    expiresAt: new Date(Date.now() + 20 * 86400000).toISOString(),
-    note: 'Abuse Flagged',
-  },
-];
+// Empty initial datasets
+const MOCK_KEYS: KeyItem[] = [];
+const MOCK_USERS: UserItem[] = [];
 
-let localKeysStore: KeyItem[] = [...MOCK_KEYS];
+let localKeysStore: KeyItem[] = [];
+let localUsersStore: UserItem[] = [];
 
 export async function checkBackendConnection(): Promise<{ isConnected: boolean; url: string }> {
   try {
@@ -69,14 +20,20 @@ export async function checkBackendConnection(): Promise<{ isConnected: boolean; 
       return { isConnected: true, url: API_BASE_URL };
     }
   } catch {
-    // Offline / Backend not active yet
+    // Backend offline / not reachable directly
   }
-  return { isConnected: false, url: `${API_BASE_URL} (Local Mock)` };
+  return { isConnected: false, url: `${API_BASE_URL} (Local Engine)` };
 }
 
-export async function fetchAllKeys(): Promise<{ keys: KeyItem[]; isLive: boolean }> {
+export async function fetchAllKeys(token?: string): Promise<{ keys: KeyItem[]; isLive: boolean; isAuthError?: boolean }> {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/keys`, { cache: 'no-store' });
+    const res = await fetch(`${API_BASE_URL}/api/keys`, {
+      headers: { Authorization: `Bearer ${token || ''}` },
+      cache: 'no-store',
+    });
+    if (res.status === 401) {
+      return { keys: [], isLive: false, isAuthError: true };
+    }
     if (res.ok) {
       const data = await res.json();
       const rawList = Array.isArray(data) ? data : (data.keys || []);
@@ -85,38 +42,129 @@ export async function fetchAllKeys(): Promise<{ keys: KeyItem[]; isLive: boolean
         key: k.key,
         status: k.status || 'active',
         hwid: k.hwid || null,
-        duration: k.expiresAt === 'never' ? 'Lifetime' : 'Custom',
+        duration: k.duration || (k.expiresAt === 'never' ? 'Lifetime' : 'Custom'),
+        costTokens: k.costTokens || 10,
         createdAt: k.createdAt || new Date().toISOString(),
         expiresAt: k.expiresAt === 'never' ? null : k.expiresAt,
         note: k.note || '',
+        createdByUsername: k.createdByUsername || k.createdBy || 'System',
+        paymentScreenshot: k.paymentScreenshot || null,
+        isMasterKey: k.isMasterKey || 0,
       }));
       localKeysStore = formattedKeys;
       return { keys: formattedKeys, isLive: true };
     }
-  } catch (e) {
-    console.warn("Backend API offline, falling back to local state store.");
+  } catch {
+    // API Fallback
   }
   return { keys: localKeysStore, isLive: false };
+}
+
+export async function fetchAllUsers(token?: string): Promise<{ users: UserItem[]; isLive: boolean; isAuthError?: boolean }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/users`, {
+      headers: { Authorization: `Bearer ${token || ''}` },
+      cache: 'no-store',
+    });
+    if (res.status === 401) {
+      return { users: [], isLive: false, isAuthError: true };
+    }
+    if (res.ok) {
+      const data = await res.json();
+      const rawList = Array.isArray(data) ? data : (data.users || []);
+      const formattedUsers: UserItem[] = rawList.map((u: any) => ({
+        id: u.id || u.username,
+        username: u.username,
+        role: u.role || 'reseller',
+        tokens: u.tokens !== undefined ? u.tokens : (u.credits || 0),
+        credits: u.credits,
+        isBlocked: u.isBlocked || 0,
+        createdAt: u.createdAt || new Date().toISOString(),
+        createdBy: u.createdBy || 'OwnerAdmin',
+      }));
+      localUsersStore = formattedUsers;
+      return { users: formattedUsers, isLive: true };
+    }
+  } catch {
+    // API Fallback
+  }
+  return { users: localUsersStore, isLive: false };
+}
+
+export async function updateUserTokensApi(
+  userId: string,
+  newTokenBalance: number,
+  token?: string
+): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/users/update-tokens`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
+      body: JSON.stringify({ userId, tokens: newTokenBalance }),
+    });
+    if (res.ok) return true;
+  } catch {
+    // API Fallback
+  }
+
+  localUsersStore = localUsersStore.map((u) =>
+    u.id === userId ? { ...u, tokens: newTokenBalance, credits: newTokenBalance } : u
+  );
+  return true;
 }
 
 export async function generateKeysApi(
   duration: string,
   count: number,
-  note: string
+  note: string,
+  paymentScreenshot?: string | null,
+  isMasterKey?: boolean,
+  userToken?: string,
+  currentUser?: any
 ): Promise<{ newKeys: KeyItem[]; generatedStrings: string[] }> {
-  let durationDays = 30;
-  if (duration.includes('1 Day')) durationDays = 1;
-  else if (duration.includes('3 Days')) durationDays = 3;
-  else if (duration.includes('7 Days')) durationDays = 7;
-  else if (duration.includes('30 Days')) durationDays = 30;
-  else if (duration.includes('90 Days')) durationDays = 90;
-  else if (duration.includes('Lifetime')) durationDays = 0;
+  let durationDays = 7;
+  let costPerKey = 70;
+
+  if (duration === '1 Day' || duration.includes('1 Day')) {
+    durationDays = 1;
+    costPerKey = 10;
+  } else if (duration === '7 Days' || duration.includes('7 Days')) {
+    durationDays = 7;
+    costPerKey = 70;
+  } else if (duration === '30 Days' || duration.includes('30 Days')) {
+    durationDays = 30;
+    costPerKey = 250;
+  } else if (duration === 'Lifetime' || duration.includes('Lifetime')) {
+    durationDays = 0;
+    costPerKey = 300;
+  } else {
+    // Custom
+    const daysMatch = duration.match(/\d+/);
+    const customDays = daysMatch ? parseInt(daysMatch[0], 10) : 10;
+    durationDays = customDays;
+    costPerKey = customDays * 10;
+  }
+
+  const totalCost = costPerKey * count;
 
   try {
     const res = await fetch(`${API_BASE_URL}/api/keys/generate`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ durationDays, count, note }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userToken || ''}`,
+      },
+      body: JSON.stringify({
+        durationDays,
+        count,
+        note,
+        paymentScreenshot,
+        isMaster: isMasterKey,
+        costTokens: totalCost,
+      }),
     });
     if (res.ok) {
       const data = await res.json();
@@ -125,27 +173,41 @@ export async function generateKeysApi(
         key: k.key,
         status: k.status || 'active',
         hwid: k.hwid || null,
-        duration: k.expiresAt === 'never' ? 'Lifetime' : `${durationDays} Days`,
+        duration: duration,
+        costTokens: costPerKey,
         createdAt: k.createdAt || new Date().toISOString(),
         expiresAt: k.expiresAt === 'never' ? null : k.expiresAt,
         note: k.note || '',
+        createdByUsername: currentUser?.username || 'OwnerAdmin',
+        paymentScreenshot: paymentScreenshot || null,
+        isMasterKey: isMasterKey ? 1 : 0,
       }));
       return {
         newKeys: createdKeys,
         generatedStrings: createdKeys.map((k) => k.key),
       };
     }
-  } catch (e) {
-    console.warn("Backend API offline, generating locally.");
+  } catch {
+    // API Fallback
   }
 
-  // Fallback local key generation logic
+  // Deduct tokens locally if reseller
+  if (currentUser && currentUser.role === 'reseller') {
+    localUsersStore = localUsersStore.map((u) =>
+      u.username === currentUser.username
+        ? { ...u, tokens: Math.max(0, (u.tokens || 0) - totalCost) }
+        : u
+    );
+  }
+
   const generated: KeyItem[] = [];
   const generatedStrings: string[] = [];
 
   for (let i = 0; i < count; i++) {
     const randomHex = () => Math.random().toString(36).substring(2, 6).toUpperCase();
-    const keyStr = `AXIOS-${randomHex()}-${randomHex()}-${randomHex()}`;
+    const keyStr = isMasterKey
+      ? `AXIOS-MASTER-${randomHex()}-${randomHex()}`
+      : `AXIOS-${randomHex()}-${randomHex()}-${randomHex()}`;
 
     let expiresAt: string | null = null;
     if (durationDays > 0) {
@@ -158,9 +220,13 @@ export async function generateKeysApi(
       status: 'active',
       hwid: null,
       duration,
+      costTokens: costPerKey,
       createdAt: new Date().toISOString(),
       expiresAt,
-      note: note || 'Panel Generated',
+      note: note || 'Panel Issued',
+      createdByUsername: currentUser?.username || 'OwnerAdmin',
+      paymentScreenshot: paymentScreenshot || null,
+      isMasterKey: isMasterKey ? 1 : 0,
     };
 
     generated.push(newItem);
@@ -171,16 +237,19 @@ export async function generateKeysApi(
   return { newKeys: generated, generatedStrings };
 }
 
-export async function resetHwidApi(keyId: string): Promise<boolean> {
+export async function resetHwidApi(keyId: string, token?: string): Promise<boolean> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/keys/reset-hwid`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
       body: JSON.stringify({ id: keyId }),
     });
     if (res.ok) return true;
-  } catch (e) {
-    console.warn("Backend API offline, resetting HWID locally.");
+  } catch {
+    // API Fallback
   }
 
   localKeysStore = localKeysStore.map((k) =>
@@ -189,19 +258,21 @@ export async function resetHwidApi(keyId: string): Promise<boolean> {
   return true;
 }
 
-export async function deleteKeyApi(keyId: string): Promise<boolean> {
+export async function deleteKeyApi(keyId: string, token?: string): Promise<boolean> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/keys/delete`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
       body: JSON.stringify({ id: keyId }),
     });
     if (res.ok) return true;
-  } catch (e) {
-    console.warn("Backend API offline, deleting locally.");
+  } catch {
+    // API Fallback
   }
 
   localKeysStore = localKeysStore.filter((k) => k.id !== keyId);
   return true;
 }
-

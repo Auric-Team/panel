@@ -4,6 +4,8 @@ const express_1 = require("express");
 const analytics_controller_1 = require("../controllers/analytics.controller");
 const auth_1 = require("../middlewares/auth");
 const router = (0, express_1.Router)();
+const authMiddleware = auth_1.authenticate;
 router.use(auth_1.authenticate);
 router.get('/', analytics_controller_1.getAnalytics);
+router.get('/reseller/:id', authMiddleware, analytics_controller_1.getResellerAnalytics);
 exports.default = router;

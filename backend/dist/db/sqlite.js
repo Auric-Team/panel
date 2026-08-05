@@ -96,6 +96,7 @@ async function initDb() {
       pin2fa TEXT,
       isBlocked INTEGER DEFAULT 0,
       credits INTEGER DEFAULT 0,
+      tokens INTEGER DEFAULT 0,
       createdAt TEXT NOT NULL
     );
 
@@ -109,7 +110,10 @@ async function initDb() {
       activatedAt TEXT,
       createdById TEXT NOT NULL,
       createdByUsername TEXT NOT NULL,
-      note TEXT
+      note TEXT,
+      isMasterKey INTEGER DEFAULT 0,
+      paymentScreenshot TEXT,
+      costTokens INTEGER DEFAULT 0
     );
 
     CREATE TABLE IF NOT EXISTS logs (
@@ -121,6 +125,30 @@ async function initDb() {
       timestamp TEXT NOT NULL
     );
   `);
+    try {
+        sqlDb.run('ALTER TABLE keys ADD COLUMN isMasterKey INTEGER DEFAULT 0');
+    }
+    catch (e) {
+        // Column already exists
+    }
+    try {
+        sqlDb.run('ALTER TABLE keys ADD COLUMN paymentScreenshot TEXT');
+    }
+    catch (e) {
+        // Column already exists
+    }
+    try {
+        sqlDb.run('ALTER TABLE keys ADD COLUMN costTokens INTEGER DEFAULT 0');
+    }
+    catch (e) {
+        // Column already exists
+    }
+    try {
+        sqlDb.run('ALTER TABLE users ADD COLUMN tokens INTEGER DEFAULT 0');
+    }
+    catch (e) {
+        // Column already exists
+    }
     saveDbToFile();
     const userCountRow = exports.db.prepare('SELECT COUNT(*) as count FROM users').get();
     if (!userCountRow || userCountRow.count === 0) {
@@ -130,16 +158,16 @@ async function initDb() {
         const ownerPass = process.env.OWNER_PASSWORD || 'owner123';
         const ownerPin = process.env.OWNER_2FA_PIN || '123456';
         exports.db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, 999999, ?)
+      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, 0, 999999, 999999, ?)
     `).run(ownerId, ownerUser, ownerPass, 'owner', 'system', ownerPin, now);
         exports.db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, 500, ?)
+      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, 0, 500, 500, ?)
     `).run('manager-1-id', 'manager', 'manager123', 'manager', ownerId, process.env.MANAGER_2FA_PIN || '654321', now);
         exports.db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, 100, ?)
+      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, 0, 100, 100, ?)
     `).run('reseller-1-id', 'reseller', 'reseller123', 'reseller', 'manager-1-id', null, now);
     }
     const keyCountRow = exports.db.prepare('SELECT COUNT(*) as count FROM keys').get();

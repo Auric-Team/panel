@@ -17,4 +17,8 @@ router.use('/analytics', analytics_routes_1.default);
 const keys_controller_1 = require("../controllers/keys.controller");
 const rateLimiter_1 = require("../middlewares/rateLimiter");
 router.post('/verify', rateLimiter_1.apiLimiter, keys_controller_1.verifyKey);
+// Health and Stats check endpoints
+router.get(['/stats', '/health'], (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 exports.default = router;

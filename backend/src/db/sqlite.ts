@@ -96,6 +96,7 @@ export async function initDb() {
       pin2fa TEXT,
       isBlocked INTEGER DEFAULT 0,
       credits INTEGER DEFAULT 0,
+      tokens INTEGER DEFAULT 0,
       createdAt TEXT NOT NULL
     );
 
@@ -110,7 +111,9 @@ export async function initDb() {
       createdById TEXT NOT NULL,
       createdByUsername TEXT NOT NULL,
       note TEXT,
-      isMasterKey INTEGER DEFAULT 0
+      isMasterKey INTEGER DEFAULT 0,
+      paymentScreenshot TEXT,
+      costTokens INTEGER DEFAULT 0
     );
 
     CREATE TABLE IF NOT EXISTS logs (
@@ -127,6 +130,21 @@ export async function initDb() {
   } catch (e) {
     // Column already exists
   }
+  try {
+    sqlDb.run('ALTER TABLE keys ADD COLUMN paymentScreenshot TEXT');
+  } catch (e) {
+    // Column already exists
+  }
+  try {
+    sqlDb.run('ALTER TABLE keys ADD COLUMN costTokens INTEGER DEFAULT 0');
+  } catch (e) {
+    // Column already exists
+  }
+  try {
+    sqlDb.run('ALTER TABLE users ADD COLUMN tokens INTEGER DEFAULT 0');
+  } catch (e) {
+    // Column already exists
+  }
   saveDbToFile();
 
   const userCountRow: any = db.prepare('SELECT COUNT(*) as count FROM users').get();
@@ -139,48 +157,8 @@ export async function initDb() {
     const ownerPin = process.env.OWNER_2FA_PIN || '123456';
     
     db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, 999999, ?)
+      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, 0, 999999, 999999, ?)
     `).run(ownerId, ownerUser, ownerPass, 'owner', 'system', ownerPin, now);
-
-    db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, 500, ?)
-    `).run('manager-1-id', 'manager', 'manager123', 'manager', ownerId, process.env.MANAGER_2FA_PIN || '654321', now);
-
-    db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, 100, ?)
-    `).run('reseller-1-id', 'reseller', 'reseller123', 'reseller', 'manager-1-id', null, now);
-  }
-
-  const keyCountRow: any = db.prepare('SELECT COUNT(*) as count FROM keys').get();
-  if ((!keyCountRow || keyCountRow.count === 0) && fs.existsSync(OLD_KEYS_PATH)) {
-    try {
-      const raw = fs.readFileSync(OLD_KEYS_PATH, 'utf-8');
-      const oldKeys = JSON.parse(raw);
-      const insertStmt = db.prepare(`
-        INSERT OR IGNORE INTO keys (id, key, hwid, status, expiresAt, createdAt, activatedAt, createdById, createdByUsername, note)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      for (const k of oldKeys) {
-        insertStmt.run(
-          k.id || crypto.randomUUID(),
-          k.key,
-          k.hwid || null,
-          k.status || 'active',
-          k.expiresAt || 'never',
-          k.createdAt || new Date().toISOString(),
-          k.hwid ? k.createdAt : null,
-          'owner-root-id',
-          'owner',
-          k.note || 'Migrated Key'
-        );
-      }
-      console.log(`[DB] Successfully migrated ${oldKeys.length} keys from keys.json to axios.db!`);
-    } catch (err) {
-      console.error('[DB] Failed to migrate old keys:', err);
-    }
   }
 }

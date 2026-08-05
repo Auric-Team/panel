@@ -3,16 +3,38 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-slate-950 text-slate-100 font-sans antialiased selection:bg-purple-500 selection:text-white;
   }
+
+  /* Cyber Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #090d16;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+    border: 1px solid rgba(147, 51, 234, 0.2);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #7e22ce;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  }
 }
 
+/* Glassmorphism Cards */
 .glass-card {
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(30, 41, 59, 0.8);
 }
 
 .glass-card-hover {
@@ -20,23 +42,67 @@
 }
 
 .glass-card-hover:hover {
-  border-color: rgba(168, 85, 247, 0.5);
-  box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
   transform: translateY(-2px);
 }
 
+/* Glowing Neon Badges */
+.badge-emerald {
+  @apply bg-emerald-950/70 text-emerald-400 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.25)];
+}
+
+.badge-violet {
+  @apply bg-purple-950/70 text-purple-300 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.25)];
+}
+
+.badge-cyan {
+  @apply bg-cyan-950/70 text-cyan-300 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.25)];
+}
+
+.badge-amber {
+  @apply bg-amber-950/70 text-amber-300 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.25)];
+}
+
+.badge-rose {
+  @apply bg-rose-950/70 text-rose-300 border border-rose-500/40 shadow-[0_0_12px_rgba(244,63,94,0.25)];
+}
+
+/* Custom Gradient Text */
+.text-gradient-purple {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-indigo-300 to-purple-200;
+}
+
+.text-gradient-cyan {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-400;
+}
+
+.text-gradient-emerald {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-300 to-green-300;
+}
+
+.text-gradient-amber {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400;
+}
+
+/* Neon Glows */
 .glow-purple {
-  box-shadow: 0 0 30px rgba(168, 85, 247, 0.35);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
 }
 
 .glow-emerald {
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
 }
 
 .glow-amber {
-  box-shadow: 0 0 30px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
 }
 
 .glow-red {
-  box-shadow: 0 0 30px rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
 }
+
