@@ -109,7 +109,8 @@ export async function initDb() {
       activatedAt TEXT,
       createdById TEXT NOT NULL,
       createdByUsername TEXT NOT NULL,
-      note TEXT
+      note TEXT,
+      isMasterKey INTEGER DEFAULT 0
     );
 
     CREATE TABLE IF NOT EXISTS logs (
@@ -121,6 +122,11 @@ export async function initDb() {
       timestamp TEXT NOT NULL
     );
   `);
+  try {
+    sqlDb.run('ALTER TABLE keys ADD COLUMN isMasterKey INTEGER DEFAULT 0');
+  } catch (e) {
+    // Column already exists
+  }
   saveDbToFile();
 
   const userCountRow: any = db.prepare('SELECT COUNT(*) as count FROM users').get();

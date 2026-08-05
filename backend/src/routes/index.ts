@@ -16,4 +16,9 @@ import { verifyKey } from '../controllers/keys.controller';
 import { apiLimiter } from '../middlewares/rateLimiter';
 router.post('/verify', apiLimiter, verifyKey);
 
+// Health and Stats check endpoints
+router.get(['/stats', '/health'], (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 export default router;

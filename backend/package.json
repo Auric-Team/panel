@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "bun build src/index.ts --outdir ./dist --target node && node -e \"require('fs').copyFileSync('node_modules/sql.js/dist/sql-wasm.wasm', 'dist/sql-wasm.wasm')\"",
+    "build": "tsc && node -e \"require('fs').copyFileSync('node_modules/sql.js/dist/sql-wasm.wasm', 'dist/sql-wasm.wasm')\"",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts"
   },

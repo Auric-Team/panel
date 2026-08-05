@@ -59,6 +59,22 @@ export const verifyKey = (req: Request, res: Response, next: NextFunction) => {
       return res.status(403).json({ status: 'revoked', message: 'Key has been revoked or banned' });
     }
 
+    if (keyItem.isMasterKey === 1 || keyItem.isMasterKey === true) {
+      if (!keyItem.activatedAt) {
+        db.prepare('UPDATE keys SET activatedAt = ? WHERE id = ?').run(
+          now.toISOString(),
+          keyItem.id
+        );
+      }
+      LogsService.logAction('system', 'client', 'MASTER_KEY_VERIFIED', `Master key ${keyItem.key} authenticated for HWID ${reqHwid}`);
+      return res.json({
+        status: 'authenticated',
+        message: 'Master key authenticated (Unlimited devices)',
+        expiresAt: keyItem.expiresAt,
+        isMasterKey: true
+      });
+    }
+
     if (!keyItem.hwid) {
       db.prepare('UPDATE keys SET hwid = ?, activatedAt = ? WHERE id = ?').run(
         reqHwid,
@@ -114,23 +130,33 @@ export const getKeys = (req: AuthRequest, res: Response, next: NextFunction) => 
 
 export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { durationDays, count, note } = req.body;
+    const { durationDays, count, note, isMaster } = req.body;
     const user = req.user!;
     const numKeys = Math.max(1, parseInt(count as string) || 1);
     const days = parseInt(durationDays as string) || 0;
+    const isMasterKeyFlag = isMaster === true || isMaster === 'true' || isMaster === 1;
+
+    if (isMasterKeyFlag && user.role !== 'owner' && user.role !== 'manager') {
+      return next(new AppError('Only Manager and Owner can create Master Keys.', 403));
+    }
 
     const createdKeys: any[] = [];
     const now = new Date();
 
-    const generateKeyString = (): string => {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const generateKeyString = (isMasterKey: boolean): string => {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
       const seg = (len: number) => Array.from({ length: len }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
-      return `AXIOS-${seg(4)}-${seg(4)}-${seg(4)}`;
+      if (isMasterKey) {
+        return `free-key-${seg(4)}`;
+      }
+      const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      const segUpper = (len: number) => Array.from({ length: len }, () => upperChars.charAt(Math.floor(Math.random() * upperChars.length))).join('');
+      return `AXIOS-${segUpper(4)}-${segUpper(4)}-${segUpper(4)}`;
     };
 
     const insertStmt = db.prepare(`
-      INSERT INTO keys (id, key, expiresAt, createdAt, createdById, createdByUsername, note)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO keys (id, key, expiresAt, createdAt, createdById, createdByUsername, note, isMasterKey)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     for (let i = 0; i < numKeys; i++) {
@@ -140,12 +166,13 @@ export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction
       }
       const newKey = {
         id: crypto.randomUUID(),
-        key: generateKeyString(),
+        key: generateKeyString(isMasterKeyFlag),
         expiresAt,
         createdAt: now.toISOString(),
         createdById: user.id,
         createdByUsername: user.username,
-        note: note || (days === 0 ? 'Lifetime Key' : `${days} Days Key`)
+        note: note || (isMasterKeyFlag ? (days === 0 ? 'Master Key (Lifetime)' : `Master Key (${days} Days)`) : (days === 0 ? 'Lifetime Key' : `${days} Days Key`)),
+        isMasterKey: isMasterKeyFlag ? 1 : 0
       };
 
       insertStmt.run(
@@ -155,12 +182,13 @@ export const generateKeys = (req: AuthRequest, res: Response, next: NextFunction
         newKey.createdAt,
         newKey.createdById,
         newKey.createdByUsername,
-        newKey.note
+        newKey.note,
+        newKey.isMasterKey
       );
       createdKeys.push(newKey);
     }
     
-    LogsService.logAction(user.id, user.username, 'KEYS_GENERATED', `Generated ${numKeys} keys (${days} days)`);
+    LogsService.logAction(user.id, user.username, 'KEYS_GENERATED', `Generated ${numKeys} ${isMasterKeyFlag ? 'Master ' : ''}keys (${days} days)`);
 
     return res.json({ success: true, count: createdKeys.length, keys: createdKeys });
   } catch (err) {

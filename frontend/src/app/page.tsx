@@ -35,8 +35,11 @@ export default function App() {
 
   // Key Gen State
   const [genCount, setGenCount] = useState(1);
-  const [genDays, setGenDays] = useState(7);
+  const [genDays, setGenDays] = useState<number>(7);
+  const [isCustomDuration, setIsCustomDuration] = useState<boolean>(false);
+  const [customDaysInput, setCustomDaysInput] = useState<string>('4');
   const [genNote, setGenNote] = useState('');
+  const [isMasterKey, setIsMasterKey] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   // User Creation State
@@ -162,13 +165,15 @@ export default function App() {
   const handleGenerateKeys = async () => {
     setIsGenerating(true);
     try {
+      const canCreateMaster = user?.role === 'owner' || user?.role === 'manager';
+      const targetDays = isCustomDuration ? (parseInt(customDaysInput, 10) || 0) : genDays;
       const res = await fetch(`${API_BASE}/keys/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ durationDays: genDays, count: genCount, note: genNote })
+        body: JSON.stringify({ durationDays: targetDays, count: genCount, note: genNote, isMaster: canCreateMaster && isMasterKey })
       });
       const data = await res.json();
       if (res.status === 401 || res.status === 403) {
@@ -411,16 +416,43 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-slate-400 block mb-1">Duration</label>
-                  <select
-                    value={genDays}
-                    onChange={(e) => setGenDays(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"
-                  >
-                    <option value={1}>1 Day (Trial)</option>
-                    <option value={7}>7 Days Key</option>
-                    <option value={30}>30 Days (Monthly)</option>
-                    <option value={0}>Lifetime Pass</option>
-                  </select>
+                  <div className="space-y-2">
+                    <select
+                      value={isCustomDuration ? -1 : genDays}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        if (val === -1) {
+                          setIsCustomDuration(true);
+                        } else {
+                          setIsCustomDuration(false);
+                          setGenDays(val);
+                        }
+                      }}
+                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"
+                    >
+                      <option value={1}>1 Day (Trial)</option>
+                      <option value={7}>7 Days Key</option>
+                      <option value={30}>30 Days (Monthly)</option>
+                      <option value={90}>90 Days</option>
+                      <option value={0}>Lifetime Pass (0 Days)</option>
+                      <option value={-1}>Custom Days...</option>
+                    </select>
+
+                    {isCustomDuration && (
+                      <div className="pt-1">
+                        <label className="text-[11px] font-semibold text-purple-300 block mb-1">Enter Custom Days Count:</label>
+                        <input
+                          type="number"
+                          min={1}
+                          max={10000}
+                          value={customDaysInput}
+                          onChange={(e) => setCustomDaysInput(e.target.value)}
+                          placeholder="Enter any number of days (e.g. 4, 211)..."
+                          className="w-full bg-slate-900 border border-purple-500/60 rounded-xl px-3.5 py-2 text-sm text-purple-100 outline-none font-mono focus:border-purple-400 focus:ring-1 focus:ring-purple-400"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -433,6 +465,17 @@ export default function App() {
                     onChange={(e) => setGenCount(Number(e.target.value))}
                     className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"
                   />
+                  {(user.role === 'owner' || user.role === 'manager') && (
+                    <label className="flex items-center space-x-2 text-xs text-amber-300 font-bold mt-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isMasterKey}
+                        onChange={(e) => setIsMasterKey(e.target.checked)}
+                        className="rounded border-amber-600 bg-slate-900 text-amber-500 focus:ring-amber-500 w-4 h-4 cursor-pointer"
+                      />
+                      <span>Master Key (Unlimited Devices)</span>
+                    </label>
+                  )}
                 </div>
 
                 <div>
@@ -444,16 +487,21 @@ export default function App() {
                     onChange={(e) => setGenNote(e.target.value)}
                     className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"
                   />
+                  {isMasterKey && (
+                    <p className="text-[11px] text-amber-400/90 mt-2 font-mono">
+                      Format: <strong className="text-white">free-key-xxxx</strong> (Unlimited Devices)
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex items-end">
                   <button
                     onClick={handleGenerateKeys}
                     disabled={isGenerating}
-                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 rounded-xl transition shadow-glow-purple flex items-center justify-center space-x-2"
+                    className={`w-full ${isMasterKey ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 hover:from-amber-500 hover:to-yellow-500' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500'} text-white font-bold py-2.5 rounded-xl transition shadow-glow-purple flex items-center justify-center space-x-2`}
                   >
                     {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-                    <span>{isGenerating ? 'Generating...' : 'Issue Keys Now'}</span>
+                    <span>{isGenerating ? 'Generating...' : isMasterKey ? 'Issue Master Key' : 'Issue Keys Now'}</span>
                   </button>
                 </div>
               </div>
@@ -504,6 +552,11 @@ export default function App() {
                       <tr key={k.id} className="hover:bg-slate-800/40 transition">
                         <td className="p-4 font-mono font-bold text-purple-300 flex items-center space-x-2">
                           <span>{k.key}</span>
+                          {(k.isMasterKey === 1 || k.isMasterKey === true) && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-widest">
+                              MASTER
+                            </span>
+                          )}
                           <button
                             onClick={() => copyToClipboard(k.key, k.id)}
                             className="text-slate-500 hover:text-purple-300 transition"
@@ -518,7 +571,15 @@ export default function App() {
                             {k.status}
                           </span>
                         </td>
-                        <td className="p-4 font-mono text-xs text-slate-400">{k.hwid || <span className="text-slate-600">Unbound</span>}</td>
+                        <td className="p-4 font-mono text-xs text-slate-400">
+                          {(k.isMasterKey === 1 || k.isMasterKey === true) ? (
+                            <span className="text-amber-400 font-bold bg-amber-950/40 border border-amber-700/50 px-2.5 py-1 rounded-lg">
+                              ⚡ Unlimited Devices
+                            </span>
+                          ) : (
+                            k.hwid || <span className="text-slate-600">Unbound</span>
+                          )}
+                        </td>
                         <td className="p-4 font-semibold text-white">{k.createdByUsername}</td>
                         <td className="p-4 text-xs text-slate-400">{k.expiresAt === 'never' ? 'Lifetime' : new Date(k.expiresAt).toLocaleDateString()}</td>
                         <td className="p-4 text-xs text-slate-400">{k.note}</td>

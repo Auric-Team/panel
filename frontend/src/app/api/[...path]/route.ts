@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://103.207.181.125:20067/api';
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://103.207.181.125:20067';
+const BACKEND_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 async function handleProxy(req: NextRequest, { params }: { params: { path: string[] } }) {
   const pathStr = params.path ? params.path.join('/') : '';
@@ -24,7 +25,10 @@ async function handleProxy(req: NextRequest, { params }: { params: { path: strin
 
     const resHeaders = new Headers();
     backendRes.headers.forEach((value, key) => {
-      resHeaders.set(key, value);
+      const lowerKey = key.toLowerCase();
+      if (lowerKey !== 'content-encoding' && lowerKey !== 'content-length' && lowerKey !== 'transfer-encoding') {
+        resHeaders.set(key, value);
+      }
     });
 
     const resData = await backendRes.arrayBuffer();
@@ -33,7 +37,8 @@ async function handleProxy(req: NextRequest, { params }: { params: { path: strin
       headers: resHeaders,
     });
   } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to communicate with remote backend server' }, { status: 502 });
+    console.error("Proxy error:", error);
+    return NextResponse.json({ error: 'Failed to communicate with remote backend server', details: String(error) }, { status: 502 });
   }
 }
 

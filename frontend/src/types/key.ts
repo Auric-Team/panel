@@ -7,6 +7,7 @@ export interface KeyItem {
   createdAt: string;
   expiresAt: string | null;
   note: string;
+  isMasterKey?: number | boolean;
 }
 
 export interface StatsOverview {
