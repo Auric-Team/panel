@@ -161,11 +161,39 @@ export default function App() {
   const isInsufficientTokens = !isUnlimited && currentResellerTokens < totalEstimatedCost;
   const neededMoreTokens = Math.max(0, totalEstimatedCost - currentResellerTokens);
 
-  // Clipboard Helper
+  // Bulletproof Clipboard Helper with Fallback
   const copyToClipboard = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKeyId(id);
-    setTimeout(() => setCopiedKeyId(null), 2000);
+    if (!text) return;
+    const handleSuccess = () => {
+      setCopiedKeyId(id);
+      setTimeout(() => setCopiedKeyId(null), 2000);
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text)
+        .then(handleSuccess)
+        .catch(() => fallbackCopy(text, handleSuccess));
+    } else {
+      fallbackCopy(text, handleSuccess);
+    }
+  };
+
+  const fallbackCopy = (text: string, callback?: () => void) => {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      if (successful && callback) callback();
+    } catch (err) {
+      console.error('Copy fallback failed:', err);
+    }
   };
 
   // Drag & Drop Image Uploader

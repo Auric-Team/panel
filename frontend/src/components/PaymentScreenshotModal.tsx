@@ -78,9 +78,37 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
   };
 
   const copyKeyToClipboard = () => {
-    navigator.clipboard.writeText(keyItem.key);
-    setCopiedKey(true);
-    setTimeout(() => setCopiedKey(false), 2000);
+    if (!keyItem.key) return;
+    const handleSuccess = () => {
+      setCopiedKey(true);
+      setTimeout(() => setCopiedKey(false), 2000);
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(keyItem.key)
+        .then(handleSuccess)
+        .catch(() => fallbackCopy(keyItem.key, handleSuccess));
+    } else {
+      fallbackCopy(keyItem.key, handleSuccess);
+    }
+  };
+
+  const fallbackCopy = (text: string, callback?: () => void) => {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      if (successful && callback) callback();
+    } catch (err) {
+      console.error('Copy fallback failed:', err);
+    }
   };
 
   const handleZoomIn = () => setScale((prev) => Math.min(prev + 0.25, 3.0));
