@@ -5,12 +5,10 @@ import {
   X,
   Image as ImageIcon,
   Download,
-  Key,
   ExternalLink,
   ZoomIn,
   ZoomOut,
   RotateCw,
-  RotateCcw,
   RefreshCw,
   Check,
   Copy,
@@ -36,7 +34,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
   const [imageError, setImageError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Keyboard shortcut listener for Escape
+  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -94,36 +92,34 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl glass-card rounded-3xl p-5 sm:p-7 border border-cyan-500/40 shadow-2xl glow-cyan max-h-[92vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
+      <div className="relative w-full max-w-4xl bg-zinc-950 border border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-2xl max-h-[92vh] flex flex-col overflow-hidden">
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 z-20 text-slate-400 hover:text-white p-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition"
+          className="absolute top-5 right-5 z-20 text-zinc-400 hover:text-zinc-100 p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition"
           aria-label="Close modal"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
         {/* Header & Key Info Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-800">
-          <div className="flex items-center space-x-3.5">
-            <div className="p-3 bg-cyan-500/10 border border-cyan-500/40 rounded-2xl text-cyan-400">
-              <ImageIcon className="w-6 h-6 animate-pulse" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-4 border-b border-zinc-800/80">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-zinc-900 border border-zinc-800 rounded-xl text-zinc-300">
+              <ImageIcon className="w-5 h-5 text-zinc-300" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-white tracking-wide">
-                Payment Receipt Lightbox
-              </h3>
-              <div className="flex items-center space-x-2 text-xs text-slate-400 font-mono mt-0.5">
+              <h3 className="text-base font-semibold text-zinc-100">Payment Receipt</h3>
+              <div className="flex items-center space-x-2 text-xs text-zinc-400 font-mono mt-0.5">
                 <span>License Key:</span>
-                <span className="text-purple-300 font-bold flex items-center space-x-1">
+                <span className="text-zinc-200 font-medium flex items-center space-x-1">
                   <span>{keyItem.key}</span>
                   <button
                     type="button"
                     onClick={copyKeyToClipboard}
-                    className="text-slate-500 hover:text-white transition p-0.5"
+                    className="text-zinc-500 hover:text-zinc-200 transition p-0.5"
                     title="Copy Key"
                   >
                     {copiedKey ? (
@@ -137,65 +133,65 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
             </div>
           </div>
 
-          {/* Download & External Open Quick Buttons */}
-          <div className="flex items-center space-x-2 self-start sm:self-auto">
+          {/* Quick Actions */}
+          <div className="flex items-center space-x-2 self-start sm:self-auto font-mono text-xs">
             <a
               href={imageUrl}
               target="_blank"
               rel="noreferrer"
-              className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition text-xs flex items-center space-x-1"
+              className="p-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-zinc-100 hover:border-zinc-700 transition flex items-center space-x-1"
               title="Open full image in new tab"
             >
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-3.5 h-3.5" />
             </a>
             <button
               type="button"
               onClick={downloadImage}
-              className="flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 text-xs font-black px-4 py-2.5 rounded-xl shadow-glow-cyan transition"
+              className="flex items-center space-x-1.5 bg-zinc-100 hover:bg-white text-zinc-950 font-semibold px-3.5 py-2 rounded-xl transition shadow-sm"
             >
-              <Download className="w-4 h-4" />
-              <span>Download Receipt</span>
+              <Download className="w-3.5 h-3.5" />
+              <span>Download</span>
             </button>
           </div>
         </div>
 
         {/* Metadata Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-900/90 border border-slate-800 rounded-2xl p-3 mb-4 text-xs font-mono">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 bg-zinc-900/60 border border-zinc-800 rounded-xl p-3 mb-3 text-xs font-mono">
           <div>
-            <span className="text-slate-500 block text-[10px] uppercase font-bold">Duration</span>
-            <span className="text-white font-bold">{keyItem.duration}</span>
+            <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Duration</span>
+            <span className="text-zinc-200 font-medium">{keyItem.duration}</span>
           </div>
           <div>
-            <span className="text-slate-500 block text-[10px] uppercase font-bold">Tokens Spent</span>
+            <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Cost</span>
             <span className="text-amber-400 font-bold">{keyItem.costTokens || 0} Tokens</span>
           </div>
           <div>
-            <span className="text-slate-500 block text-[10px] uppercase font-bold">Created By</span>
-            <span className="text-purple-300 font-bold">{keyItem.createdByUsername || 'System'}</span>
+            <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Created By</span>
+            <span className="text-zinc-200 font-medium">{keyItem.createdByUsername || 'System'}</span>
           </div>
           <div>
-            <span className="text-slate-500 block text-[10px] uppercase font-bold">Created Date</span>
-            <span className="text-slate-300">{new Date(keyItem.createdAt).toLocaleDateString()}</span>
+            <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Created Date</span>
+            <span className="text-zinc-300">{new Date(keyItem.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
 
-        {/* Interactive Lightbox Viewport & Controls Overlay */}
-        <div className="relative flex-1 rounded-2xl border border-slate-800 bg-slate-950 flex items-center justify-center p-4 min-h-[300px] max-h-[55vh] overflow-hidden select-none">
+        {/* Lightbox Viewport */}
+        <div className="relative flex-1 rounded-xl border border-zinc-800 bg-zinc-950 flex items-center justify-center p-4 min-h-[300px] max-h-[55vh] overflow-hidden select-none">
           {/* Zoom & Rotation Controls Toolbar */}
-          <div className="absolute top-4 right-4 z-20 flex items-center space-x-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-1.5 rounded-2xl shadow-xl">
+          <div className="absolute top-3 right-3 z-20 flex items-center space-x-1 bg-zinc-900/90 border border-zinc-800 p-1 rounded-xl shadow-lg text-xs font-mono">
             {/* Zoom Out */}
             <button
               type="button"
               onClick={handleZoomOut}
               disabled={scale <= 0.5}
-              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition"
+              className="p-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition"
               title="Zoom Out"
             >
-              <ZoomOut className="w-4 h-4" />
+              <ZoomOut className="w-3.5 h-3.5" />
             </button>
 
-            {/* Scale indicator */}
-            <span className="px-2 text-xs font-mono font-bold text-cyan-300 min-w-[45px] text-center">
+            {/* Scale % */}
+            <span className="px-1.5 text-zinc-400 min-w-[40px] text-center font-medium">
               {Math.round(scale * 100)}%
             </span>
 
@@ -204,68 +200,68 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
               type="button"
               onClick={handleZoomIn}
               disabled={scale >= 3.0}
-              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition"
+              className="p-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition"
               title="Zoom In"
             >
-              <ZoomIn className="w-4 h-4" />
+              <ZoomIn className="w-3.5 h-3.5" />
             </button>
 
-            <div className="w-px h-5 bg-slate-700 mx-1" />
+            <div className="w-px h-4 bg-zinc-800 mx-0.5" />
 
-            {/* Rotate Clockwise */}
+            {/* Rotate */}
             <button
               type="button"
               onClick={handleRotateClockwise}
-              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition"
-              title="Rotate Clockwise (90°)"
+              className="p-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 transition"
+              title="Rotate 90°"
             >
-              <RotateCw className="w-4 h-4" />
+              <RotateCw className="w-3.5 h-3.5" />
             </button>
 
-            {/* Reset Controls */}
+            {/* Reset */}
             <button
               type="button"
               onClick={handleResetControls}
-              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition"
+              className="p-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 transition"
               title="Reset Zoom & Rotation"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Loading Indicator */}
           {isLoading && !imageError && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-3 bg-slate-950/80 z-10">
-              <div className="w-8 h-8 border-3 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs font-mono text-cyan-300">Loading receipt image...</span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 bg-zinc-950/80 z-10 font-mono">
+              <div className="w-6 h-6 border-2 border-zinc-400 border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs text-zinc-400">Loading receipt...</span>
             </div>
           )}
 
-          {/* Fallback View when Image Fails to Load */}
+          {/* Error View */}
           {imageError ? (
-            <div className="flex flex-col items-center justify-center text-center p-6 space-y-3 animate-in fade-in">
-              <div className="p-4 bg-rose-950/60 border border-rose-500/40 rounded-2xl text-rose-400 shadow-glow-rose">
-                <AlertCircle className="w-8 h-8" />
+            <div className="flex flex-col items-center justify-center text-center p-6 space-y-2.5 font-mono">
+              <div className="p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-rose-400">
+                <AlertCircle className="w-6 h-6" />
               </div>
-              <h4 className="text-base font-bold text-white font-mono">
-                Unable to Display Screenshot
+              <h4 className="text-sm font-semibold text-zinc-200">
+                Unable to load image
               </h4>
-              <p className="text-xs text-slate-400 max-w-md font-mono">
-                The image file could not be loaded directly. It might be stored on a remote server or restricted.
+              <p className="text-xs text-zinc-400 max-w-xs">
+                The receipt file could not be displayed directly.
               </p>
               <a
                 href={imageUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono text-cyan-300 flex items-center space-x-2 transition"
+                className="mt-1 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs text-zinc-300 flex items-center space-x-1.5 transition"
               >
-                <ExternalLink className="w-4 h-4" />
-                <span>Open Image Link Directly</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Open image link</span>
               </a>
             </div>
           ) : (
             /* Image display container */
-            <div className="w-full h-full flex items-center justify-center overflow-auto p-4">
+            <div className="w-full h-full flex items-center justify-center overflow-auto p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageUrl}
@@ -277,27 +273,27 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
                 }}
                 style={{
                   transform: `scale(${scale}) rotate(${rotation}deg)`,
-                  transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
-                className="max-w-full max-h-full object-contain rounded-xl shadow-2xl origin-center"
+                className="max-w-full max-h-full object-contain rounded-lg shadow-xl origin-center"
               />
             </div>
           )}
         </div>
 
-        {/* Footer Note & Info */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-800 text-xs font-mono text-slate-400">
-          <div className="flex items-center space-x-2">
-            <FileText className="w-4 h-4 text-purple-400" />
-            <span>{keyItem.note ? `Note: ${keyItem.note}` : 'Verified Payment Upload'}</span>
+        {/* Footer Note */}
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-800/80 text-xs font-mono text-zinc-400">
+          <div className="flex items-center space-x-1.5">
+            <FileText className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="truncate max-w-[300px]">{keyItem.note ? `Note: ${keyItem.note}` : 'Payment Screenshot Proof'}</span>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-bold px-5 py-2.5 rounded-xl border border-slate-700 transition"
+            className="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold px-4 py-2 rounded-xl border border-zinc-800 transition"
           >
-            Close Lightbox
+            Close
           </button>
         </div>
       </div>
