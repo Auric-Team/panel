@@ -453,74 +453,46 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-16 selection:bg-purple-500 selection:text-white">
       {/* 1. TOP NAVIGATION HEADER */}
-      <header className="border-b border-purple-900/40 bg-slate-950/90 backdrop-blur-2xl sticky top-0 z-40 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+      <header className="border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           
-          {/* Logo & Glowing Neon Emblem */}
-          <div className="flex items-center space-x-3.5">
-            <div className="relative group">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500 via-purple-500 to-amber-500 blur-md opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
-              <div className="relative w-11 h-11 rounded-2xl bg-slate-950 border border-purple-500/50 flex items-center justify-center text-cyan-400 shadow-glow-cyan">
-                <Zap className="w-6 h-6 animate-pulse" />
-              </div>
+          {/* Sleek Minimal Brand Mark */}
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-100 shadow-sm">
+              <Shield className="w-4 h-4 text-zinc-200" />
             </div>
-            <div>
-              <h1 className="text-xl font-extrabold tracking-wider text-white flex items-center gap-2 font-mono">
-                <span className="text-gradient-cyan">AXIOS</span>
-                <span className="text-gradient-purple">EXECUTIVE</span>
-                <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] bg-purple-950 text-purple-300 border border-purple-500/40 rounded-md uppercase font-mono tracking-widest">
-                  v2.0 SAAS
-                </span>
-              </h1>
-              <p className="text-[11px] text-slate-400 font-mono hidden md:block">
-                Hardware Licensing & Token Economy Control Panel
-              </p>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-lg font-bold tracking-tight text-white font-mono">AXIOS</h1>
+              <span className="px-2 py-0.5 text-[10px] font-mono font-medium text-zinc-400 bg-zinc-900 border border-zinc-800 rounded uppercase tracking-wider">
+                v2.0
+              </span>
             </div>
           </div>
 
           {/* Right Header Navigation Badges */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2.5">
             
             {/* Live Backend Connection Badge */}
-            <div className="hidden lg:flex items-center space-x-2 bg-slate-900/90 border border-slate-800 px-3.5 py-1.5 rounded-xl font-mono text-xs shadow-inner">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isConnected ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
-                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-              </span>
-              <span className="text-slate-400 hidden xl:inline">Live Sync:</span>
-              <span className="text-cyan-300 font-bold tracking-wider">{backendUrl}</span>
+            <div className="hidden lg:flex items-center space-x-2 bg-zinc-900/80 border border-zinc-800/80 px-3 py-1.5 rounded-lg text-xs font-mono text-zinc-400">
+              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500/80' : 'bg-rose-500/80'}`} />
+              <span className="text-zinc-300 font-medium">103.207.181.125:20067</span>
             </div>
 
             {/* Token Balance Pill */}
-            <div className={`flex items-center space-x-2 px-4 py-1.5 rounded-xl border transition-all duration-300 ${
-              isUnlimited 
-                ? 'bg-slate-900/90 border-emerald-500/50 text-emerald-300 glow-emerald' 
-                : isInsufficientTokens
-                ? 'bg-rose-950/80 border-rose-500/60 text-rose-300 glow-red'
-                : 'bg-slate-900/90 border-amber-500/50 text-amber-300 glow-amber'
-            }`}>
-              <Coins className={`w-4 h-4 ${isUnlimited ? 'text-emerald-400' : 'text-amber-400 animate-bounce'}`} />
-              <div className="text-xs font-mono">
-                <span className="text-slate-400 mr-1.5 hidden sm:inline">Balance:</span>
-                <span className="font-extrabold tracking-wide">
-                  {isUnlimited ? '∞ Infinite' : `${currentResellerTokens} Tokens`}
-                </span>
-              </div>
+            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-zinc-900/80 border border-zinc-800 text-xs font-mono text-zinc-300">
+              <Coins className="w-3.5 h-3.5 text-amber-400/90" />
+              <span>
+                {isUnlimited ? '∞ Infinite' : `${currentResellerTokens} Tokens`}
+              </span>
             </div>
 
-            {/* User Profile Badge */}
-            <div className="flex items-center space-x-2 bg-slate-900/90 border border-purple-500/30 px-3.5 py-1.5 rounded-xl text-xs font-mono shadow-md">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-[11px] font-bold">
-                {user.username.slice(0, 1).toUpperCase()}
+            {/* User Info Badge */}
+            <div className="flex items-center space-x-2 bg-zinc-900/80 border border-zinc-800 px-3 py-1.5 rounded-lg text-xs font-mono">
+              <div className="w-5 h-5 rounded bg-zinc-800 text-zinc-200 flex items-center justify-center text-[10px] font-bold uppercase">
+                {user.username.slice(0, 1)}
               </div>
-              <span className="text-slate-200 font-bold hidden sm:inline">{user.username}</span>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${
-                user.role === 'owner' 
-                  ? 'bg-purple-950 text-purple-300 border border-purple-600/40' 
-                  : user.role === 'manager' 
-                  ? 'bg-indigo-950 text-indigo-300 border border-indigo-600/40' 
-                  : 'bg-amber-950 text-amber-300 border border-amber-600/40'
-              }`}>
+              <span className="text-zinc-200 font-medium hidden sm:inline">{user.username}</span>
+              <span className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 text-[10px] font-semibold uppercase tracking-wider border border-zinc-700/50">
                 {user.role}
               </span>
             </div>
@@ -529,29 +501,41 @@ export default function App() {
             <button
               onClick={() => loadData()}
               disabled={isRefreshing}
-              className="p-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-slate-300 transition hover:border-purple-500 active:scale-95"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-xs font-mono rounded-lg transition active:scale-95"
               title="Refresh Dashboard Data"
             >
-              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-purple-400' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-zinc-400 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Refresh</span>
             </button>
 
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-1.5 text-xs bg-rose-950/40 hover:bg-rose-900/70 text-rose-300 border border-rose-800/40 px-3.5 py-2 rounded-xl transition font-mono hover:shadow-[0_0_15px_rgba(244,63,94,0.3)] active:scale-95"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-rose-400 text-xs font-mono rounded-lg transition active:scale-95"
+              title="Logout Account"
             >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Logout</span>
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Logout</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* DASHBOARD CONTENT BODY */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
         
+        {/* Executive KPI Summary Stat Cards */}
+        <section>
+          <StatsOverview
+            totalKeys={keys.length}
+            activeKeys={activeKeysCount}
+            totalResellers={totalResellersCount}
+            totalRevenueTokens={totalRevenueTokens}
+          />
+        </section>
+
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 border-b border-slate-800/80 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setActiveTab('keys')}
@@ -901,33 +885,33 @@ export default function App() {
             </div>
 
             {/* 3. LICENSE KEYS MANAGEMENT TABLE SECTION */}
-            <div className="glass-card rounded-3xl p-6 sm:p-8 border border-slate-800">
+            <div className="glass-card rounded-3xl p-6 sm:p-8 border border-slate-800/80">
               
               {/* Header & Filter Controls */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
                 <div>
                   <h3 className="text-xl font-bold text-white font-mono flex items-center space-x-2">
                     <Key className="w-5 h-5 text-purple-400" />
-                    <span>License Keys Management</span>
+                    <span>License Keys</span>
                   </h3>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">Filter, verify hardware bindings, and inspect payment receipts</p>
+                  <p className="text-xs text-zinc-400 font-mono mt-0.5">Filter, verify hardware bindings, and inspect payment receipts</p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-3">
                   {/* Search Bar */}
                   <div className="relative w-full sm:w-80">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                    <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-2.5" />
                     <input
                       type="text"
                       placeholder="Search key, reseller, HWID, note..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white outline-none focus:border-purple-500 font-mono"
+                      className="w-full bg-zinc-900/90 border border-zinc-800 text-zinc-200 placeholder:text-zinc-500 rounded-xl pl-9 pr-3.5 py-2 text-xs focus:outline-none focus:border-purple-500/50 font-mono transition"
                     />
                   </div>
 
                   {/* Status Filter Pills (All, Active, Expired, Revoked, Master) */}
-                  <div className="flex rounded-xl bg-slate-900 p-1 border border-slate-800 w-full sm:w-auto font-mono text-xs overflow-x-auto">
+                  <div className="flex rounded-xl bg-zinc-900/90 p-1 border border-zinc-800/80 w-full sm:w-auto font-mono text-xs gap-1 overflow-x-auto">
                     {[
                       { id: 'all', label: 'All' },
                       { id: 'active', label: 'Active' },
@@ -938,10 +922,10 @@ export default function App() {
                       <button
                         key={pill.id}
                         onClick={() => setStatusFilter(pill.id)}
-                        className={`px-3 py-1.5 rounded-lg font-semibold transition whitespace-nowrap ${
+                        className={`px-3 py-1 rounded-lg font-medium transition whitespace-nowrap ${
                           statusFilter === pill.id
-                            ? 'bg-purple-600 text-white shadow-glow-purple'
-                            : 'text-slate-400 hover:text-white'
+                            ? 'bg-purple-600 text-white shadow-glow-purple border border-purple-400/30'
+                            : 'text-zinc-400 hover:text-zinc-200'
                         }`}
                       >
                         {pill.label}
@@ -951,124 +935,137 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Table */}
-              <div className="overflow-x-auto rounded-2xl border border-slate-800/80">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider font-mono border-b border-slate-800">
+              {/* Data Table */}
+              <div className="overflow-x-auto rounded-2xl border border-zinc-800/80">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-zinc-900/90 text-zinc-400 font-medium text-xs border-b border-zinc-800/80 uppercase tracking-wider font-mono">
                     <tr>
-                      <th className="p-4">License Key</th>
-                      <th className="p-4">Duration & Expiry Date/Time</th>
-                      <th className="p-4">Cost Tokens</th>
-                      <th className="p-4">Payment Receipt</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4">Bound HWID</th>
-                      <th className="p-4">Created By</th>
-                      <th className="p-4 text-right">Actions</th>
+                      <th className="py-3.5 px-4">Key String</th>
+                      <th className="py-3.5 px-4">Duration & Expiry</th>
+                      <th className="py-3.5 px-4">Tokens Spent</th>
+                      <th className="py-3.5 px-4">Payment Receipt</th>
+                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4">HWID & Creator</th>
+                      <th className="py-3.5 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 font-mono text-xs">
+                  <tbody className="divide-y divide-zinc-800/60 font-mono text-xs">
                     {filteredKeys.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="p-12 text-center text-slate-500 font-sans">
-                          <AlertCircle className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                          <p className="text-sm font-semibold text-slate-400">No license keys match your search or filter criteria.</p>
+                        <td colSpan={7} className="p-12 text-center text-zinc-500 font-sans">
+                          <AlertCircle className="w-8 h-8 text-zinc-600 mx-auto mb-2" />
+                          <p className="text-sm font-medium text-zinc-400">No license keys match your search or filter criteria.</p>
                         </td>
                       </tr>
                     ) : (
                       filteredKeys.map((k) => (
-                        <tr key={k.id} className="hover:bg-slate-800/40 transition">
+                        <tr key={k.id} className="hover:bg-zinc-900/50 transition">
                           
-                          {/* License Key */}
-                          <td className="p-4 font-bold text-purple-300 flex items-center space-x-2">
-                            <span className="truncate max-w-[200px]">{k.key}</span>
-                            {(k.isMasterKey === 1 || k.isMasterKey === true) && (
-                              <span className="px-2 py-0.5 rounded text-[9px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wider">
-                                MASTER
+                          {/* Key String */}
+                          <td className="py-3.5 px-4 font-mono text-zinc-300">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-semibold text-zinc-100 select-all truncate max-w-[190px]">{k.key}</span>
+                              {(k.isMasterKey === 1 || k.isMasterKey === true) && (
+                                <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded text-[10px] font-semibold font-mono tracking-wider">
+                                  MASTER
+                                </span>
+                              )}
+                              <button
+                                onClick={() => copyToClipboard(k.key, k.id)}
+                                className="p-1 text-zinc-500 hover:text-zinc-200 transition rounded-md hover:bg-zinc-800"
+                                title="Copy Key String"
+                              >
+                                {copiedKeyId === k.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                              </button>
+                            </div>
+                            {k.note && (
+                              <span className="text-[10px] text-zinc-500 block mt-0.5 truncate max-w-[200px]" title={k.note}>
+                                {k.note}
                               </span>
                             )}
-                            <button
-                              onClick={() => copyToClipboard(k.key, k.id)}
-                              className="text-slate-500 hover:text-purple-300 transition p-1"
-                              title="Copy Key String"
-                            >
-                              {copiedKeyId === k.id ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                            </button>
                           </td>
 
                           {/* Duration & Expiry */}
-                          <td className="p-4">
-                            <span className="text-slate-200 font-bold block">{k.duration || 'Custom'}</span>
+                          <td className="py-3.5 px-4 font-mono">
+                            <span className="text-zinc-200 font-medium block">{k.duration || 'Custom'}</span>
                             {!k.expiresAt || k.expiresAt === 'never' ? (
-                              <span className="text-[10px] text-emerald-400 font-semibold flex items-center space-x-1 mt-0.5">
+                              <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full text-[10px] font-medium inline-flex items-center gap-1 mt-0.5">
                                 <Clock className="w-3 h-3 text-emerald-400" />
-                                <span>Never Expires</span>
+                                <span>Never</span>
                               </span>
                             ) : (
-                              <span className="text-[10px] text-cyan-300/80 block mt-0.5 font-mono">
+                              <span className="text-[11px] text-zinc-400 block mt-0.5 font-mono">
                                 Exp: {new Date(k.expiresAt).toLocaleString()}
                               </span>
                             )}
                           </td>
 
-                          {/* Cost Tokens */}
-                          <td className="p-4 font-bold text-amber-400">
-                            <span className="px-2.5 py-1 rounded-lg bg-amber-950/40 border border-amber-500/30 text-amber-300">
-                              {k.costTokens || 0} Tokens
+                          {/* Tokens Spent */}
+                          <td className="py-3.5 px-4 font-mono">
+                            <span className="text-amber-400/90 font-semibold text-xs">
+                              {k.costTokens || 0} tokens
                             </span>
                           </td>
 
-                          {/* Payment Receipt Badge */}
-                          <td className="p-4">
+                          {/* Payment Receipt */}
+                          <td className="py-3.5 px-4 font-mono">
                             {k.paymentScreenshot ? (
                               <button
                                 onClick={() => setScreenshotModalKey(k)}
-                                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl badge-cyan hover:scale-105 transition font-mono text-xs"
+                                className="px-2.5 py-1 text-xs font-medium text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 hover:text-white border border-zinc-700/60 rounded-lg transition inline-flex items-center gap-1.5 shadow-sm"
                               >
-                                <ImageIcon className="w-3.5 h-3.5 text-cyan-300" />
-                                <span>Receipt Attached</span>
+                                <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
+                                <span>View Receipt</span>
                               </button>
                             ) : (
-                              <span className="text-slate-600 font-mono italic text-[11px]">No Receipt</span>
+                              <span className="text-zinc-600 italic text-[11px]">No Receipt</span>
                             )}
                           </td>
 
-                          {/* Status Badge */}
-                          <td className="p-4">
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                              k.status === 'active' 
-                                ? 'badge-emerald' 
-                                : k.status === 'expired' 
-                                ? 'badge-amber' 
-                                : 'badge-rose'
-                            }`}>
-                              {k.status}
-                            </span>
+                          {/* Status */}
+                          <td className="py-3.5 px-4 font-mono">
+                            {k.status === 'active' ? (
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                Active
+                              </span>
+                            ) : k.status === 'expired' ? (
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 inline-flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                Expired
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20 inline-flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                                Revoked
+                              </span>
+                            )}
                           </td>
 
-                          {/* Bound HWID */}
-                          <td className="p-4 text-slate-400">
+                          {/* HWID & Creator */}
+                          <td className="py-3.5 px-4 font-mono">
                             {(k.isMasterKey === 1 || k.isMasterKey === true) ? (
-                              <span className="text-amber-400 font-bold bg-amber-950/40 border border-amber-700/50 px-2 py-0.5 rounded text-[11px]">
-                                ⚡ Unlimited
+                              <span className="text-amber-400/90 font-medium text-xs">
+                                Unlimited Binds
                               </span>
                             ) : k.hwid ? (
-                              <span className="text-cyan-300 font-mono truncate max-w-[120px] block" title={k.hwid}>
+                              <span className="text-zinc-300 text-xs truncate max-w-[130px] block" title={k.hwid}>
                                 {k.hwid}
                               </span>
                             ) : (
-                              <span className="text-slate-600 italic">Unbound</span>
+                              <span className="text-zinc-600 italic text-xs">Unbound</span>
                             )}
+                            <span className="text-zinc-500 text-[11px] block mt-0.5 font-sans">
+                              by {k.createdByUsername || 'System'}
+                            </span>
                           </td>
 
-                          {/* Created By */}
-                          <td className="p-4 text-white font-semibold">{k.createdByUsername || 'System'}</td>
-
                           {/* Actions */}
-                          <td className="p-4 text-right space-x-2">
+                          <td className="py-3.5 px-4 text-right space-x-2 font-mono">
                             {k.hwid && (
                               <button
                                 onClick={() => handleResetHwid(k.id)}
-                                className="px-3 py-1.5 text-xs bg-amber-950/50 hover:bg-amber-900/80 text-amber-300 border border-amber-800/50 rounded-xl transition"
+                                className="px-2.5 py-1 text-xs font-medium text-amber-400 hover:text-amber-300 hover:bg-amber-400/10 border border-amber-500/30 hover:border-amber-500/50 rounded-lg transition"
                                 title="Reset Hardware ID Binding"
                               >
                                 Reset HWID
@@ -1076,10 +1073,10 @@ export default function App() {
                             )}
                             <button
                               onClick={() => handleDeleteKey(k.id)}
-                              className="px-3 py-1.5 text-xs bg-rose-950/50 hover:bg-rose-900/80 text-rose-400 border border-rose-800/50 rounded-xl transition"
+                              className="px-2.5 py-1 text-xs font-medium text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 border border-zinc-800 hover:border-rose-500/30 rounded-lg transition"
                               title="Revoke and Delete Key"
                             >
-                              Delete
+                              Revoke
                             </button>
                           </td>
                         </tr>
@@ -1100,40 +1097,40 @@ export default function App() {
             <div className="glass-card rounded-3xl p-6 sm:p-8 border border-purple-500/30 glow-purple">
               <h3 className="text-xl font-bold text-white mb-5 flex items-center space-x-2 font-mono">
                 <UserPlus className="w-5 h-5 text-purple-400" />
-                <span>Create New Staff / Reseller Account</span>
+                <span>Create Staff & Reseller Account</span>
               </h3>
               
               <form onSubmit={handleCreateUser} className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 font-mono">Username</label>
+                  <label className="text-xs font-medium text-zinc-400 block mb-1.5 font-mono">Username</label>
                   <input
                     type="text"
                     required
-                    placeholder="Enter account name..."
+                    placeholder="Account username..."
                     value={newUserUsername}
                     onChange={(e) => setNewUserUsername(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
+                    className="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-200 placeholder:text-zinc-500 font-mono outline-none focus:border-purple-500/60 transition"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 font-mono">Password</label>
+                  <label className="text-xs font-medium text-zinc-400 block mb-1.5 font-mono">Password</label>
                   <input
                     type="password"
                     required
-                    placeholder="Enter password..."
+                    placeholder="Account password..."
                     value={newUserPassword}
                     onChange={(e) => setNewUserPassword(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
+                    className="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-200 placeholder:text-zinc-500 font-mono outline-none focus:border-purple-500/60 transition"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 font-mono">Account Role</label>
+                  <label className="text-xs font-medium text-zinc-400 block mb-1.5 font-mono">Account Role</label>
                   <select
                     value={newUserRole}
                     onChange={(e) => setNewUserRole(e.target.value as any)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
+                    className="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-200 font-mono outline-none focus:border-purple-500/60 transition"
                   >
                     <option value="reseller">Reseller</option>
                     {user.role === 'owner' && <option value="manager">Manager</option>}
@@ -1141,20 +1138,20 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 font-mono">Initial Tokens</label>
+                  <label className="text-xs font-medium text-zinc-400 block mb-1.5 font-mono">Initial Tokens</label>
                   <input
                     type="number"
                     min="0"
                     value={newUserTokens}
                     onChange={(e) => setNewUserTokens(parseInt(e.target.value, 10) || 0)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono outline-none focus:border-purple-500"
+                    className="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-200 font-mono outline-none focus:border-purple-500/60 transition"
                   />
                 </div>
 
                 <div className="flex items-end">
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-2.5 rounded-xl transition shadow-glow-purple font-mono text-sm"
+                    className="w-full bg-purple-600 hover:bg-purple-500 text-white font-medium py-2.5 rounded-xl transition shadow-glow-purple font-mono text-xs"
                   >
                     Add Reseller
                   </button>
@@ -1168,89 +1165,93 @@ export default function App() {
                 <div>
                   <h3 className="text-xl font-bold text-white font-mono flex items-center space-x-2">
                     <Users className="w-5 h-5 text-cyan-400" />
-                    <span>Reseller Network Accounts</span>
+                    <span>Reseller Management</span>
                   </h3>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">Click any reseller row to open Deep Dive Dashboard</p>
+                  <p className="text-xs text-zinc-400 font-mono mt-0.5">Click any reseller row to view detailed statistics</p>
                 </div>
 
                 {/* Reseller Search */}
                 <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                  <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-2.5" />
                   <input
                     type="text"
-                    placeholder="Search reseller username/role..."
+                    placeholder="Search reseller..."
                     value={userSearchQuery}
                     onChange={(e) => setUserSearchQuery(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-xs text-white font-mono outline-none focus:border-purple-500"
+                    className="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl pl-9 pr-3.5 py-2 text-xs text-zinc-200 placeholder:text-zinc-500 font-mono outline-none focus:border-purple-500/60 transition"
                   />
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-slate-800">
-                <table className="w-full text-left text-sm text-slate-300">
-                  <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider font-mono border-b border-slate-800">
+              <div className="overflow-x-auto rounded-2xl border border-zinc-800/80">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-zinc-900/90 text-zinc-400 font-medium text-xs border-b border-zinc-800/80 uppercase tracking-wider font-mono">
                     <tr>
-                      <th className="p-4">Username</th>
-                      <th className="p-4">Role</th>
-                      <th className="p-4">Creator Info</th>
-                      <th className="p-4">Tokens Balance Pill</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4 text-right">Actions</th>
+                      <th className="py-3.5 px-4">Reseller</th>
+                      <th className="py-3.5 px-4">Role</th>
+                      <th className="py-3.5 px-4">Created By</th>
+                      <th className="py-3.5 px-4">Tokens Balance</th>
+                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 font-mono text-xs">
+                  <tbody className="divide-y divide-zinc-800/60 font-mono text-xs">
                     {filteredUsers.map((u) => (
                       <tr
                         key={u.id}
                         onClick={() => setDashboardReseller(u)}
-                        className="hover:bg-purple-950/20 transition cursor-pointer group"
+                        className="hover:bg-zinc-900/50 transition cursor-pointer group"
                       >
-                        <td className="p-4 font-bold text-white group-hover:text-purple-300 transition flex items-center space-x-2">
-                          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-600 flex items-center justify-center text-white text-xs font-bold">
+                        <td className="py-3.5 px-4 font-semibold text-zinc-100 group-hover:text-purple-300 transition flex items-center space-x-2.5">
+                          <div className="w-6 h-6 rounded-lg bg-zinc-800 border border-zinc-700/60 flex items-center justify-center text-purple-300 text-[11px] font-bold">
                             {u.username.slice(0, 1).toUpperCase()}
                           </div>
                           <span>{u.username}</span>
                         </td>
 
-                        <td className="p-4 font-bold uppercase">
-                          <span className={`px-2.5 py-1 rounded-md text-[10px] ${
+                        <td className="py-3.5 px-4 uppercase font-mono">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${
                             u.role === 'owner'
-                              ? 'bg-purple-950 text-purple-300 border border-purple-600/40'
+                              ? 'bg-purple-500/10 text-purple-300 border border-purple-500/20'
                               : u.role === 'manager'
-                              ? 'bg-indigo-950 text-indigo-300 border border-indigo-600/40'
-                              : 'bg-slate-900 text-slate-300 border border-slate-700'
+                              ? 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20'
+                              : 'bg-zinc-800 text-zinc-300 border border-zinc-700/60'
                           }`}>
                             {u.role}
                           </span>
                         </td>
 
-                        <td className="p-4 text-slate-400">{u.createdBy || 'OwnerAdmin'}</td>
+                        <td className="py-3.5 px-4 text-zinc-400 font-mono">{u.createdBy || 'OwnerAdmin'}</td>
 
                         {/* Tokens balance pill */}
-                        <td className="p-4">
-                          <span className="px-3 py-1 rounded-xl bg-amber-950/50 text-amber-300 border border-amber-500/40 font-bold glow-amber">
+                        <td className="py-3.5 px-4 font-mono">
+                          <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold text-xs inline-flex items-center gap-1.5">
+                            <Coins className="w-3.5 h-3.5 text-amber-400" />
                             {u.tokens ?? 0} Tokens
                           </span>
                         </td>
 
-                        <td className="p-4">
-                          <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
-                            u.isBlocked === 1 ? 'badge-rose' : 'badge-emerald'
+                        <td className="py-3.5 px-4 font-mono">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-medium inline-flex items-center gap-1.5 ${
+                            u.isBlocked === 1
+                              ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                           }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${u.isBlocked === 1 ? 'bg-rose-400' : 'bg-emerald-400 animate-pulse'}`} />
                             {u.isBlocked === 1 ? 'BLOCKED' : 'ACTIVE'}
                           </span>
                         </td>
 
                         <td
-                          className="p-4 text-right"
+                          className="py-3.5 px-4 text-right font-mono"
                           onClick={(e) => e.stopPropagation()} // Prevent row click when clicking action button
                         >
                           <button
                             onClick={() => setTokenModalUser(u)}
-                            className="px-3.5 py-1.5 text-xs bg-amber-950/60 hover:bg-amber-900/80 text-amber-300 border border-amber-600/60 rounded-xl font-bold transition flex-inline items-center space-x-1.5 shadow-md"
+                            className="px-2.5 py-1 text-xs font-medium text-amber-400 hover:text-amber-300 hover:bg-amber-400/10 border border-amber-500/30 hover:border-amber-500/50 rounded-lg transition inline-flex items-center gap-1.5"
                           >
-                            <Coins className="w-3.5 h-3.5 inline mr-1 text-amber-400" />
-                            <span>Manage Tokens (+/-)</span>
+                            <Coins className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Manage Tokens</span>
                           </button>
                         </td>
                       </tr>
