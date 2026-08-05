@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://127.0.0.1:20067/api';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://103.207.181.125:20067/api';
 
 async function handleProxy(req: NextRequest, { params }: { params: { path: string[] } }) {
   const pathStr = params.path ? params.path.join('/') : '';
