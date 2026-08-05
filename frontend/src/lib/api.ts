@@ -1,6 +1,6 @@
 import { KeyItem, StatsOverview } from '@/types/key';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://51.83.103.21:20067';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://103.207.181.125:20067';
 
 // Initial fallback mock keys to ensure dashboard works out of the box
 const MOCK_KEYS: KeyItem[] = [
