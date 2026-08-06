@@ -1,6 +1,6 @@
 import { KeyItem, UserItem, StatsOverview, SalesDataPoint } from '@/types/key';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://103.207.181.125:20067';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.axioshacks.com';
 
 // Empty initial datasets
 const MOCK_KEYS: KeyItem[] = [];

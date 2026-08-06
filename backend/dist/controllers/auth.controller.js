@@ -79,9 +79,9 @@ const verify2FA = (req, res, next) => {
         }
         // Check 2FA PIN against process.env configuration or database fallback
         const expectedPin = user.role === 'owner'
-            ? (process.env.OWNER_2FA_PIN || user.pin2fa || '123456')
+            ? (user.pin2fa || process.env.OWNER_2FA_PIN || '123456')
             : user.role === 'manager'
-                ? (process.env.MANAGER_2FA_PIN || user.pin2fa || '654321')
+                ? (user.pin2fa || process.env.MANAGER_2FA_PIN || '654321')
                 : user.pin2fa;
         if (pin !== expectedPin) {
             logs_service_1.LogsService.logAction(user.id, user.username, '2FA_FAILED', 'Invalid 2FA PIN entered');

@@ -8,7 +8,6 @@ exports.initDb = initDb;
 const sql_js_1 = __importDefault(require("sql.js"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const crypto_1 = __importDefault(require("crypto"));
 const DB_PATH = path_1.default.resolve(process.cwd(), 'data', 'axios.db');
 const OLD_KEYS_PATH = path_1.default.resolve(process.cwd(), 'data', 'keys.json');
 const dataDir = path_1.default.dirname(DB_PATH);
@@ -161,31 +160,5 @@ async function initDb() {
       INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
       VALUES (?, ?, ?, ?, ?, ?, 0, 999999, 999999, ?)
     `).run(ownerId, ownerUser, ownerPass, 'owner', 'system', ownerPin, now);
-        exports.db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, 500, 500, ?)
-    `).run('manager-1-id', 'manager', 'manager123', 'manager', ownerId, process.env.MANAGER_2FA_PIN || '654321', now);
-        exports.db.prepare(`
-      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, 0, 100, 100, ?)
-    `).run('reseller-1-id', 'reseller', 'reseller123', 'reseller', 'manager-1-id', null, now);
-    }
-    const keyCountRow = exports.db.prepare('SELECT COUNT(*) as count FROM keys').get();
-    if ((!keyCountRow || keyCountRow.count === 0) && fs_1.default.existsSync(OLD_KEYS_PATH)) {
-        try {
-            const raw = fs_1.default.readFileSync(OLD_KEYS_PATH, 'utf-8');
-            const oldKeys = JSON.parse(raw);
-            const insertStmt = exports.db.prepare(`
-        INSERT OR IGNORE INTO keys (id, key, hwid, status, expiresAt, createdAt, activatedAt, createdById, createdByUsername, note)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-            for (const k of oldKeys) {
-                insertStmt.run(k.id || crypto_1.default.randomUUID(), k.key, k.hwid || null, k.status || 'active', k.expiresAt || 'never', k.createdAt || new Date().toISOString(), k.hwid ? k.createdAt : null, 'owner-root-id', 'owner', k.note || 'Migrated Key');
-            }
-            console.log(`[DB] Successfully migrated ${oldKeys.length} keys from keys.json to axios.db!`);
-        }
-        catch (err) {
-            console.error('[DB] Failed to migrate old keys:', err);
-        }
     }
 }

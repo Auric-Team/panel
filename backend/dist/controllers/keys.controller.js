@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteKey = exports.resetHwid = exports.generateKeys = exports.getKeys = exports.verifyKey = void 0;
 const sqlite_1 = require("../db/sqlite");
 const crypto_1 = __importDefault(require("crypto"));
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const errors_1 = require("../utils/errors");
 const logs_service_1 = require("../services/logs.service");
 const verifyKey = (req, res, next) => {
@@ -89,21 +91,21 @@ const verifyKey = (req, res, next) => {
 exports.verifyKey = verifyKey;
 const getKeys = (req, res, next) => {
     try {
-        const { role, id } = req.user;
+        const { role, id, username } = req.user;
         let keys = [];
         if (role === 'owner') {
             keys = sqlite_1.db.prepare('SELECT * FROM keys ORDER BY createdAt DESC').all();
         }
         else if (role === 'manager') {
             keys = sqlite_1.db.prepare(`
-        SELECT k.* FROM keys k
+        SELECT DISTINCT k.* FROM keys k
         LEFT JOIN users u ON k.createdById = u.id
-        WHERE k.createdById = ? OR u.createdBy = ?
+        WHERE k.createdById = ? OR k.createdByUsername = ? OR u.createdBy = ? OR u.createdBy = ?
         ORDER BY k.createdAt DESC
-      `).all(id, id);
+      `).all(id, username, id, username);
         }
         else {
-            keys = sqlite_1.db.prepare('SELECT * FROM keys WHERE createdById = ? ORDER BY createdAt DESC').all(id);
+            keys = sqlite_1.db.prepare('SELECT * FROM keys WHERE createdById = ? OR createdByUsername = ? ORDER BY createdAt DESC').all(id, username);
         }
         return res.json(keys);
     }
@@ -144,6 +146,36 @@ const generateKeys = (req, res, next) => {
             }
             sqlite_1.db.prepare('UPDATE users SET tokens = tokens - ?, credits = credits - ? WHERE id = ?').run(totalCost, totalCost, user.id);
         }
+        let savedScreenshotUrl = null;
+        if (paymentScreenshot && typeof paymentScreenshot === 'string' && paymentScreenshot.trim() !== '') {
+            if (paymentScreenshot.startsWith('data:image/')) {
+                try {
+                    const matches = paymentScreenshot.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+                    if (matches && matches.length === 3) {
+                        const ext = matches[1].toLowerCase() === 'jpeg' ? 'jpg' : matches[1].toLowerCase();
+                        const base64Data = matches[2];
+                        const fileName = `screenshot-${Date.now()}-${crypto_1.default.randomBytes(4).toString('hex')}.${ext}`;
+                        const uploadsFolder = path_1.default.resolve(process.cwd(), 'uploads');
+                        if (!fs_1.default.existsSync(uploadsFolder)) {
+                            fs_1.default.mkdirSync(uploadsFolder, { recursive: true });
+                        }
+                        const filePath = path_1.default.join(uploadsFolder, fileName);
+                        fs_1.default.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+                        savedScreenshotUrl = `/uploads/${fileName}`;
+                    }
+                    else {
+                        savedScreenshotUrl = paymentScreenshot;
+                    }
+                }
+                catch (e) {
+                    console.error('Failed to save payment screenshot file:', e);
+                    savedScreenshotUrl = paymentScreenshot;
+                }
+            }
+            else {
+                savedScreenshotUrl = paymentScreenshot;
+            }
+        }
         const createdKeys = [];
         const now = new Date();
         const generateKeyString = (isMasterKey) => {
@@ -174,7 +206,7 @@ const generateKeys = (req, res, next) => {
                 createdByUsername: user.username,
                 note: note || (isMasterKeyFlag ? (days === 0 ? 'Master Key (Lifetime)' : `Master Key (${days} Days)`) : (days === 0 ? 'Lifetime Key' : `${days} Days Key`)),
                 isMasterKey: isMasterKeyFlag ? 1 : 0,
-                paymentScreenshot: paymentScreenshot || null,
+                paymentScreenshot: savedScreenshotUrl,
                 costTokens: costPerKey
             };
             insertStmt.run(newKey.id, newKey.key, newKey.expiresAt, newKey.createdAt, newKey.createdById, newKey.createdByUsername, newKey.note, newKey.isMasterKey, newKey.paymentScreenshot, newKey.costTokens);

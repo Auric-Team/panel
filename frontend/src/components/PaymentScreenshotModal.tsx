@@ -58,7 +58,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
 
   if (!isOpen || !keyItem || !keyItem.paymentScreenshot) return null;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://103.207.181.125:20067';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.axioshacks.com';
   const imageUrl = keyItem.paymentScreenshot.startsWith('/uploads')
     ? `${baseUrl}${keyItem.paymentScreenshot}`
     : keyItem.paymentScreenshot;

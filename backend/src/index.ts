@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 
 app.use(cors({
   origin: '*',
@@ -27,6 +27,23 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 app.use('/uploads', express.static(uploadsDir));
+
+// Root status endpoint
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    message: 'AXIOS Executive Control Server Running',
+    version: '2.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/stats',
+      verifyKey: '/api/verify',
+      auth: '/api/auth/login',
+      keys: '/api/keys',
+      users: '/api/users'
+    }
+  });
+});
 
 // API Routes
 app.use('/api', routes);

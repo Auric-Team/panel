@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://103.207.181.125:20067';
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.axioshacks.com';
 const BACKEND_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 async function handleProxy(req: NextRequest, { params }: { params: { path: string[] } }) {

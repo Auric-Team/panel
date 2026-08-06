@@ -35,7 +35,7 @@ export default function App() {
 
   // Backend Connection State
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [backendUrl, setBackendUrl] = useState<string>('103.207.181.125:20067');
+  const [backendUrl, setBackendUrl] = useState<string>('api.axioshacks.com');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   // Auth State
@@ -97,17 +97,18 @@ export default function App() {
     }
   }, []);
 
-  const loadData = async () => {
+  const loadData = async (authToken?: string) => {
     setIsRefreshing(true);
     try {
+      const activeToken = authToken || token || (typeof window !== 'undefined' ? localStorage.getItem('axios_token') : null);
       const conn = await checkBackendConnection();
       setIsConnected(conn.isConnected);
       if (conn.url) {
         setBackendUrl(conn.url.replace(/^https?:\/\//, ''));
       }
 
-      const keysRes = await fetchAllKeys(token || undefined);
-      const usersRes = await fetchAllUsers(token || undefined);
+      const keysRes = await fetchAllKeys(activeToken || undefined);
+      const usersRes = await fetchAllUsers(activeToken || undefined);
 
       if (keysRes.isAuthError || usersRes.isAuthError) {
         handleLogout();
@@ -134,7 +135,7 @@ export default function App() {
 
   useEffect(() => {
     if (token) {
-      loadData();
+      loadData(token);
     }
   }, [token]);
 
@@ -256,6 +257,7 @@ export default function App() {
         setUser(data.user);
         localStorage.setItem('axios_token', data.token);
         localStorage.setItem('axios_user', JSON.stringify(data.user));
+        loadData(data.token);
       }
     } catch (err: any) {
       setLoginError(err.message || 'Authentication error');
@@ -278,6 +280,7 @@ export default function App() {
       setUser(data.user);
       localStorage.setItem('axios_token', data.token);
       localStorage.setItem('axios_user', JSON.stringify(data.user));
+      loadData(data.token);
     } catch (err: any) {
       setPinError(err.message);
     }
@@ -503,7 +506,7 @@ export default function App() {
             {/* Live Backend Connection Badge */}
             <div className="hidden lg:flex items-center space-x-2 bg-zinc-900/80 border border-zinc-800/80 px-3 py-1.5 rounded-lg text-xs font-mono text-zinc-400">
               <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500/80' : 'bg-rose-500/80'}`} />
-              <span className="text-zinc-300 font-medium">103.207.181.125:20067</span>
+              <span className="text-zinc-300 font-medium">{backendUrl}</span>
             </div>
 
             {/* Token Balance Pill */}

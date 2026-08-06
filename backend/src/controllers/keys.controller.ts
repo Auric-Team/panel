@@ -108,20 +108,20 @@ export const verifyKey = (req: Request, res: Response, next: NextFunction) => {
 
 export const getKeys = (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { role, id } = req.user!;
+    const { role, id, username } = req.user!;
     let keys: any[] = [];
     
     if (role === 'owner') {
       keys = db.prepare('SELECT * FROM keys ORDER BY createdAt DESC').all();
     } else if (role === 'manager') {
       keys = db.prepare(`
-        SELECT k.* FROM keys k
+        SELECT DISTINCT k.* FROM keys k
         LEFT JOIN users u ON k.createdById = u.id
-        WHERE k.createdById = ? OR u.createdBy = ?
+        WHERE k.createdById = ? OR k.createdByUsername = ? OR u.createdBy = ? OR u.createdBy = ?
         ORDER BY k.createdAt DESC
-      `).all(id, id);
+      `).all(id, username, id, username);
     } else {
-      keys = db.prepare('SELECT * FROM keys WHERE createdById = ? ORDER BY createdAt DESC').all(id);
+      keys = db.prepare('SELECT * FROM keys WHERE createdById = ? OR createdByUsername = ? ORDER BY createdAt DESC').all(id, username);
     }
 
     return res.json(keys);
