@@ -80,17 +80,18 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
   const durationPresets = ['1 Day', '7 Days', '30 Days', 'Lifetime', 'Custom'];
 
   // Token Cost Breakdown Calculations
-  // Base token rules: 1D = 1 token, 7D = 5 tokens, 30D = 18 tokens, Lifetime = 50 tokens; Custom = days * 1
+  // Base token rules: 1D = 10 tokens, 7D = 70 tokens, 30D = 250 tokens, Lifetime = 300 tokens; Custom = days * 10
   const baseTokensPerKey = useMemo(() => {
-    if (durationOption === '1 Day') return 1;
-    if (durationOption === '7 Days') return 5;
-    if (durationOption === '30 Days') return 18;
-    if (durationOption === 'Lifetime') return 50;
+    if (durationOption === '1 Day') return 10;
+    if (durationOption === '7 Days') return 70;
+    if (durationOption === '30 Days') return 250;
+    if (durationOption === 'Lifetime') return 300;
     if (durationOption === 'Custom') {
       const parsed = parseInt(customDays, 10);
-      return isNaN(parsed) || parsed < 1 ? 1 : parsed;
+      const days = isNaN(parsed) || parsed < 1 ? 1 : parsed;
+      return days * 10;
     }
-    return 5;
+    return 70;
   }, [durationOption, customDays]);
 
   const masterMultiplier = isMasterKey ? 1.5 : 1.0;
@@ -162,7 +163,9 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isInsufficientTokens) return;
-    const targetDuration = durationOption === 'Custom' ? `${customDays} Days` : durationOption;
+    const parsedCustom = parseInt(customDays, 10);
+    const validCustom = isNaN(parsedCustom) || parsedCustom < 1 ? 1 : parsedCustom;
+    const targetDuration = durationOption === 'Custom' ? `${validCustom} Days` : durationOption;
     await onGenerate(targetDuration, genCount, genNote, paymentScreenshot, isMasterKey);
     setGenNote('');
     setPaymentScreenshot(null);
@@ -706,26 +709,35 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
 
                   return (
                     <tr key={k.id} className="hover:bg-slate-800/40 transition">
-                      {/* Key String & Copy */}
+                      {/* Key String & Copy & Note */}
                       <td className="p-3.5 font-bold text-white">
-                        <div className="flex items-center space-x-2">
-                          {k.isMasterKey ? (
-                            <span className="p-1 rounded-lg bg-purple-950/80 text-purple-400 border border-purple-800/60" title="Master Key">
-                              <Sparkles className="w-3.5 h-3.5" />
-                            </span>
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            {k.isMasterKey ? (
+                              <span className="p-1 rounded-lg bg-purple-950/80 text-purple-400 border border-purple-800/60" title="Master Key">
+                                <Sparkles className="w-3.5 h-3.5" />
+                              </span>
+                            ) : null}
+                            <span className="truncate max-w-[200px]" title={k.key}>{k.key}</span>
+                            <button
+                              onClick={() => handleCopySingleKey(k.key, k.id)}
+                              className="text-slate-400 hover:text-white p-1 rounded-lg transition"
+                              title="Copy Key"
+                            >
+                              {copiedId === k.id ? (
+                                <Check className="w-4 h-4 text-emerald-400" />
+                              ) : (
+                                <Copy className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
+                          {k.note ? (
+                            <div className="text-[10px] font-normal text-cyan-400/90 flex items-center space-x-1">
+                              <span className="px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-800/50 text-[10px] text-cyan-300 font-semibold truncate max-w-[220px]" title={k.note}>
+                                Note: {k.note}
+                              </span>
+                            </div>
                           ) : null}
-                          <span className="truncate max-w-[200px]" title={k.key}>{k.key}</span>
-                          <button
-                            onClick={() => handleCopySingleKey(k.key, k.id)}
-                            className="text-slate-400 hover:text-white p-1 rounded-lg transition"
-                            title="Copy Key"
-                          >
-                            {copiedId === k.id ? (
-                              <Check className="w-4 h-4 text-emerald-400" />
-                            ) : (
-                              <Copy className="w-4 h-4" />
-                            )}
-                          </button>
                         </div>
                       </td>
 

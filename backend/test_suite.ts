@@ -139,6 +139,33 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(me.tokens).toBe(560);
   });
 
+  test("5b. Custom Days Key Generation (Non-Lifetime)", async () => {
+    const customDaysRes = await fetch(`${BASE_URL}/api/keys/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resellerToken}`,
+      },
+      body: JSON.stringify({
+        durationDays: 4, // 4 days custom key
+        count: 1,
+        note: "Automated Custom Days Test Key",
+      }),
+    });
+    expect(customDaysRes.status).toBe(200);
+    const customData = await customDaysRes.json();
+    expect(customData.success).toBe(true);
+    expect(customData.keys.length).toBe(1);
+    const customKey = customData.keys[0];
+    expect(customKey.expiresAt).not.toBe("never");
+    
+    // Verify expiresAt is ~4 days in future
+    const expDate = new Date(customKey.expiresAt).getTime();
+    const now = Date.now();
+    const diffDays = Math.round((expDate - now) / (24 * 60 * 60 * 1000));
+    expect(diffDays).toBe(4);
+  });
+
   test("6. Public Key Verification & HWID Binding", async () => {
     const hwid = `TEST-HWID-${Date.now()}`;
     const verifyRes = await fetch(`${BASE_URL}/api/verify`, {
@@ -215,7 +242,7 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(resellerAnalyticsRes.status).toBe(200);
     const rData = await resellerAnalyticsRes.json();
     expect(rData.resellerInfo).toBeDefined();
-    expect(rData.stats.totalKeys).toBe(2);
+    expect(rData.stats.totalKeys).toBe(3);
   });
 
   test("9. Delete Key & Delete Test User Cleanup", async () => {

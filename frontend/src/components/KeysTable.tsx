@@ -149,26 +149,35 @@ export const KeysTable: React.FC<KeysTableProps> = ({
             ) : (
               filteredKeys.map((k) => (
                 <tr key={k.id} className="hover:bg-slate-800/40 transition">
-                  {/* Key String & Copy */}
+                  {/* Key String & Copy & Note */}
                   <td className="p-3.5 font-bold text-white">
-                    <div className="flex items-center space-x-2">
-                      {k.isMasterKey ? (
-                        <span className="p-1 rounded-lg bg-amber-950/80 text-amber-400 border border-amber-800/60" title="Master Key">
-                          <Sparkles className="w-3.5 h-3.5" />
-                        </span>
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        {k.isMasterKey ? (
+                          <span className="p-1 rounded-lg bg-amber-950/80 text-amber-400 border border-amber-800/60" title="Master Key">
+                            <Sparkles className="w-3.5 h-3.5" />
+                          </span>
+                        ) : null}
+                        <span className="truncate max-w-[200px]" title={k.key}>{k.key}</span>
+                        <button
+                          onClick={() => copyToClipboard(k.key, k.id)}
+                          className="text-slate-400 hover:text-white p-1 rounded-lg transition"
+                          title="Copy Key"
+                        >
+                          {copiedId === k.id ? (
+                            <Check className="w-4 h-4 text-emerald-400" />
+                          ) : (
+                            <Copy className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                      {k.note ? (
+                        <div className="text-[10px] font-normal text-cyan-400/90 flex items-center space-x-1">
+                          <span className="px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-800/50 text-[10px] text-cyan-300 font-semibold truncate max-w-[220px]" title={k.note}>
+                            Note: {k.note}
+                          </span>
+                        </div>
                       ) : null}
-                      <span className="truncate max-w-[200px]" title={k.key}>{k.key}</span>
-                      <button
-                        onClick={() => copyToClipboard(k.key, k.id)}
-                        className="text-slate-400 hover:text-white p-1 rounded-lg transition"
-                        title="Copy Key"
-                      >
-                        {copiedId === k.id ? (
-                          <Check className="w-4 h-4 text-emerald-400" />
-                        ) : (
-                          <Copy className="w-4 h-4" />
-                        )}
-                      </button>
                     </div>
                   </td>
 

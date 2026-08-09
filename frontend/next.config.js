@@ -8,14 +8,15 @@ const nextConfig = {
     return config;
   },
   async rewrites() {
+    const backendUrl = process.env.BACKEND_INTERNAL_URL || 'http://localhost:20067';
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067'}/api/:path*`,
+        destination: `${backendUrl}/api/:path*`,
       },
       {
         source: '/uploads/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067'}/uploads/:path*`,
+        destination: `${backendUrl}/uploads/:path*`,
       },
     ];
   },

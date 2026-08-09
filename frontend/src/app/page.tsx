@@ -195,10 +195,18 @@ export default function Home() {
     if (!token) return;
     setIsGenerating(true);
     try {
-      const durationDays = duration === '1 Day' ? 1 : duration === '7 Days' ? 7 : duration === '30 Days' ? 30 : 0;
+      let durationDays = 0;
+      if (duration === 'Lifetime' || duration.includes('Lifetime')) {
+        durationDays = 0;
+      } else {
+        const match = duration.match(/\d+/);
+        durationDays = match ? parseInt(match[0], 10) : 7;
+      }
+
       const res = await api.generateKeys(token, {
+        duration,
         durationDays,
-        customDays: duration.includes('Days') ? parseInt(duration, 10) : undefined,
+        customDays: durationDays,
         count,
         note,
         paymentScreenshot,

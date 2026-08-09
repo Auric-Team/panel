@@ -1,6 +1,6 @@
 import { KeyItem, UserItem } from '@/types/key';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.axioshacks.com';
 
 let localKeysStore: KeyItem[] = [];
 let localUsersStore: UserItem[] = [];
@@ -76,20 +76,41 @@ export async function fetchAllKeys(token?: string): Promise<{ keys: KeyItem[]; i
     if (res.ok) {
       const data = await res.json();
       const rawList = Array.isArray(data) ? data : (data.keys || []);
-      const formattedKeys: KeyItem[] = rawList.map((k: any) => ({
-        id: k.id || k.key,
-        key: k.key,
-        status: k.status || 'active',
-        hwid: k.hwid || null,
-        duration: k.duration || (k.expiresAt === 'never' ? 'Lifetime' : 'Custom'),
-        costTokens: k.costTokens || 0,
-        createdAt: k.createdAt || new Date().toISOString(),
-        expiresAt: k.expiresAt === 'never' ? null : k.expiresAt,
-        note: k.note || '',
-        createdByUsername: k.createdByUsername || k.createdBy || 'System',
-        paymentScreenshot: k.paymentScreenshot || null,
-        isMasterKey: k.isMasterKey || 0,
-      }));
+      const formattedKeys: KeyItem[] = rawList.map((k: any) => {
+        const createdAt = k.createdAt || new Date().toISOString();
+        const expiresAt = (!k.expiresAt || k.expiresAt === 'never') ? null : k.expiresAt;
+
+        let calculatedDuration = k.duration;
+        if (!calculatedDuration) {
+          if (!expiresAt) {
+            calculatedDuration = 'Lifetime';
+          } else {
+            const expTime = new Date(expiresAt).getTime();
+            const createTime = new Date(createdAt).getTime();
+            if (!isNaN(expTime) && !isNaN(createTime)) {
+              const diffDays = Math.round((expTime - createTime) / (24 * 60 * 60 * 1000));
+              calculatedDuration = diffDays <= 1 ? '1 Day' : `${diffDays} Days`;
+            } else {
+              calculatedDuration = 'Custom';
+            }
+          }
+        }
+
+        return {
+          id: k.id || k.key,
+          key: k.key,
+          status: k.status || 'active',
+          hwid: k.hwid || null,
+          duration: calculatedDuration,
+          costTokens: k.costTokens || 0,
+          createdAt: createdAt,
+          expiresAt: expiresAt,
+          note: k.note || '',
+          createdByUsername: k.createdByUsername || k.createdBy || 'System',
+          paymentScreenshot: k.paymentScreenshot || null,
+          isMasterKey: k.isMasterKey || 0,
+        };
+      });
       localKeysStore = formattedKeys;
       return { keys: formattedKeys, isLive: true };
     }
@@ -164,27 +185,20 @@ export async function generateKeysApi(
   userToken?: string,
   currentUser?: UserItem | null
 ): Promise<{ newKeys: KeyItem[]; generatedStrings: string[] }> {
-  let durationDays = 7;
-  let costPerKey = 70;
-
-  if (duration === '1 Day' || duration.includes('1 Day')) {
-    durationDays = 1;
-    costPerKey = 10;
-  } else if (duration === '7 Days' || duration.includes('7 Days')) {
-    durationDays = 7;
-    costPerKey = 70;
-  } else if (duration === '30 Days' || duration.includes('30 Days')) {
-    durationDays = 30;
-    costPerKey = 250;
-  } else if (duration === 'Lifetime' || duration.includes('Lifetime')) {
+  let durationDays = 0;
+  if (duration === 'Lifetime' || duration.includes('Lifetime')) {
     durationDays = 0;
-    costPerKey = 300;
   } else {
-    const daysMatch = duration.match(/\d+/);
-    const customDays = daysMatch ? parseInt(daysMatch[0], 10) : 10;
-    durationDays = customDays;
-    costPerKey = customDays * 10;
+    const match = duration.match(/\d+/);
+    durationDays = match ? parseInt(match[0], 10) : 7;
   }
+
+  let costPerKey = 0;
+  if (durationDays === 1) costPerKey = 10;
+  else if (durationDays === 7) costPerKey = 70;
+  else if (durationDays === 30) costPerKey = 250;
+  else if (durationDays === 0) costPerKey = 300;
+  else costPerKey = durationDays * 10;
 
   if (isMasterKey) costPerKey = 0;
   const totalCost = costPerKey * count;

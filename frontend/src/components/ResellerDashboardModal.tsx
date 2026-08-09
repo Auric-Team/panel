@@ -243,18 +243,25 @@ export const ResellerDashboardModal: React.FC<ResellerDashboardModalProps> = ({
                       filteredKeys.map((k) => (
                         <tr key={k.id} className="hover:bg-slate-900/60 transition">
                           <td className="p-3 font-bold text-white">
-                            <div className="flex items-center space-x-1.5">
-                              <span className="truncate max-w-[160px]" title={k.key}>{k.key}</span>
-                              <button
-                                onClick={() => copyToClipboard(k.key, k.id)}
-                                className="text-slate-400 hover:text-white p-0.5 rounded transition"
-                              >
-                                {copiedId === k.id ? (
-                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                ) : (
-                                  <Copy className="w-3.5 h-3.5" />
-                                )}
-                              </button>
+                            <div className="space-y-1">
+                              <div className="flex items-center space-x-1.5">
+                                <span className="truncate max-w-[160px]" title={k.key}>{k.key}</span>
+                                <button
+                                  onClick={() => copyToClipboard(k.key, k.id)}
+                                  className="text-slate-400 hover:text-white p-0.5 rounded transition"
+                                >
+                                  {copiedId === k.id ? (
+                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              </div>
+                              {k.note ? (
+                                <div className="text-[10px] text-cyan-400 truncate max-w-[160px]" title={k.note}>
+                                  Note: {k.note}
+                                </div>
+                              ) : null}
                             </div>
                           </td>
 

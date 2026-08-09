@@ -1,11 +1,621 @@
 [
   {
-    "id": "b46eaabe-0683-47ad-a754-9ec79d9da122",
+    "id": "2d5069f0-11b8-4e03-abc2-e44ad63d398c",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-1f258a6d3c6648d8",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-1f258a6d3c6648d8"
+    },
+    "timestamp": "2026-08-09T08:53:18.021Z"
+  },
+  {
+    "id": "2966b3bf-1518-4053-9c78-d2d8de99c07c",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-1f258a6d3c6648d8",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-1f258a6d3c6648d8"
+    },
+    "timestamp": "2026-08-09T08:53:17.996Z"
+  },
+  {
+    "id": "f10b3185-cd83-4030-b501-2d7870d54e71",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-E52G-IVWY-MFH4 authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-E52G-IVWY-MFH4",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-09T08:53:10.039Z"
+  },
+  {
+    "id": "ef9d1ba0-e2dd-4596-bff4-247597c645f2",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_BOUND",
+    "details": "Key AXIOS-E52G-IVWY-MFH4 successfully activated and bound to HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-E52G-IVWY-MFH4",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-09T08:53:09.965Z"
+  },
+  {
+    "id": "657c7c6e-69bf-4939-a4ef-6255cdf7a874",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-86d6a0a39dedb91f",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-86d6a0a39dedb91f"
+    },
+    "timestamp": "2026-08-09T08:52:01.628Z"
+  },
+  {
+    "id": "d8335db8-b423-4779-93a8-8d9f0859605d",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-86d6a0a39dedb91f",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-86d6a0a39dedb91f"
+    },
+    "timestamp": "2026-08-09T08:51:59.989Z"
+  },
+  {
+    "id": "31c7b885-088f-458b-ac90-17603f18d48a",
+    "userId": "50ab95b7-8107-45ab-a6a8-cae811f62fd2",
+    "username": "mohit67",
+    "action": "KEYS_GENERATED",
+    "details": "Issued 1 Key(s) [AXIOS-5ELC-UOG7-6TA7] • Duration: 5 Days • Cost: 50 Tokens • Note: \"@Leo888z\"",
+    "metadata": {
+      "count": 1,
+      "costTokens": 50,
+      "isMasterKey": false,
+      "note": "@Leo888z"
+    },
+    "timestamp": "2026-08-09T08:51:55.908Z"
+  },
+  {
+    "id": "503755cb-088d-445a-86a2-7f67caebd9b9",
+    "userId": "50ab95b7-8107-45ab-a6a8-cae811f62fd2",
+    "username": "mohit67",
+    "action": "KEYS_GENERATED",
+    "details": "Issued 1 Key(s) [AXIOS-E52G-IVWY-MFH4] • Duration: 2 Days • Cost: 20 Tokens • Note: \"Rakesh007\"",
+    "metadata": {
+      "count": 1,
+      "costTokens": 20,
+      "isMasterKey": false,
+      "note": "Rakesh007"
+    },
+    "timestamp": "2026-08-09T08:50:53.899Z"
+  },
+  {
+    "id": "3bf71cc3-43ac-4233-a653-695cd7354382",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-86d6a0a39dedb91f",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-86d6a0a39dedb91f"
+    },
+    "timestamp": "2026-08-09T08:50:11.209Z"
+  },
+  {
+    "id": "3c49bf6c-cf55-40c8-92f8-c5459465923b",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-86d6a0a39dedb91f",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-86d6a0a39dedb91f"
+    },
+    "timestamp": "2026-08-09T08:50:10.981Z"
+  },
+  {
+    "id": "2c114a25-79c8-4504-9699-a5c9998280fa",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-LHRO-YH5I-KUNI",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-09T08:50:01.790Z"
+  },
+  {
+    "id": "8231822e-fb89-412e-9b19-b5e121d04ca0",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-LHRO-YH5I-KUNI",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-09T08:50:01.700Z"
+  },
+  {
+    "id": "8d68807e-eb75-413a-b700-b11933208598",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-AEYG-YI0V-4GSI authenticated for bound HWID: HWID-5178ac5a7db3d596",
+    "metadata": {
+      "key": "AXIOS-AEYG-YI0V-4GSI",
+      "hwid": "HWID-5178ac5a7db3d596"
+    },
+    "timestamp": "2026-08-09T08:49:28.505Z"
+  },
+  {
+    "id": "980c66c2-b4f3-4329-8778-dc8e789345ad",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-AEYG-YI0V-4GSI authenticated for bound HWID: HWID-5178ac5a7db3d596",
+    "metadata": {
+      "key": "AXIOS-AEYG-YI0V-4GSI",
+      "hwid": "HWID-5178ac5a7db3d596"
+    },
+    "timestamp": "2026-08-09T08:49:27.387Z"
+  },
+  {
+    "id": "4d6250b9-fd76-4eb8-8686-1a22241a2641",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-JMBW-GDFY-FOH2\" from HWID: HWID-11D53EE120908710",
+    "metadata": {
+      "key": "AXIOS-JMBW-GDFY-FOH2",
+      "hwid": "HWID-11D53EE120908710"
+    },
+    "timestamp": "2026-08-09T08:48:21.583Z"
+  },
+  {
+    "id": "78142d25-04c9-40e5-b5e5-5b90b2f08c45",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-JMBW-GDFY-FOH2\" from HWID: HWID-11D53EE120908710",
+    "metadata": {
+      "key": "AXIOS-JMBW-GDFY-FOH2",
+      "hwid": "HWID-11D53EE120908710"
+    },
+    "timestamp": "2026-08-09T08:48:21.534Z"
+  },
+  {
+    "id": "2238e0b3-38f2-4fa1-85d3-772f01629f7c",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-AEYG-YI0V-4GSI authenticated for bound HWID: HWID-5178ac5a7db3d596",
+    "metadata": {
+      "key": "AXIOS-AEYG-YI0V-4GSI",
+      "hwid": "HWID-5178ac5a7db3d596"
+    },
+    "timestamp": "2026-08-09T08:46:47.147Z"
+  },
+  {
+    "id": "e18577d3-32e7-4d2e-96ba-370bf365bf0d",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-AEYG-YI0V-4GSI authenticated for bound HWID: HWID-5178ac5a7db3d596",
+    "metadata": {
+      "key": "AXIOS-AEYG-YI0V-4GSI",
+      "hwid": "HWID-5178ac5a7db3d596"
+    },
+    "timestamp": "2026-08-09T08:46:46.275Z"
+  },
+  {
+    "id": "07f34c5f-c067-446e-b1b8-bbb6c1f18f6a",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-AEYG-YI0V-4GSI authenticated for bound HWID: HWID-5178ac5a7db3d596",
+    "metadata": {
+      "key": "AXIOS-AEYG-YI0V-4GSI",
+      "hwid": "HWID-5178ac5a7db3d596"
+    },
+    "timestamp": "2026-08-09T08:46:34.876Z"
+  },
+  {
+    "id": "f535bc24-d79e-4a47-ab8c-5fcbc1960ad9",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-377470f77a7aac07",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-377470f77a7aac07"
+    },
+    "timestamp": "2026-08-09T08:46:31.908Z"
+  },
+  {
+    "id": "0f4cca07-9605-4a8a-bca0-94ad1682a31b",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-377470f77a7aac07",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-377470f77a7aac07"
+    },
+    "timestamp": "2026-08-09T08:46:31.907Z"
+  },
+  {
+    "id": "865a857a-bee9-4486-a33c-973be75d8323",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-377470f77a7aac07",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-377470f77a7aac07"
+    },
+    "timestamp": "2026-08-09T08:45:54.574Z"
+  },
+  {
+    "id": "38c2d2f9-1fc9-4bd0-afb9-c5d66e992f5f",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-377470f77a7aac07",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-377470f77a7aac07"
+    },
+    "timestamp": "2026-08-09T08:45:54.494Z"
+  },
+  {
+    "id": "2669fe5e-a09c-404a-8915-d2d3f7435120",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-JMBW-GDFY-FOH2\" from HWID: HWID-11D53EE120908710",
+    "metadata": {
+      "key": "AXIOS-JMBW-GDFY-FOH2",
+      "hwid": "HWID-11D53EE120908710"
+    },
+    "timestamp": "2026-08-09T08:45:37.905Z"
+  },
+  {
+    "id": "454bc784-1d1f-468b-aea5-c1bc303d4d26",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-JMBW-GDFY-FOH2\" from HWID: HWID-11D53EE120908710",
+    "metadata": {
+      "key": "AXIOS-JMBW-GDFY-FOH2",
+      "hwid": "HWID-11D53EE120908710"
+    },
+    "timestamp": "2026-08-09T08:45:37.826Z"
+  },
+  {
+    "id": "e693f116-605b-497b-a629-d80e7228cee2",
+    "userId": "50ab95b7-8107-45ab-a6a8-cae811f62fd2",
+    "username": "mohit67",
+    "action": "KEYS_GENERATED",
+    "details": "Issued 1 Key(s) [AXIOS-7YVT-3XGG-XA8K] • Duration: 1 Days • Cost: 10 Tokens • Note: \"Hournoued\"",
+    "metadata": {
+      "count": 1,
+      "costTokens": 10,
+      "isMasterKey": false,
+      "note": "Hournoued"
+    },
+    "timestamp": "2026-08-09T08:45:27.550Z"
+  },
+  {
+    "id": "5a302b8b-f589-4d54-806e-bb3ea9956f41",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-JMBW-GDFY-FOH2\" from HWID: HWID-11D53EE120908710",
+    "metadata": {
+      "key": "AXIOS-JMBW-GDFY-FOH2",
+      "hwid": "HWID-11D53EE120908710"
+    },
+    "timestamp": "2026-08-09T08:45:04.247Z"
+  },
+  {
+    "id": "513020cc-5d01-466c-b901-67fa5ad3a0a2",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-JMBW-GDFY-FOH2\" from HWID: HWID-11D53EE120908710",
+    "metadata": {
+      "key": "AXIOS-JMBW-GDFY-FOH2",
+      "hwid": "HWID-11D53EE120908710"
+    },
+    "timestamp": "2026-08-09T08:45:04.219Z"
+  },
+  {
+    "id": "9a25f00c-9cdf-442e-9f53-2e431e39dbe0",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-b42dc4a5a0f9cda5",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-b42dc4a5a0f9cda5"
+    },
+    "timestamp": "2026-08-09T08:45:03.788Z"
+  },
+  {
+    "id": "364c2855-fbe2-473e-a3ff-f30ce796759d",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-b42dc4a5a0f9cda5",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-b42dc4a5a0f9cda5"
+    },
+    "timestamp": "2026-08-09T08:45:03.405Z"
+  },
+  {
+    "id": "b62f1982-7e90-4c9a-ad0c-bf639aee63f1",
+    "userId": "50ab95b7-8107-45ab-a6a8-cae811f62fd2",
+    "username": "mohit67",
+    "action": "KEY_DELETED",
+    "details": "Deleted / revoked key: AXIOS-CW8J-NW11-8CUO (Original Creator: mohit67)",
+    "metadata": {
+      "key": "AXIOS-CW8J-NW11-8CUO",
+      "creator": "mohit67"
+    },
+    "timestamp": "2026-08-09T08:45:00.039Z"
+  },
+  {
+    "id": "165e02a0-c164-44fd-8fdd-2e16dff86f7c",
+    "userId": "50ab95b7-8107-45ab-a6a8-cae811f62fd2",
+    "username": "mohit67",
+    "action": "KEY_DELETED",
+    "details": "Deleted / revoked key: AXIOS-7POK-YJOJ-M3IC (Original Creator: mohit67)",
+    "metadata": {
+      "key": "AXIOS-7POK-YJOJ-M3IC",
+      "creator": "mohit67"
+    },
+    "timestamp": "2026-08-09T08:44:46.213Z"
+  },
+  {
+    "id": "88f3f92a-d6cb-4c34-ba54-c4e1cad088df",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-LHRO-YH5I-KUNI",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-09T08:43:51.960Z"
+  },
+  {
+    "id": "2763dc79-4f68-43af-a603-1fdb29451548",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-LHRO-YH5I-KUNI",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-09T08:43:51.870Z"
+  },
+  {
+    "id": "ee875ee7-302a-45f5-a733-8fc2cac8d3ee",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_MISMATCH",
+    "details": "Key AXIOS-RP9R-ZDPB-PD96 HWID Mismatch! Bound to: HWID-3490a1d4d5e93258, Attempted from: HWID-3b75ddd30f70c386",
+    "metadata": {
+      "key": "AXIOS-RP9R-ZDPB-PD96",
+      "boundHwid": "HWID-3490a1d4d5e93258",
+      "attemptedHwid": "HWID-3b75ddd30f70c386"
+    },
+    "timestamp": "2026-08-09T08:43:49.449Z"
+  },
+  {
+    "id": "328fe3e8-2845-420f-8dd1-e222dfb75406",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_MISMATCH",
+    "details": "Key AXIOS-RP9R-ZDPB-PD96 HWID Mismatch! Bound to: HWID-3490a1d4d5e93258, Attempted from: HWID-3b75ddd30f70c386",
+    "metadata": {
+      "key": "AXIOS-RP9R-ZDPB-PD96",
+      "boundHwid": "HWID-3490a1d4d5e93258",
+      "attemptedHwid": "HWID-3b75ddd30f70c386"
+    },
+    "timestamp": "2026-08-09T08:43:49.371Z"
+  },
+  {
+    "id": "fd19e3d0-723e-490d-b4d5-6599f7e4305c",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-86d6a0a39dedb91f",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-86d6a0a39dedb91f"
+    },
+    "timestamp": "2026-08-09T08:43:39.615Z"
+  },
+  {
+    "id": "85635eb4-397f-4cce-a9ff-8d47906dbb0a",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-86d6a0a39dedb91f",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-86d6a0a39dedb91f"
+    },
+    "timestamp": "2026-08-09T08:43:39.610Z"
+  },
+  {
+    "id": "b67ba2fd-2be8-4c01-89e8-a05a82fa3c15",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-b42dc4a5a0f9cda5",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-b42dc4a5a0f9cda5"
+    },
+    "timestamp": "2026-08-09T08:43:26.042Z"
+  },
+  {
+    "id": "969c7054-6faf-47e7-8df8-6fa96f2093b4",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-b42dc4a5a0f9cda5",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-b42dc4a5a0f9cda5"
+    },
+    "timestamp": "2026-08-09T08:43:25.603Z"
+  },
+  {
+    "id": "0adbab53-7d94-48e7-8b4d-3b4648e05cde",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-4M8J-W31K-LP9Y\" from HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4M8J-W31K-LP9Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-09T08:42:55.840Z"
+  },
+  {
+    "id": "2de30b89-0d56-4662-b37a-213a7360580b",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-4M8J-W31K-LP9Y\" from HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4M8J-W31K-LP9Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-09T08:42:55.494Z"
+  },
+  {
+    "id": "715ab520-89b2-45f5-a98e-c70ca3fae859",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-b42dc4a5a0f9cda5",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-b42dc4a5a0f9cda5"
+    },
+    "timestamp": "2026-08-09T08:42:46.149Z"
+  },
+  {
+    "id": "b01a856a-2b54-4d66-90a3-5d946b2c2a89",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-b42dc4a5a0f9cda5",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-b42dc4a5a0f9cda5"
+    },
+    "timestamp": "2026-08-09T08:42:45.654Z"
+  },
+  {
+    "id": "e0250b5b-e5bd-49bb-b46f-fbe85e9dba87",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_MISMATCH",
+    "details": "Key AXIOS-RP9R-ZDPB-PD96 HWID Mismatch! Bound to: HWID-3490a1d4d5e93258, Attempted from: HWID-3b75ddd30f70c386",
+    "metadata": {
+      "key": "AXIOS-RP9R-ZDPB-PD96",
+      "boundHwid": "HWID-3490a1d4d5e93258",
+      "attemptedHwid": "HWID-3b75ddd30f70c386"
+    },
+    "timestamp": "2026-08-09T08:42:43.900Z"
+  },
+  {
+    "id": "00355c47-9dbd-47c1-8546-b5d424dffa71",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_MISMATCH",
+    "details": "Key AXIOS-RP9R-ZDPB-PD96 HWID Mismatch! Bound to: HWID-3490a1d4d5e93258, Attempted from: HWID-3b75ddd30f70c386",
+    "metadata": {
+      "key": "AXIOS-RP9R-ZDPB-PD96",
+      "boundHwid": "HWID-3490a1d4d5e93258",
+      "attemptedHwid": "HWID-3b75ddd30f70c386"
+    },
+    "timestamp": "2026-08-09T08:42:43.816Z"
+  },
+  {
+    "id": "99a6b3a5-3f46-4ead-bd56-7fe9b61f8e23",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-5BA8-73BH-O444 authenticated for bound HWID: HWID-4ca69f53049a854c",
+    "metadata": {
+      "key": "AXIOS-5BA8-73BH-O444",
+      "hwid": "HWID-4ca69f53049a854c"
+    },
+    "timestamp": "2026-08-09T08:42:11.705Z"
+  },
+  {
+    "id": "ccba9794-d4bb-4a62-a0dc-d3fe7e80881e",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_BOUND",
+    "details": "Key AXIOS-5BA8-73BH-O444 successfully activated and bound to HWID: HWID-4ca69f53049a854c",
+    "metadata": {
+      "key": "AXIOS-5BA8-73BH-O444",
+      "hwid": "HWID-4ca69f53049a854c"
+    },
+    "timestamp": "2026-08-09T08:42:10.477Z"
+  },
+  {
+    "id": "8852340f-670b-4b09-873c-0864231da416",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-b42dc4a5a0f9cda5",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-b42dc4a5a0f9cda5"
+    },
+    "timestamp": "2026-08-09T08:41:55.530Z"
+  },
+  {
+    "id": "3ade59a8-1aad-4faf-be19-913015ddd04d",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"LEE-YCQ2R6X21C\" from HWID: HWID-b42dc4a5a0f9cda5",
+    "metadata": {
+      "key": "LEE-YCQ2R6X21C",
+      "hwid": "HWID-b42dc4a5a0f9cda5"
+    },
+    "timestamp": "2026-08-09T08:41:54.584Z"
+  },
+  {
+    "id": "4a8773d0-81d6-41ef-accd-e80c37945222",
     "userId": "owner-root-id",
     "username": "owner",
     "action": "SYSTEM_LOGS_CLEARED",
     "details": "Cleared all JSON audit logs history",
     "metadata": {},
-    "timestamp": "2026-08-09T07:21:04.380Z"
+    "timestamp": "2026-08-09T08:41:30.059Z"
   }
 ]

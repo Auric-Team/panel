@@ -106,10 +106,33 @@ export class KeysService {
     }
   }
 
-  static generateKeys(user: AuthUserPayload, payload: GenerateKeysPayload) {
-    const { durationDays, count, note, isMaster, paymentScreenshot } = payload;
+  static generateKeys(user: AuthUserPayload, payload: GenerateKeysPayload & { customDays?: number; duration?: string }) {
+    const { durationDays, customDays, duration, count, note, isMaster, paymentScreenshot } = payload;
     const numKeys = Math.max(1, parseInt(String(count), 10) || 1);
-    const days = parseInt(String(durationDays), 10) || 0;
+    
+    let days = 0;
+    if (durationDays !== undefined && durationDays !== null && durationDays !== '') {
+      const parsed = parseInt(String(durationDays), 10);
+      days = isNaN(parsed) ? 0 : parsed;
+    }
+    
+    if (days === 0 && customDays !== undefined && customDays !== null && customDays !== '') {
+      const parsed = parseInt(String(customDays), 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        days = parsed;
+      }
+    }
+
+    if (days === 0 && duration && typeof duration === 'string') {
+      const lower = duration.toLowerCase();
+      if (!lower.includes('lifetime') && !lower.includes('permanent') && !lower.includes('never')) {
+        const match = duration.match(/\d+/);
+        if (match) {
+          days = parseInt(match[0], 10);
+        }
+      }
+    }
+
     const isMasterKeyFlag = isMaster === true || isMaster === 'true' || isMaster === 1;
 
     if (isMasterKeyFlag && user.role !== 'owner' && user.role !== 'manager') {
