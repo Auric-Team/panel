@@ -1,0 +1,11 @@
+[
+  {
+    "id": "b46eaabe-0683-47ad-a754-9ec79d9da122",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "SYSTEM_LOGS_CLEARED",
+    "details": "Cleared all JSON audit logs history",
+    "metadata": {},
+    "timestamp": "2026-08-09T07:21:04.380Z"
+  }
+]

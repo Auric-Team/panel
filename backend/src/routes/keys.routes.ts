@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { verifyKey, getKeys, generateKeys, resetHwid, deleteKey } from '../controllers/keys.controller';
-import { authenticate } from '../middlewares/auth';
+import { authenticate } from '../middlewares/auth.middleware';
 import { apiLimiter } from '../middlewares/rateLimiter';
 
 const router = Router();

@@ -1,18 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/errors';
 
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error(err);
+export const errorHandler = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
 
-  if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      success: false,
-      error: err.message
-    });
+  if (process.env.NODE_ENV !== 'production' && !(err instanceof AppError)) {
+    console.error('[Unhandled Error]', err);
   }
 
-  return res.status(500).json({
+  res.status(statusCode).json({
     success: false,
-    error: 'Internal Server Error'
+    error: message,
+    status: err.status || (statusCode === 404 ? 'not_found' : statusCode === 403 ? 'invalid' : 'error'),
   });
 };

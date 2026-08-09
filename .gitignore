@@ -8,6 +8,10 @@ dist/
 build/
 out/
 
+# SQLite WAL temporary files
+*-wal
+*-shm
+
 # Environment files
 .env.local
 .env.development.local

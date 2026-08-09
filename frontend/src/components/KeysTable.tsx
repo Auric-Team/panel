@@ -1,253 +1,255 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
+import { Search, Copy, Check, RotateCcw, Trash2, FileImage, ShieldCheck, Clock, Sparkles, Download, Filter } from 'lucide-react';
 import { KeyItem } from '@/types/key';
-import { Search, Filter, Copy, RotateCcw, Trash2, Check, Shield, Cpu, Clock, Calendar, AlertCircle } from 'lucide-react';
 
 interface KeysTableProps {
   keys: KeyItem[];
-  onResetHwid: (keyId: string) => Promise<void>;
-  onDeleteKey: (keyId: string) => Promise<void>;
+  onResetHwid: (id: string) => void;
+  onDeleteKey: (id: string) => void;
+  onOpenProofModal: (key: KeyItem) => void;
 }
 
 export const KeysTable: React.FC<KeysTableProps> = ({
   keys,
   onResetHwid,
   onDeleteKey,
+  onOpenProofModal,
 }) => {
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [copiedKeyId, setCopiedKeyId] = useState<string | null>(null);
-  const [loadingActionId, setLoadingActionId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'expired' | 'revoked' | 'master'>('all');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Filter keys
   const filteredKeys = useMemo(() => {
     return keys.filter((k) => {
+      const q = searchQuery.toLowerCase();
       const matchesSearch =
-        k.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (k.hwid && k.hwid.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (k.note && k.note.toLowerCase().includes(searchTerm.toLowerCase()));
+        k.key.toLowerCase().includes(q) ||
+        (k.createdByUsername && k.createdByUsername.toLowerCase().includes(q)) ||
+        (k.note && k.note.toLowerCase().includes(q)) ||
+        (k.hwid && k.hwid.toLowerCase().includes(q));
 
-      const matchesStatus =
-        statusFilter === 'all' || k.status === statusFilter;
+      let matchesStatus = true;
+      if (statusFilter === 'active') matchesStatus = k.status === 'active';
+      else if (statusFilter === 'expired') matchesStatus = k.status === 'expired';
+      else if (statusFilter === 'revoked') matchesStatus = k.status === 'revoked';
+      else if (statusFilter === 'master') matchesStatus = Boolean(k.isMasterKey);
 
       return matchesSearch && matchesStatus;
     });
-  }, [keys, searchTerm, statusFilter]);
+  }, [keys, searchQuery, statusFilter]);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
-    setCopiedKeyId(id);
-    setTimeout(() => setCopiedKeyId(null), 2000);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleResetHwid = async (id: string) => {
-    if (!confirm('Are you sure you want to reset HWID for this key?')) return;
-    setLoadingActionId(id + '-reset');
-    try {
-      await onResetHwid(id);
-    } finally {
-      setLoadingActionId(null);
-    }
-  };
+  const exportToCSV = () => {
+    if (filteredKeys.length === 0) return;
+    const headers = ['Key', 'Creator', 'Status', 'Duration', 'ExpiresAt', 'BoundHWID', 'CostTokens', 'Note'];
+    const rows = filteredKeys.map((k) => [
+      k.key,
+      k.createdByUsername || 'System',
+      k.status,
+      k.duration || 'Custom',
+      k.expiresAt || 'Never',
+      k.hwid || 'Unbound',
+      k.costTokens || 0,
+      `"${(k.note || '').replace(/"/g, '""')}"`,
+    ]);
 
-  const handleDeleteKey = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this key? This action cannot be undone.')) return;
-    setLoadingActionId(id + '-delete');
-    try {
-      await onDeleteKey(id);
-    } finally {
-      setLoadingActionId(null);
-    }
-  };
-
-  const getStatusBadge = (status: KeyItem['status']) => {
-    switch (status) {
-      case 'active':
-        return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse" />
-            Active
-          </span>
-        );
-      case 'expired':
-        return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5" />
-            Expired
-          </span>
-        );
-      case 'revoked':
-        return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1.5" />
-            Revoked
-          </span>
-        );
-    }
+    const csvContent = [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `axios-keys-export-${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
-    <div className="glass-panel rounded-2xl p-6 border border-purple-800/40 bg-axios-card shadow-2xl">
-      {/* Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400/70" />
-          <input
-            type="text"
-            placeholder="Search key, HWID, note..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-axios-dark border border-purple-900/60 rounded-xl pl-10 pr-4 py-2.5 text-xs text-purple-100 placeholder-purple-900/80 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all font-mono"
-          />
+    <div className="bg-slate-900/90 border border-slate-800/90 rounded-3xl p-6 shadow-xl space-y-4 font-mono text-xs backdrop-blur-md">
+      {/* Controls & Filter Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
+        <div className="flex items-center space-x-3">
+          <h3 className="text-sm font-bold text-white tracking-wide">License Keys Registry</h3>
+          <span className="px-2.5 py-0.5 rounded-lg bg-slate-950 text-cyan-400 border border-slate-800 font-bold text-xs">
+            {filteredKeys.length} Keys
+          </span>
         </div>
 
-        <div className="flex items-center space-x-3 w-full sm:w-auto justify-end">
-          <Filter className="w-4 h-4 text-purple-400 hidden sm:block" />
-          <div className="flex rounded-xl bg-axios-dark p-1 border border-purple-900/60 w-full sm:w-auto">
-            {['all', 'active', 'expired', 'revoked'].map((st) => (
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Status Filter Buttons */}
+          <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-2xl border border-slate-800">
+            {(['all', 'active', 'expired', 'revoked', 'master'] as const).map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg capitalize transition-all flex-1 sm:flex-none ${
+                className={`px-3 py-1.5 rounded-xl uppercase text-[10px] font-bold transition ${
                   statusFilter === st
-                    ? 'bg-purple-600 text-white shadow-glow-purple'
-                    : 'text-purple-300/70 hover:text-purple-100'
+                    ? 'bg-slate-800 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 {st}
               </button>
             ))}
           </div>
+
+          {/* Search Input */}
+          <div className="relative w-full sm:w-60">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <input
+              type="text"
+              placeholder="Search key, HWID, creator, note..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-white font-mono outline-none focus:border-slate-700 transition"
+            />
+          </div>
+
+          {/* Export CSV Button */}
+          <button
+            onClick={exportToCSV}
+            className="p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 transition flex items-center space-x-1"
+            title="Export CSV"
+          >
+            <Download className="w-4 h-4 text-cyan-400" />
+            <span className="hidden sm:inline">Export</span>
+          </button>
         </div>
       </div>
 
-      {/* Table container */}
-      <div className="overflow-x-auto rounded-xl border border-purple-900/40">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-axios-dark/80 text-purple-200/70 text-[11px] uppercase tracking-wider font-semibold border-b border-purple-900/50">
-              <th className="py-3.5 px-4">Key</th>
-              <th className="py-3.5 px-4">Status</th>
-              <th className="py-3.5 px-4">Bound HWID</th>
-              <th className="py-3.5 px-4">Expires At</th>
-              <th className="py-3.5 px-4">Created</th>
-              <th className="py-3.5 px-4">Note / Tag</th>
-              <th className="py-3.5 px-4 text-right">Actions</th>
+      {/* Keys Data Table */}
+      <div className="overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-950/50">
+        <table className="w-full text-left text-xs">
+          <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800 font-semibold">
+            <tr>
+              <th className="p-3.5">License Key</th>
+              <th className="p-3.5">Creator / Owner</th>
+              <th className="p-3.5">Duration & Expiry</th>
+              <th className="p-3.5">Cost Tokens</th>
+              <th className="p-3.5">Status</th>
+              <th className="p-3.5">Payment Proof</th>
+              <th className="p-3.5">Bound HWID Device</th>
+              <th className="p-3.5 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-purple-950/60 text-xs font-mono">
+          <tbody className="divide-y divide-slate-800/60 font-mono text-slate-300">
             {filteredKeys.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-purple-300/50">
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <AlertCircle className="w-8 h-8 text-purple-500/40" />
-                    <p className="text-sm font-sans">No keys match your criteria</p>
-                  </div>
+                <td colSpan={8} className="p-10 text-center text-slate-500 font-sans">
+                  No license keys match the selected criteria.
                 </td>
               </tr>
             ) : (
-              filteredKeys.map((item) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-purple-950/30 transition-colors duration-150 group"
-                >
-                  {/* Key */}
-                  <td className="py-3.5 px-4 font-semibold text-purple-100">
+              filteredKeys.map((k) => (
+                <tr key={k.id} className="hover:bg-slate-800/40 transition">
+                  {/* Key String & Copy */}
+                  <td className="p-3.5 font-bold text-white">
                     <div className="flex items-center space-x-2">
-                      <span className="truncate max-w-[180px] sm:max-w-[240px] text-purple-200">
-                        {item.key}
-                      </span>
+                      {k.isMasterKey ? (
+                        <span className="p-1 rounded-lg bg-amber-950/80 text-amber-400 border border-amber-800/60" title="Master Key">
+                          <Sparkles className="w-3.5 h-3.5" />
+                        </span>
+                      ) : null}
+                      <span className="truncate max-w-[200px]" title={k.key}>{k.key}</span>
+                      <button
+                        onClick={() => copyToClipboard(k.key, k.id)}
+                        className="text-slate-400 hover:text-white p-1 rounded-lg transition"
+                        title="Copy Key"
+                      >
+                        {copiedId === k.id ? (
+                          <Check className="w-4 h-4 text-emerald-400" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </button>
                     </div>
                   </td>
 
-                  {/* Status */}
-                  <td className="py-3.5 px-4">{getStatusBadge(item.status)}</td>
-
-                  {/* HWID */}
-                  <td className="py-3.5 px-4">
-                    {item.hwid ? (
-                      <span
-                        className="inline-flex items-center px-2 py-1 rounded bg-axios-dark border border-cyan-900/40 text-cyan-300 text-[11px]"
-                        title={item.hwid}
-                      >
-                        <Cpu className="w-3 h-3 mr-1 text-cyan-400" />
-                        {item.hwid.length > 12
-                          ? `${item.hwid.slice(0, 6)}...${item.hwid.slice(-6)}`
-                          : item.hwid}
-                      </span>
-                    ) : (
-                      <span className="text-purple-400/50 italic text-[11px]">Unbound</span>
-                    )}
-                  </td>
-
-                  {/* Expires At */}
-                  <td className="py-3.5 px-4 text-purple-300/80">
-                    {item.expiresAt ? (
-                      <span className="flex items-center space-x-1">
-                        <Clock className="w-3 h-3 text-purple-400" />
-                        <span>{new Date(item.expiresAt).toLocaleDateString()}</span>
-                      </span>
-                    ) : (
-                      <span className="text-emerald-400 font-semibold">Never (Lifetime)</span>
-                    )}
-                  </td>
-
-                  {/* Created At */}
-                  <td className="py-3.5 px-4 text-purple-300/60">
-                    <span className="flex items-center space-x-1">
-                      <Calendar className="w-3 h-3 text-purple-500/60" />
-                      <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                  {/* Creator */}
+                  <td className="p-3.5">
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 text-[11px] font-semibold border border-slate-800">
+                      {k.createdByUsername || 'System'}
                     </span>
                   </td>
 
-                  {/* Note */}
-                  <td className="py-3.5 px-4 font-sans text-purple-300/90 max-w-[140px] truncate">
-                    {item.note || <span className="text-purple-700/60 italic">-</span>}
+                  {/* Duration & Expiry */}
+                  <td className="p-3.5">
+                    <span className="text-white font-medium block">{k.duration || 'Custom'}</span>
+                    {!k.expiresAt || k.expiresAt === 'never' ? (
+                      <span className="text-[10px] text-emerald-400 font-bold block">Lifetime / Never</span>
+                    ) : (
+                      <span className="text-[10px] text-slate-400 block">
+                        {new Date(k.expiresAt).toLocaleDateString()}
+                      </span>
+                    )}
+                  </td>
+
+                  {/* Cost Tokens */}
+                  <td className="p-3.5 font-extrabold text-amber-400 text-sm">
+                    {k.costTokens || 0}
+                  </td>
+
+                  {/* Status */}
+                  <td className="p-3.5">
+                    <span
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase ${
+                        k.status === 'active'
+                          ? 'bg-emerald-950/90 text-emerald-400 border border-emerald-800/80'
+                          : k.status === 'expired'
+                          ? 'bg-amber-950/90 text-amber-400 border border-amber-800/80'
+                          : 'bg-rose-950/90 text-rose-400 border border-rose-800/80'
+                      }`}
+                    >
+                      {k.status}
+                    </span>
+                  </td>
+
+                  {/* Payment Proof */}
+                  <td className="p-3.5">
+                    {k.paymentScreenshot ? (
+                      <button
+                        onClick={() => onOpenProofModal(k)}
+                        className="px-3 py-1.5 rounded-xl text-[10px] font-bold bg-slate-900 text-cyan-300 border border-slate-800 hover:bg-slate-800 transition flex items-center space-x-1.5 shadow-sm"
+                      >
+                        <FileImage className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>View Proof</span>
+                      </button>
+                    ) : (
+                      <span className="text-slate-600 font-mono text-[11px]">-</span>
+                    )}
+                  </td>
+
+                  {/* Bound HWID */}
+                  <td className="p-3.5 text-slate-400 max-w-[130px] truncate" title={k.hwid || 'Unbound'}>
+                    {k.hwid || 'Unbound'}
                   </td>
 
                   {/* Actions */}
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      {/* Copy Key */}
-                      <button
-                        onClick={() => copyToClipboard(item.key, item.id)}
-                        className="p-1.5 rounded-lg bg-purple-900/40 hover:bg-purple-700/60 text-purple-300 hover:text-white transition-all"
-                        title="Copy Key"
-                      >
-                        {copiedKeyId === item.id ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        ) : (
-                          <Copy className="w-3.5 h-3.5" />
-                        )}
-                      </button>
+                  <td className="p-3.5 text-right">
+                    <div className="flex items-center justify-end space-x-1.5">
+                      {k.hwid && (
+                        <button
+                          onClick={() => onResetHwid(k.id)}
+                          className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition"
+                          title="Reset Hardware Binding (HWID)"
+                        >
+                          <RotateCcw className="w-4 h-4" />
+                        </button>
+                      )}
 
-                      {/* Reset HWID */}
                       <button
-                        onClick={() => handleResetHwid(item.id)}
-                        disabled={!item.hwid || loadingActionId === item.id + '-reset'}
-                        className="p-1.5 rounded-lg bg-cyan-950/50 hover:bg-cyan-800/60 text-cyan-300 hover:text-white transition-all disabled:opacity-30 disabled:hover:bg-cyan-950/50"
-                        title="Reset HWID"
+                        onClick={() => onDeleteKey(k.id)}
+                        className="p-2 rounded-xl bg-rose-950/50 border border-rose-800/60 text-rose-400 hover:text-rose-200 hover:bg-rose-900/80 transition"
+                        title="Delete / Revoke Key"
                       >
-                        <RotateCcw
-                          className={`w-3.5 h-3.5 ${
-                            loadingActionId === item.id + '-reset' ? 'animate-spin' : ''
-                          }`}
-                        />
-                      </button>
-
-                      {/* Delete Key */}
-                      <button
-                        onClick={() => handleDeleteKey(item.id)}
-                        disabled={loadingActionId === item.id + '-delete'}
-                        className="p-1.5 rounded-lg bg-rose-950/50 hover:bg-rose-800/60 text-rose-300 hover:text-white transition-all disabled:opacity-30"
-                        title="Delete Key"
-                      >
-                        <Trash2
-                          className={`w-3.5 h-3.5 ${
-                            loadingActionId === item.id + '-delete' ? 'animate-spin' : ''
-                          }`}
-                        />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>

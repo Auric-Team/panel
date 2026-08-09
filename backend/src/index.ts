@@ -1,63 +1,64 @@
 import express from 'express';
 import cors from 'cors';
-import { initDb } from './db/sqlite';
-import routes from './routes';
-import { errorHandler } from './middlewares/errorHandler';
-
 import fs from 'fs';
 import path from 'path';
-import dotenv from 'dotenv';
-dotenv.config();
+import { ENV } from './config/env';
+import { initDatabase } from './db/database';
+import routes from './routes';
+import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
 app.set('trust proxy', true);
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 app.options('*', cors());
 
-app.use(express.json({ limit: '15mb' }));
-app.use(express.urlencoded({ extended: true, limit: '15mb' }));
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
-const uploadsDir = path.resolve(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+if (!fs.existsSync(ENV.UPLOADS_DIR)) {
+  fs.mkdirSync(ENV.UPLOADS_DIR, { recursive: true });
 }
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', express.static(ENV.UPLOADS_DIR));
 
-// Root status endpoint
 app.get('/', (req, res) => {
   res.json({
     status: 'online',
-    message: 'AXIOS Executive Control Server Running',
-    version: '2.0.0',
+    engine: 'Bun Native TypeScript Server',
+    message: 'AXIOS Executive Control Center Active',
+    version: '2.1.0',
     timestamp: new Date().toISOString(),
     endpoints: {
       health: '/api/stats',
       verifyKey: '/api/verify',
       auth: '/api/auth/login',
       keys: '/api/keys',
-      users: '/api/users'
-    }
+      users: '/api/users',
+      analytics: '/api/analytics',
+    },
   });
 });
 
-// API Routes
 app.use('/api', routes);
 
-// Global Error Handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 20067;
-
-async function startServer() {
-  await initDb();
-  app.listen(PORT, () => {
-    console.log(`[Axios Backend] Express & SQLite server running on http://0.0.0.0:${PORT}`);
-  });
+async function bootstrap() {
+  try {
+    initDatabase();
+    app.listen(ENV.PORT, () => {
+      console.log(`\n🚀 [AXIOS Bun Backend] Server running directly on http://0.0.0.0:${ENV.PORT}`);
+    });
+  } catch (error) {
+    console.error('[AXIOS Backend Fatal Startup Error]', error);
+    process.exit(1);
+  }
 }
 
-startServer();
+bootstrap();

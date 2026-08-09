@@ -1,13 +1,19 @@
-import { KeyItem, UserItem, StatsOverview, SalesDataPoint } from '@/types/key';
+import { KeyItem, UserItem } from '@/types/key';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.axioshacks.com';
-
-// Empty initial datasets
-const MOCK_KEYS: KeyItem[] = [];
-const MOCK_USERS: UserItem[] = [];
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067';
 
 let localKeysStore: KeyItem[] = [];
 let localUsersStore: UserItem[] = [];
+
+export interface AuditLogItem {
+  id: string;
+  userId: string;
+  username: string;
+  action: string;
+  details: string;
+  metadata?: Record<string, any>;
+  timestamp: string;
+}
 
 export async function checkBackendConnection(): Promise<{ isConnected: boolean; url: string }> {
   try {
@@ -20,9 +26,42 @@ export async function checkBackendConnection(): Promise<{ isConnected: boolean; 
       return { isConnected: true, url: API_BASE_URL };
     }
   } catch {
-    // Backend offline / not reachable directly
+    // Backend connection check error
   }
-  return { isConnected: false, url: `${API_BASE_URL} (Local Engine)` };
+  return { isConnected: false, url: API_BASE_URL };
+}
+
+export async function fetchLogsApi(token?: string, limit = 500): Promise<{ logs: AuditLogItem[]; isLive: boolean }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/logs?limit=${limit}`, {
+      headers: { Authorization: `Bearer ${token || ''}` },
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return { logs: Array.isArray(data) ? data : [], isLive: true };
+    }
+  } catch {
+    // Fallback
+  }
+  return { logs: [], isLive: false };
+}
+
+export async function clearLogsApi(token?: string): Promise<{ success: boolean; message?: string }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/logs/clear`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) return { success: true, message: data.message };
+    return { success: false, message: data.message || 'Failed to clear logs' };
+  } catch (err: any) {
+    return { success: false, message: err?.message || 'Network error' };
+  }
 }
 
 export async function fetchAllKeys(token?: string): Promise<{ keys: KeyItem[]; isLive: boolean; isAuthError?: boolean }> {
@@ -31,7 +70,7 @@ export async function fetchAllKeys(token?: string): Promise<{ keys: KeyItem[]; i
       headers: { Authorization: `Bearer ${token || ''}` },
       cache: 'no-store',
     });
-    if (res.status === 401) {
+    if (res.status === 401 || res.status === 403) {
       return { keys: [], isLive: false, isAuthError: true };
     }
     if (res.ok) {
@@ -43,7 +82,7 @@ export async function fetchAllKeys(token?: string): Promise<{ keys: KeyItem[]; i
         status: k.status || 'active',
         hwid: k.hwid || null,
         duration: k.duration || (k.expiresAt === 'never' ? 'Lifetime' : 'Custom'),
-        costTokens: k.costTokens || 10,
+        costTokens: k.costTokens || 0,
         createdAt: k.createdAt || new Date().toISOString(),
         expiresAt: k.expiresAt === 'never' ? null : k.expiresAt,
         note: k.note || '',
@@ -55,7 +94,7 @@ export async function fetchAllKeys(token?: string): Promise<{ keys: KeyItem[]; i
       return { keys: formattedKeys, isLive: true };
     }
   } catch {
-    // API Fallback
+    // API fallback
   }
   return { keys: localKeysStore, isLive: false };
 }
@@ -66,7 +105,7 @@ export async function fetchAllUsers(token?: string): Promise<{ users: UserItem[]
       headers: { Authorization: `Bearer ${token || ''}` },
       cache: 'no-store',
     });
-    if (res.status === 401) {
+    if (res.status === 401 || res.status === 403) {
       return { users: [], isLive: false, isAuthError: true };
     }
     if (res.ok) {
@@ -80,22 +119,23 @@ export async function fetchAllUsers(token?: string): Promise<{ users: UserItem[]
         credits: u.credits,
         isBlocked: u.isBlocked || 0,
         createdAt: u.createdAt || new Date().toISOString(),
-        createdBy: u.createdBy || 'OwnerAdmin',
+        createdBy: u.createdBy || 'Owner',
       }));
       localUsersStore = formattedUsers;
       return { users: formattedUsers, isLive: true };
     }
   } catch {
-    // API Fallback
+    // API fallback
   }
   return { users: localUsersStore, isLive: false };
 }
 
 export async function updateUserTokensApi(
   userId: string,
-  newTokenBalance: number,
+  amount: number,
+  action: 'add' | 'deduct',
   token?: string
-): Promise<boolean> {
+): Promise<{ success: boolean; newBalance?: number; error?: string }> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/users/update-tokens`, {
       method: 'POST',
@@ -103,17 +143,16 @@ export async function updateUserTokensApi(
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token || ''}`,
       },
-      body: JSON.stringify({ userId, tokens: newTokenBalance }),
+      body: JSON.stringify({ userId, amount, action }),
     });
-    if (res.ok) return true;
-  } catch {
-    // API Fallback
+    const data = await res.json();
+    if (res.ok && data.success) {
+      return { success: true, newBalance: data.newBalance };
+    }
+    return { success: false, error: data.error || data.message || 'Failed to update tokens' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Network error' };
   }
-
-  localUsersStore = localUsersStore.map((u) =>
-    u.id === userId ? { ...u, tokens: newTokenBalance, credits: newTokenBalance } : u
-  );
-  return true;
 }
 
 export async function generateKeysApi(
@@ -123,7 +162,7 @@ export async function generateKeysApi(
   paymentScreenshot?: string | null,
   isMasterKey?: boolean,
   userToken?: string,
-  currentUser?: any
+  currentUser?: UserItem | null
 ): Promise<{ newKeys: KeyItem[]; generatedStrings: string[] }> {
   let durationDays = 7;
   let costPerKey = 70;
@@ -141,13 +180,13 @@ export async function generateKeysApi(
     durationDays = 0;
     costPerKey = 300;
   } else {
-    // Custom
     const daysMatch = duration.match(/\d+/);
     const customDays = daysMatch ? parseInt(daysMatch[0], 10) : 10;
     durationDays = customDays;
     costPerKey = customDays * 10;
   }
 
+  if (isMasterKey) costPerKey = 0;
   const totalCost = costPerKey * count;
 
   try {
@@ -178,7 +217,7 @@ export async function generateKeysApi(
         createdAt: k.createdAt || new Date().toISOString(),
         expiresAt: k.expiresAt === 'never' ? null : k.expiresAt,
         note: k.note || '',
-        createdByUsername: currentUser?.username || 'OwnerAdmin',
+        createdByUsername: currentUser?.username || 'Owner',
         paymentScreenshot: paymentScreenshot || null,
         isMasterKey: isMasterKey ? 1 : 0,
       }));
@@ -188,53 +227,10 @@ export async function generateKeysApi(
       };
     }
   } catch {
-    // API Fallback
+    // API fallback
   }
 
-  // Deduct tokens locally if reseller
-  if (currentUser && currentUser.role === 'reseller') {
-    localUsersStore = localUsersStore.map((u) =>
-      u.username === currentUser.username
-        ? { ...u, tokens: Math.max(0, (u.tokens || 0) - totalCost) }
-        : u
-    );
-  }
-
-  const generated: KeyItem[] = [];
-  const generatedStrings: string[] = [];
-
-  for (let i = 0; i < count; i++) {
-    const randomHex = () => Math.random().toString(36).substring(2, 6).toUpperCase();
-    const keyStr = isMasterKey
-      ? `AXIOS-MASTER-${randomHex()}-${randomHex()}`
-      : `AXIOS-${randomHex()}-${randomHex()}-${randomHex()}`;
-
-    let expiresAt: string | null = null;
-    if (durationDays > 0) {
-      expiresAt = new Date(Date.now() + durationDays * 86400000).toISOString();
-    }
-
-    const newItem: KeyItem = {
-      id: `key-gen-${Date.now()}-${i}`,
-      key: keyStr,
-      status: 'active',
-      hwid: null,
-      duration,
-      costTokens: costPerKey,
-      createdAt: new Date().toISOString(),
-      expiresAt,
-      note: note || 'Panel Issued',
-      createdByUsername: currentUser?.username || 'OwnerAdmin',
-      paymentScreenshot: paymentScreenshot || null,
-      isMasterKey: isMasterKey ? 1 : 0,
-    };
-
-    generated.push(newItem);
-    generatedStrings.push(keyStr);
-  }
-
-  localKeysStore = [...generated, ...localKeysStore];
-  return { newKeys: generated, generatedStrings };
+  return { newKeys: [], generatedStrings: [] };
 }
 
 export async function resetHwidApi(keyId: string, token?: string): Promise<boolean> {
@@ -249,12 +245,8 @@ export async function resetHwidApi(keyId: string, token?: string): Promise<boole
     });
     if (res.ok) return true;
   } catch {
-    // API Fallback
+    // API fallback
   }
-
-  localKeysStore = localKeysStore.map((k) =>
-    k.id === keyId ? { ...k, hwid: null } : k
-  );
   return true;
 }
 
@@ -270,9 +262,142 @@ export async function deleteKeyApi(keyId: string, token?: string): Promise<boole
     });
     if (res.ok) return true;
   } catch {
-    // API Fallback
+    // API fallback
   }
-
-  localKeysStore = localKeysStore.filter((k) => k.id !== keyId);
   return true;
 }
+
+export async function toggleBlockUserApi(userId: string, isBlocked: boolean, token?: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/users/toggle-block`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
+      body: JSON.stringify({ userId, isBlocked }),
+    });
+    if (res.ok) return true;
+  } catch {
+    // API fallback
+  }
+  return true;
+}
+
+export async function deleteUserApi(userId: string, token?: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/users/delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
+      body: JSON.stringify({ userId }),
+    });
+    const data = await res.json();
+    if (res.ok && data.success) return { success: true };
+    return { success: false, error: data.error || data.message || 'Failed to delete user' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Network error' };
+  }
+}
+
+// Global API Object Wrapper for Page integration
+export const api = {
+  login: async (username: string, password: string) => {
+    const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Login failed');
+    return data;
+  },
+
+  verify2FA: async (userId: string, pin: string) => {
+    const res = await fetch(`${API_BASE_URL}/api/auth/verify-2fa`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, pin }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || '2FA verification failed');
+    return data;
+  },
+
+  getAnalytics: async (token: string) => {
+    const res = await fetch(`${API_BASE_URL}/api/analytics`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error('Failed to fetch analytics');
+    return await res.json();
+  },
+
+  getLogs: async (token: string, limit = 500) => {
+    const result = await fetchLogsApi(token, limit);
+    return result.logs;
+  },
+
+  clearLogs: async (token: string) => {
+    return await clearLogsApi(token);
+  },
+
+  getKeys: async (token: string) => {
+    const result = await fetchAllKeys(token);
+    return result.keys;
+  },
+
+  getUsers: async (token: string) => {
+    const result = await fetchAllUsers(token);
+    return result.users;
+  },
+
+  generateKeys: async (token: string, payload: any) => {
+    const res = await fetch(`${API_BASE_URL}/api/keys/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to generate keys');
+    return data;
+  },
+
+  resetHwid: async (token: string, keyId: string) => {
+    return await resetHwidApi(keyId, token);
+  },
+
+  deleteKey: async (token: string, keyId: string) => {
+    return await deleteKeyApi(keyId, token);
+  },
+
+  createUser: async (token: string, payload: any) => {
+    const res = await fetch(`${API_BASE_URL}/api/users/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to create user');
+    return data;
+  },
+
+  toggleBlockUser: async (token: string, userId: string, isBlocked: boolean) => {
+    return await toggleBlockUserApi(userId, isBlocked, token);
+  },
+
+  updateTokens: async (token: string, userId: string, amount: number, action: 'add' | 'deduct') => {
+    return await updateUserTokensApi(userId, amount, action, token);
+  },
+
+  deleteUser: async (token: string, userId: string) => {
+    return await deleteUserApi(userId, token);
+  },
+};

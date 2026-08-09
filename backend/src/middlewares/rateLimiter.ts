@@ -1,21 +1,32 @@
-import rateLimit from 'express-rate-limit';
+import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../utils/errors';
 
-export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 1000,
-  message: { error: 'Too many authentication attempts. Try again later.' },
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: { trustProxy: false },
-  keyGenerator: (req) => (req.headers['cf-connecting-ip'] as string) || (req.headers['x-forwarded-for'] as string) || req.ip || '127.0.0.1'
-});
+interface RateLimitRecord {
+  count: number;
+  resetTime: number;
+}
 
-export const apiLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  max: 2000,
-  message: { error: 'Too many requests. Try again later.' },
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: { trustProxy: false },
-  keyGenerator: (req) => (req.headers['cf-connecting-ip'] as string) || (req.headers['x-forwarded-for'] as string) || req.ip || '127.0.0.1'
-});
+const rateLimitStore = new Map<string, RateLimitRecord>();
+
+export const createRateLimiter = (maxRequests: number = 30, windowMs: number = 60 * 1000) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    const now = Date.now();
+
+    const record = rateLimitStore.get(ip);
+    if (!record || now > record.resetTime) {
+      rateLimitStore.set(ip, { count: 1, resetTime: now + windowMs });
+      return next();
+    }
+
+    if (record.count >= maxRequests) {
+      return next(new AppError('Too many requests, please try again later.', 429));
+    }
+
+    record.count += 1;
+    next();
+  };
+};
+
+export const authLimiter = createRateLimiter(15, 60 * 1000);
+export const apiLimiter = createRateLimiter(120, 60 * 1000);

@@ -1,7 +1,7 @@
 export interface KeyItem {
   id: string;
   key: string;
-  status: 'active' | 'expired' | 'revoked';
+  status: 'active' | 'expired' | 'revoked' | 'banned';
   hwid: string | null;
   duration: string;
   costTokens: number;
@@ -22,6 +22,8 @@ export interface UserItem {
   isBlocked: number;
   createdAt: string;
   createdBy?: string;
+  status?: string;
+  email?: string;
 }
 
 export interface SalesDataPoint {
@@ -30,7 +32,16 @@ export interface SalesDataPoint {
   revenueTokens: number;
 }
 
-export interface StatsOverview {
+export interface DashboardStats {
+  totalKeys: number;
+  activeKeys: number;
+  expiredKeys: number;
+  boundDevices: number;
+  totalResellers: number;
+  totalTokensSpent: number;
+}
+
+export interface StatsOverviewData {
   totalKeys: number;
   activeKeys: number;
   boundDevices: number;

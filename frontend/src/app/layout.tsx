@@ -1,19 +1,19 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "AXIOS KEY MANAGEMENT PANEL",
-  description: "Admin panel for Axios Mod Menu Key Authentication System",
+  title: 'AXIOS Executive License Control Center',
+  description: 'Enterprise Hardware Authentication & Reseller Licensing Portal',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className="antialiased selection:bg-purple-600 selection:text-white">
+      <body className="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-cyan-500 selection:text-white">
         {children}
       </body>
     </html>

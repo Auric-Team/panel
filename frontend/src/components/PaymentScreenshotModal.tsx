@@ -1,327 +1,337 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   X,
-  Image as ImageIcon,
-  Download,
+  FileImage,
   ExternalLink,
   ZoomIn,
   ZoomOut,
   RotateCw,
+  Maximize2,
+  Minimize2,
+  Download,
   RefreshCw,
-  Check,
-  Copy,
-  AlertCircle,
-  FileText,
+  Calendar,
+  User,
+  Coins,
+  Key,
+  Expand,
 } from 'lucide-react';
 import { KeyItem } from '@/types/key';
 
-interface PaymentScreenshotModalProps {
+export interface PaymentScreenshotModalProps {
   isOpen: boolean;
-  keyItem: KeyItem | null;
+  keyItem?: KeyItem | null;
+  imageSrc?: string | null;
+  imageTitle?: string;
   onClose: () => void;
 }
 
 export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
   isOpen,
   keyItem,
+  imageSrc,
+  imageTitle,
   onClose,
 }) => {
-  const [scale, setScale] = useState<number>(1);
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
-  const [copiedKey, setCopiedKey] = useState<boolean>(false);
-  const [imageError, setImageError] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [fitMode, setFitMode] = useState<'fit' | 'actual'>('fit');
 
-  // Close on Escape key
+  // Drag Pan state
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const activeSrc = imageSrc || keyItem?.paymentScreenshot || null;
+  const activeTitle = imageTitle || (keyItem ? `Key: ${keyItem.key}` : 'Payment Proof Screenshot');
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+      if (e.key === 'Escape' && isOpen) onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Reset viewport state when modal opens or keyItem changes
+  // Reset zoom, rotation & position when modal opens or source changes
   useEffect(() => {
     if (isOpen) {
-      setScale(1);
+      setZoomLevel(1);
       setRotation(0);
-      setImageError(false);
-      setIsLoading(true);
-      setCopiedKey(false);
+      setPosition({ x: 0, y: 0 });
+      setIsFullscreen(false);
+      setFitMode('fit');
     }
-  }, [isOpen, keyItem]);
+  }, [isOpen, activeSrc]);
 
-  if (!isOpen || !keyItem || !keyItem.paymentScreenshot) return null;
+  if (!isOpen || !activeSrc) return null;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.axioshacks.com';
-  const imageUrl = keyItem.paymentScreenshot.startsWith('/uploads')
-    ? `${baseUrl}${keyItem.paymentScreenshot}`
-    : keyItem.paymentScreenshot;
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(4, Math.round((prev + 0.25) * 100) / 100));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(0.4, Math.round((prev - 0.25) * 100) / 100));
 
-  const downloadImage = () => {
-    try {
-      const link = document.createElement('a');
-      link.href = imageUrl;
-      link.target = '_blank';
-      link.download = `payment-receipt-${keyItem.key}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (err) {
-      window.open(imageUrl, '_blank');
-    }
-  };
-
-  const copyKeyToClipboard = () => {
-    if (!keyItem.key) return;
-    const handleSuccess = () => {
-      setCopiedKey(true);
-      setTimeout(() => setCopiedKey(false), 2000);
-    };
-
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(keyItem.key)
-        .then(handleSuccess)
-        .catch(() => fallbackCopy(keyItem.key, handleSuccess));
-    } else {
-      fallbackCopy(keyItem.key, handleSuccess);
-    }
-  };
-
-  const fallbackCopy = (text: string, callback?: () => void) => {
-    try {
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      textArea.style.position = 'fixed';
-      textArea.style.left = '-999999px';
-      textArea.style.top = '-999999px';
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textArea);
-      if (successful && callback) callback();
-    } catch (err) {
-      console.error('Copy fallback failed:', err);
-    }
-  };
-
-  const handleZoomIn = () => setScale((prev) => Math.min(prev + 0.25, 3.0));
-  const handleZoomOut = () => setScale((prev) => Math.max(prev - 0.25, 0.5));
-  const handleRotateClockwise = () => setRotation((prev) => (prev + 90) % 360);
-  const handleResetControls = () => {
-    setScale(1);
+  const handleReset = () => {
+    setZoomLevel(1);
     setRotation(0);
+    setPosition({ x: 0, y: 0 });
+    setFitMode('fit');
+  };
+
+  const handleRotate = () => setRotation((prev) => (prev + 90) % 360);
+
+  const toggleFitMode = () => {
+    if (fitMode === 'fit') {
+      setFitMode('actual');
+      setZoomLevel(1.5);
+    } else {
+      setFitMode('fit');
+      setZoomLevel(1);
+      setPosition({ x: 0, y: 0 });
+    }
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      handleZoomIn();
+    } else {
+      handleZoomOut();
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Only left click drag
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleDownload = () => {
+    if (!activeSrc) return;
+    const a = document.createElement('a');
+    a.href = activeSrc;
+    a.download = keyItem ? `receipt-${keyItem.key}-${Date.now()}.jpg` : `axios_payment_proof_${Date.now()}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
-      <div className="relative w-full max-w-4xl bg-zinc-950 border border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-2xl max-h-[92vh] flex flex-col overflow-hidden">
-        {/* Close Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-5 right-5 z-20 text-zinc-400 hover:text-zinc-100 p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition"
-          aria-label="Close modal"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
-        {/* Header & Key Info Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-4 border-b border-zinc-800/80">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/90 backdrop-blur-2xl animate-in fade-in duration-200 font-mono text-xs">
+      <div
+        className={`relative w-full transition-all duration-300 bg-slate-900/95 border border-slate-800/90 rounded-3xl shadow-2xl flex flex-col overflow-hidden ${
+          isFullscreen ? 'max-w-[98vw] h-[96vh]' : 'max-w-4xl h-[90vh]'
+        }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800/80 bg-slate-950/70 shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-zinc-900 border border-zinc-800 rounded-xl text-zinc-300">
-              <ImageIcon className="w-5 h-5 text-zinc-300" />
+            <div className="p-2 rounded-xl bg-cyan-950/80 border border-cyan-800/50 text-cyan-400">
+              <FileImage className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-semibold text-zinc-100">Payment Receipt</h3>
-              <div className="flex items-center space-x-2 text-xs text-zinc-400 font-mono mt-0.5">
-                <span>License Key:</span>
-                <span className="text-zinc-200 font-medium flex items-center space-x-1">
-                  <span>{keyItem.key}</span>
-                  <button
-                    type="button"
-                    onClick={copyKeyToClipboard}
-                    className="text-zinc-500 hover:text-zinc-200 transition p-0.5"
-                    title="Copy Key"
-                  >
-                    {copiedKey ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
+              <h3 className="text-sm font-bold text-white tracking-wide">
+                High-Res Payment Receipt Lightbox
+              </h3>
+              <p className="text-[10px] text-slate-400 truncate max-w-md">
+                {activeTitle}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            {/* Download Button */}
+            <button
+              onClick={handleDownload}
+              className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 transition"
+              title="Download Image"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+
+            {/* Toggle Fullscreen Modal */}
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 transition"
+              title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen View'}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
+
+            {/* Close Modal (X) */}
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl bg-rose-950/50 border border-rose-800/60 text-rose-300 hover:bg-rose-900/80 hover:text-white transition"
+              title="Close Lightbox"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Metadata Details Strip (if keyItem exists) */}
+        {keyItem && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-5 py-2.5 bg-slate-950/40 border-b border-slate-800/60 text-[11px] shrink-0">
+            <div className="flex items-center space-x-2">
+              <Key className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <div className="truncate">
+                <span className="text-[9px] text-slate-500 uppercase block">License Key</span>
+                <span className="text-slate-200 font-semibold truncate block">{keyItem.key}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <div className="truncate">
+                <span className="text-[9px] text-slate-500 uppercase block">Issued By</span>
+                <span className="text-slate-200 font-medium block">
+                  {keyItem.createdByUsername || 'System'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Coins className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <div>
+                <span className="text-[9px] text-slate-500 uppercase block">Cost Tokens</span>
+                <span className="text-amber-400 font-bold block">
+                  {keyItem.costTokens || 0} Tokens
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <div>
+                <span className="text-[9px] text-slate-500 uppercase block">Timestamp</span>
+                <span className="text-slate-300 block">
+                  {keyItem.createdAt ? new Date(keyItem.createdAt).toLocaleString() : 'N/A'}
                 </span>
               </div>
             </div>
           </div>
+        )}
 
-          {/* Quick Actions */}
-          <div className="flex items-center space-x-2 self-start sm:self-auto font-mono text-xs">
-            <a
-              href={imageUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="p-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-zinc-100 hover:border-zinc-700 transition flex items-center space-x-1"
-              title="Open full image in new tab"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+        {/* Interactive Image Viewer Canvas Container */}
+        <div
+          ref={containerRef}
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          className="relative flex-1 bg-slate-950 border-b border-slate-800/80 overflow-hidden flex items-center justify-center p-2 select-none cursor-grab active:cursor-grabbing"
+        >
+          <div className="w-full h-full flex items-center justify-center">
+            <img
+              src={activeSrc}
+              alt="Payment Receipt Proof"
+              draggable={false}
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px) scale(${zoomLevel}) rotate(${rotation}deg)`,
+                transition: isDragging ? 'none' : 'transform 0.15s ease-out',
+                maxHeight: fitMode === 'fit' ? '100%' : 'none',
+                maxWidth: fitMode === 'fit' ? '100%' : 'none',
+              }}
+              className="object-contain rounded-xl shadow-2xl pointer-events-auto"
+            />
+          </div>
+
+          {/* Floating Controls Toolbar */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-2 px-4 py-2 rounded-2xl bg-slate-900/90 border border-slate-700/80 backdrop-blur-md shadow-2xl text-slate-200 z-20 font-mono text-xs">
+            {/* Fit / Actual Size Toggle */}
             <button
-              type="button"
-              onClick={downloadImage}
-              className="flex items-center space-x-1.5 bg-zinc-100 hover:bg-white text-zinc-950 font-semibold px-3.5 py-2 rounded-xl transition shadow-sm"
+              onClick={toggleFitMode}
+              className={`px-2.5 py-1 rounded-lg font-bold text-[10px] uppercase transition flex items-center space-x-1 border ${
+                fitMode === 'fit'
+                  ? 'bg-cyan-950 text-cyan-400 border-cyan-800/60'
+                  : 'bg-slate-800 text-slate-300 border-slate-700'
+              }`}
+              title="Toggle Auto Fit to Screen"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download</span>
+              <Expand className="w-3 h-3" />
+              <span>{fitMode === 'fit' ? 'Fit Screen' : '100% Size'}</span>
             </button>
-          </div>
-        </div>
 
-        {/* Metadata Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 bg-zinc-900/60 border border-zinc-800 rounded-xl p-3 mb-3 text-xs font-mono">
-          <div>
-            <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Duration</span>
-            <span className="text-zinc-200 font-medium">{keyItem.duration}</span>
-          </div>
-          <div>
-            <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Cost</span>
-            <span className="text-amber-400 font-bold">{keyItem.costTokens || 0} Tokens</span>
-          </div>
-          <div>
-            <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Created By</span>
-            <span className="text-zinc-200 font-medium">{keyItem.createdByUsername || 'System'}</span>
-          </div>
-          <div>
-            <span className="text-zinc-500 block text-[10px] uppercase font-semibold">Created Date</span>
-            <span className="text-zinc-300">{new Date(keyItem.createdAt).toLocaleDateString()}</span>
-          </div>
-        </div>
+            <div className="w-px h-4 bg-slate-700 mx-0.5" />
 
-        {/* Lightbox Viewport */}
-        <div className="relative flex-1 rounded-xl border border-zinc-800 bg-zinc-950 flex items-center justify-center p-4 min-h-[300px] max-h-[55vh] overflow-hidden select-none">
-          {/* Zoom & Rotation Controls Toolbar */}
-          <div className="absolute top-3 right-3 z-20 flex items-center space-x-1 bg-zinc-900/90 border border-zinc-800 p-1 rounded-xl shadow-lg text-xs font-mono">
-            {/* Zoom Out */}
+            {/* Zoom Out Button (-) */}
             <button
-              type="button"
               onClick={handleZoomOut}
-              disabled={scale <= 0.5}
-              className="p-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition"
-              title="Zoom Out"
+              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center space-x-1"
+              title="Zoom Out (-)"
             >
-              <ZoomOut className="w-3.5 h-3.5" />
+              <ZoomOut className="w-4 h-4" />
             </button>
 
-            {/* Scale % */}
-            <span className="px-1.5 text-zinc-400 min-w-[40px] text-center font-medium">
-              {Math.round(scale * 100)}%
+            <span className="text-cyan-400 font-semibold px-1.5 min-w-[45px] text-center">
+              {Math.round(zoomLevel * 100)}%
             </span>
 
-            {/* Zoom In */}
+            {/* Zoom In Button (+) */}
             <button
-              type="button"
               onClick={handleZoomIn}
-              disabled={scale >= 3.0}
-              className="p-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition"
-              title="Zoom In"
+              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center space-x-1"
+              title="Zoom In (+)"
             >
-              <ZoomIn className="w-3.5 h-3.5" />
+              <ZoomIn className="w-4 h-4" />
             </button>
 
-            <div className="w-px h-4 bg-zinc-800 mx-0.5" />
+            <div className="w-px h-4 bg-slate-700 mx-0.5" />
 
-            {/* Rotate */}
+            {/* 90-degree Rotation Button */}
             <button
-              type="button"
-              onClick={handleRotateClockwise}
-              className="p-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 transition"
+              onClick={handleRotate}
+              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center space-x-1"
               title="Rotate 90°"
             >
-              <RotateCw className="w-3.5 h-3.5" />
+              <RotateCw className="w-4 h-4" />
             </button>
 
-            {/* Reset */}
+            {/* Reset View Button */}
             <button
-              type="button"
-              onClick={handleResetControls}
-              className="p-1.5 rounded-lg text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 transition"
-              title="Reset Zoom & Rotation"
+              onClick={handleReset}
+              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center space-x-1"
+              title="Reset Zoom & Position"
             >
               <RefreshCw className="w-3.5 h-3.5" />
+              <span className="text-[10px]">Reset</span>
             </button>
           </div>
-
-          {/* Loading Indicator */}
-          {isLoading && !imageError && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 bg-zinc-950/80 z-10 font-mono">
-              <div className="w-6 h-6 border-2 border-zinc-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs text-zinc-400">Loading receipt...</span>
-            </div>
-          )}
-
-          {/* Error View */}
-          {imageError ? (
-            <div className="flex flex-col items-center justify-center text-center p-6 space-y-2.5 font-mono">
-              <div className="p-3 bg-zinc-900 border border-zinc-800 rounded-xl text-rose-400">
-                <AlertCircle className="w-6 h-6" />
-              </div>
-              <h4 className="text-sm font-semibold text-zinc-200">
-                Unable to load image
-              </h4>
-              <p className="text-xs text-zinc-400 max-w-xs">
-                The receipt file could not be displayed directly.
-              </p>
-              <a
-                href={imageUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-1 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs text-zinc-300 flex items-center space-x-1.5 transition"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>Open image link</span>
-              </a>
-            </div>
-          ) : (
-            /* Image display container */
-            <div className="w-full h-full flex items-center justify-center overflow-auto p-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imageUrl}
-                alt={`Payment receipt screenshot for key ${keyItem.key}`}
-                onLoad={() => setIsLoading(false)}
-                onError={() => {
-                  setIsLoading(false);
-                  setImageError(true);
-                }}
-                style={{
-                  transform: `scale(${scale}) rotate(${rotation}deg)`,
-                  transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-xl origin-center"
-              />
-            </div>
-          )}
         </div>
 
-        {/* Footer Note */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-800/80 text-xs font-mono text-zinc-400">
-          <div className="flex items-center space-x-1.5">
-            <FileText className="w-3.5 h-3.5 text-zinc-500" />
-            <span className="truncate max-w-[300px]">{keyItem.note ? `Note: ${keyItem.note}` : 'Payment Screenshot Proof'}</span>
-          </div>
+        {/* Footer Actions */}
+        <div className="flex items-center justify-between px-5 py-3 bg-slate-950/80 shrink-0">
+          <a
+            href={activeSrc}
+            target="_blank"
+            rel="noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 text-xs font-semibold flex items-center space-x-1.5"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Open Original Image Direct</span>
+          </a>
 
           <button
-            type="button"
             onClick={onClose}
-            className="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold px-4 py-2 rounded-xl border border-zinc-800 transition"
+            className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-5 py-2 rounded-xl transition border border-slate-700/80 shadow-sm"
           >
-            Close
+            Close Viewer
           </button>
         </div>
       </div>
