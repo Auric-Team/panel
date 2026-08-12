@@ -112,4 +112,53 @@ export class AuthService {
       },
     };
   }
+
+  static register(username?: string, password?: string, deviceFingerprint?: string) {
+    const cleanUsername = username?.trim();
+    const cleanPassword = password?.trim();
+
+    if (!cleanUsername || !cleanPassword) {
+      throw new AppError('Username and password are required for registration.', 400);
+    }
+
+    if (cleanUsername.length < 3) {
+      throw new AppError('Username must be at least 3 characters.', 400);
+    }
+
+    const existingUser = db.prepare('SELECT id FROM users WHERE LOWER(username) = LOWER(?)').get(cleanUsername);
+    if (existingUser) {
+      throw new AppError('Username is already registered. Please choose another username or log in.', 400);
+    }
+
+    const userId = `usr_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    const now = new Date().toISOString();
+    const defaultRole = 'reseller';
+
+    db.prepare(`
+      INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
+      VALUES (?, ?, ?, ?, 'self_registration', null, 0, 0, 0, ?)
+    `).run(userId, cleanUsername, cleanPassword, defaultRole, now);
+
+    const token = jwt.sign(
+      { id: userId, username: cleanUsername, role: defaultRole },
+      ENV.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    LogsService.logAction(userId, cleanUsername, 'USER_REGISTERED', `New user registered successfully (${deviceFingerprint || 'Client device'})`);
+
+    return {
+      success: true,
+      message: 'Registration complete. Account created successfully.',
+      token,
+      role: defaultRole,
+      user: {
+        id: userId,
+        username: cleanUsername,
+        role: defaultRole,
+        tokens: 0,
+        credits: 0,
+      },
+    };
+  }
 }

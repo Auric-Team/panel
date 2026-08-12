@@ -6,8 +6,9 @@ import analyticsRoutes from './analytics.routes';
 import logsRoutes from './logs.routes';
 import deployRoutes from './deploy.routes';
 import { verifyKey } from '../controllers/keys.controller';
-import { login } from '../controllers/auth.controller';
+import { login, register } from '../controllers/auth.controller';
 import { getDeployStatus, downloadBinary } from '../controllers/deploy.controller';
+import { authenticate } from '../middlewares/auth.middleware';
 import { apiLimiter } from '../middlewares/rateLimiter';
 
 const router = Router();
@@ -19,9 +20,18 @@ router.use('/analytics', analyticsRoutes);
 router.use('/logs', logsRoutes);
 router.use('/deploy', deployRoutes);
 
-// High-level API Aliases for Injector & Direct Clients
+// High-level API Aliases for Injector & Direct Mobile Clients
 router.post('/verify', apiLimiter, verifyKey);
+router.get('/verify', authenticate, (req: any, res) => {
+  res.json({
+    success: true,
+    username: req.user?.username,
+    role: req.user?.role || 'user',
+  });
+});
+
 router.post('/login', apiLimiter, login);
+router.post('/register', apiLimiter, register);
 router.get('/status', getDeployStatus);
 router.get(['/download/libil2cpp', '/download/libil2cpp.so'], downloadBinary);
 

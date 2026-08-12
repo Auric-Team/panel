@@ -20,3 +20,13 @@ export const verify2FA = (req: Request, res: Response, next: NextFunction) => {
     next(err);
   }
 };
+
+export const register = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { username, password, deviceFingerprint } = req.body;
+    const result = AuthService.register(username, password, deviceFingerprint);
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};

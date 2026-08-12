@@ -1,5 +1,172 @@
 [
   {
+    "id": "de742b6d-62ec-48f9-9022-71cb30aa82cf",
+    "userId": "usr_1786556276949_130",
+    "username": "mobile_test_1786556276394",
+    "action": "USER_REGISTERED",
+    "details": "New user registered successfully (Client device)",
+    "metadata": {},
+    "timestamp": "2026-08-12T17:37:56.959Z"
+  },
+  {
+    "id": "ba2597fa-7787-4839-9090-31b1ad0c2d82",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "USER_DELETED",
+    "details": "Deleted RESELLER partner account: @reseller_test_1786556240342 (ID: ecce6acf-ac68-4cf6-936a-0f08cf32a455)",
+    "metadata": {
+      "targetUser": "reseller_test_1786556240342",
+      "role": "reseller"
+    },
+    "timestamp": "2026-08-12T17:37:21.099Z"
+  },
+  {
+    "id": "1b6e59ea-e68a-4e8a-bf20-01bdc7eb4048",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "KEY_DELETED",
+    "details": "Deleted / revoked key: AXIOS-TAWY-8V3B-TDZT (Original Creator: reseller_test_1786556240342)",
+    "metadata": {
+      "key": "AXIOS-TAWY-8V3B-TDZT",
+      "creator": "reseller_test_1786556240342"
+    },
+    "timestamp": "2026-08-12T17:37:21.063Z"
+  },
+  {
+    "id": "c67f7fc0-b869-48fa-a4ec-1479f43b560f",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_BOUND",
+    "details": "Key AXIOS-TAWY-8V3B-TDZT successfully activated and bound to HWID: NEW-HWID-BOUND-1786556240943",
+    "metadata": {
+      "key": "AXIOS-TAWY-8V3B-TDZT",
+      "hwid": "NEW-HWID-BOUND-1786556240943"
+    },
+    "timestamp": "2026-08-12T17:37:20.964Z"
+  },
+  {
+    "id": "dfeac39b-0e30-4088-968a-a7b453c876f1",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "KEY_HWID_RESET",
+    "details": "Unbound HWID for key AXIOS-TAWY-8V3B-TDZT (Previously bound to: TEST-HWID-1786556240663)",
+    "metadata": {
+      "key": "AXIOS-TAWY-8V3B-TDZT",
+      "oldHwid": "TEST-HWID-1786556240663"
+    },
+    "timestamp": "2026-08-12T17:37:20.892Z"
+  },
+  {
+    "id": "aa78c8b2-dc91-4c4a-9462-eda4efb56612",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_MISMATCH",
+    "details": "Key AXIOS-TAWY-8V3B-TDZT HWID Mismatch! Bound to: TEST-HWID-1786556240663, Attempted from: DIFFERENT-HWID-9999",
+    "metadata": {
+      "key": "AXIOS-TAWY-8V3B-TDZT",
+      "boundHwid": "TEST-HWID-1786556240663",
+      "attemptedHwid": "DIFFERENT-HWID-9999"
+    },
+    "timestamp": "2026-08-12T17:37:20.827Z"
+  },
+  {
+    "id": "dff7c546-3807-4ef5-954a-2b31af691d46",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-TAWY-8V3B-TDZT authenticated for bound HWID: TEST-HWID-1786556240663",
+    "metadata": {
+      "key": "AXIOS-TAWY-8V3B-TDZT",
+      "hwid": "TEST-HWID-1786556240663"
+    },
+    "timestamp": "2026-08-12T17:37:20.750Z"
+  },
+  {
+    "id": "2a67005d-0147-4e30-9929-01e39d2057a6",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_BOUND",
+    "details": "Key AXIOS-TAWY-8V3B-TDZT successfully activated and bound to HWID: TEST-HWID-1786556240663",
+    "metadata": {
+      "key": "AXIOS-TAWY-8V3B-TDZT",
+      "hwid": "TEST-HWID-1786556240663"
+    },
+    "timestamp": "2026-08-12T17:37:20.677Z"
+  },
+  {
+    "id": "661b6f0c-91aa-4906-b12c-d4ea8ba9288f",
+    "userId": "ecce6acf-ac68-4cf6-936a-0f08cf32a455",
+    "username": "reseller_test_1786556240342",
+    "action": "KEYS_GENERATED",
+    "details": "Issued 1 Key(s) [AXIOS-A7FZ-5WRJ-FI5V] • Duration: 4 Days • Cost: 40 Tokens • Note: \"Automated Custom Days Test Key\"",
+    "metadata": {
+      "count": 1,
+      "costTokens": 40,
+      "isMasterKey": false,
+      "note": "Automated Custom Days Test Key"
+    },
+    "timestamp": "2026-08-12T17:37:20.582Z"
+  },
+  {
+    "id": "be9701f6-afab-4303-9f98-69fba4e52229",
+    "userId": "ecce6acf-ac68-4cf6-936a-0f08cf32a455",
+    "username": "reseller_test_1786556240342",
+    "action": "KEYS_GENERATED",
+    "details": "Issued 2 Key(s) [2 Keys (First: AXIOS-TAWY-8V3B-TDZT)] • Duration: 7 Days • Cost: 140 Tokens • Note: \"Automated Test Key\"",
+    "metadata": {
+      "count": 2,
+      "costTokens": 140,
+      "isMasterKey": false,
+      "note": "Automated Test Key"
+    },
+    "timestamp": "2026-08-12T17:37:20.528Z"
+  },
+  {
+    "id": "7ebeee9e-caa9-4773-a998-c06b12dcf8d3",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "TOKENS_UPDATED",
+    "details": "Added 200 tokens for reseller @reseller_test_1786556240342. New Token Balance: 700",
+    "metadata": {
+      "targetUser": "reseller_test_1786556240342",
+      "amount": 200,
+      "action": "add",
+      "newBalance": 700
+    },
+    "timestamp": "2026-08-12T17:37:20.456Z"
+  },
+  {
+    "id": "19184184-cff3-4e8c-8369-5cce222725c9",
+    "userId": "ecce6acf-ac68-4cf6-936a-0f08cf32a455",
+    "username": "reseller_test_1786556240342",
+    "action": "LOGIN_SUCCESS",
+    "details": "User logged in successfully",
+    "metadata": {},
+    "timestamp": "2026-08-12T17:37:20.401Z"
+  },
+  {
+    "id": "671b74cb-447c-44e5-a015-cecf9b51ff75",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "USER_CREATED",
+    "details": "Provisioned new RESELLER account: @reseller_test_1786556240342 (Initial Tokens: 500)",
+    "metadata": {
+      "targetUser": "reseller_test_1786556240342",
+      "role": "reseller",
+      "initialTokens": 500
+    },
+    "timestamp": "2026-08-12T17:37:20.360Z"
+  },
+  {
+    "id": "672f86bf-b5a6-4973-ae69-56e8b0e333b3",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "LOGIN_SUCCESS",
+    "details": "User verified 2FA successfully",
+    "metadata": {},
+    "timestamp": "2026-08-12T17:37:20.265Z"
+  },
+  {
     "id": "0781ea53-2d9a-4c6d-a93c-34d8a29cfddf",
     "userId": "owner-root-id",
     "username": "owner",
