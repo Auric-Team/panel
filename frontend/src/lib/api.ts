@@ -414,4 +414,23 @@ export const api = {
   deleteUser: async (token: string, userId: string) => {
     return await deleteUserApi(userId, token);
   },
+
+  getPayloadStatus: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/status`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Failed to fetch payload status');
+    return await res.json();
+  },
+
+  publishPayload: async (token: string, formData: FormData) => {
+    const res = await fetch(`${API_BASE_URL}/api/deploy/upload`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to publish libil2cpp.so');
+    return data;
+  },
 };

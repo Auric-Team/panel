@@ -1,5 +1,163 @@
 [
   {
+    "id": "0781ea53-2d9a-4c6d-a93c-34d8a29cfddf",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "USER_DELETED",
+    "details": "Deleted RESELLER partner account: @reseller_test_1786552532161 (ID: e340ffe9-2f6e-46ec-93ca-4addf1279e32)",
+    "metadata": {
+      "targetUser": "reseller_test_1786552532161",
+      "role": "reseller"
+    },
+    "timestamp": "2026-08-12T16:35:32.610Z"
+  },
+  {
+    "id": "2eaa248e-acf8-4836-92a9-7f345c33636f",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "KEY_DELETED",
+    "details": "Deleted / revoked key: AXIOS-TE5O-4ZGE-ZANZ (Original Creator: reseller_test_1786552532161)",
+    "metadata": {
+      "key": "AXIOS-TE5O-4ZGE-ZANZ",
+      "creator": "reseller_test_1786552532161"
+    },
+    "timestamp": "2026-08-12T16:35:32.583Z"
+  },
+  {
+    "id": "af844dda-3c1e-40db-baab-bc21f7eba057",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_BOUND",
+    "details": "Key AXIOS-TE5O-4ZGE-ZANZ successfully activated and bound to HWID: NEW-HWID-BOUND-1786552532505",
+    "metadata": {
+      "key": "AXIOS-TE5O-4ZGE-ZANZ",
+      "hwid": "NEW-HWID-BOUND-1786552532505"
+    },
+    "timestamp": "2026-08-12T16:35:32.516Z"
+  },
+  {
+    "id": "98c1f987-b2ed-4481-922d-28381e37c40c",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "KEY_HWID_RESET",
+    "details": "Unbound HWID for key AXIOS-TE5O-4ZGE-ZANZ (Previously bound to: TEST-HWID-1786552532353)",
+    "metadata": {
+      "key": "AXIOS-TE5O-4ZGE-ZANZ",
+      "oldHwid": "TEST-HWID-1786552532353"
+    },
+    "timestamp": "2026-08-12T16:35:32.478Z"
+  },
+  {
+    "id": "cfb26890-d88e-4756-b9b3-135b937d3913",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_MISMATCH",
+    "details": "Key AXIOS-TE5O-4ZGE-ZANZ HWID Mismatch! Bound to: TEST-HWID-1786552532353, Attempted from: DIFFERENT-HWID-9999",
+    "metadata": {
+      "key": "AXIOS-TE5O-4ZGE-ZANZ",
+      "boundHwid": "TEST-HWID-1786552532353",
+      "attemptedHwid": "DIFFERENT-HWID-9999"
+    },
+    "timestamp": "2026-08-12T16:35:32.433Z"
+  },
+  {
+    "id": "74a9ee2a-6f11-4ea2-96f1-d57b15d1cabe",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-TE5O-4ZGE-ZANZ authenticated for bound HWID: TEST-HWID-1786552532353",
+    "metadata": {
+      "key": "AXIOS-TE5O-4ZGE-ZANZ",
+      "hwid": "TEST-HWID-1786552532353"
+    },
+    "timestamp": "2026-08-12T16:35:32.405Z"
+  },
+  {
+    "id": "d7c3a6d0-f748-4378-9358-38d506f08cfb",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_HWID_BOUND",
+    "details": "Key AXIOS-TE5O-4ZGE-ZANZ successfully activated and bound to HWID: TEST-HWID-1786552532353",
+    "metadata": {
+      "key": "AXIOS-TE5O-4ZGE-ZANZ",
+      "hwid": "TEST-HWID-1786552532353"
+    },
+    "timestamp": "2026-08-12T16:35:32.369Z"
+  },
+  {
+    "id": "9f11ad0f-b8be-4107-a84b-acffd4bd282f",
+    "userId": "e340ffe9-2f6e-46ec-93ca-4addf1279e32",
+    "username": "reseller_test_1786552532161",
+    "action": "KEYS_GENERATED",
+    "details": "Issued 1 Key(s) [AXIOS-AR3K-X9QK-XIQA] • Duration: 4 Days • Cost: 40 Tokens • Note: \"Automated Custom Days Test Key\"",
+    "metadata": {
+      "count": 1,
+      "costTokens": 40,
+      "isMasterKey": false,
+      "note": "Automated Custom Days Test Key"
+    },
+    "timestamp": "2026-08-12T16:35:32.335Z"
+  },
+  {
+    "id": "585bf8d3-904d-4cc3-8580-b9176ee0ec48",
+    "userId": "e340ffe9-2f6e-46ec-93ca-4addf1279e32",
+    "username": "reseller_test_1786552532161",
+    "action": "KEYS_GENERATED",
+    "details": "Issued 2 Key(s) [2 Keys (First: AXIOS-TE5O-4ZGE-ZANZ)] • Duration: 7 Days • Cost: 140 Tokens • Note: \"Automated Test Key\"",
+    "metadata": {
+      "count": 2,
+      "costTokens": 140,
+      "isMasterKey": false,
+      "note": "Automated Test Key"
+    },
+    "timestamp": "2026-08-12T16:35:32.294Z"
+  },
+  {
+    "id": "ff869d17-7ccf-40ec-b41b-9334e4b8f9ee",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "TOKENS_UPDATED",
+    "details": "Added 200 tokens for reseller @reseller_test_1786552532161. New Token Balance: 700",
+    "metadata": {
+      "targetUser": "reseller_test_1786552532161",
+      "amount": 200,
+      "action": "add",
+      "newBalance": 700
+    },
+    "timestamp": "2026-08-12T16:35:32.261Z"
+  },
+  {
+    "id": "348c7a9d-a494-40a3-925d-44cf4ded12da",
+    "userId": "e340ffe9-2f6e-46ec-93ca-4addf1279e32",
+    "username": "reseller_test_1786552532161",
+    "action": "LOGIN_SUCCESS",
+    "details": "User logged in successfully",
+    "metadata": {},
+    "timestamp": "2026-08-12T16:35:32.215Z"
+  },
+  {
+    "id": "9f55d1a6-99e9-47c1-8945-908fbf9f1d53",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "USER_CREATED",
+    "details": "Provisioned new RESELLER account: @reseller_test_1786552532161 (Initial Tokens: 500)",
+    "metadata": {
+      "targetUser": "reseller_test_1786552532161",
+      "role": "reseller",
+      "initialTokens": 500
+    },
+    "timestamp": "2026-08-12T16:35:32.182Z"
+  },
+  {
+    "id": "f3712db1-8edd-437c-b336-1ec07e20385c",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "LOGIN_SUCCESS",
+    "details": "User verified 2FA successfully",
+    "metadata": {},
+    "timestamp": "2026-08-12T16:35:32.126Z"
+  },
+  {
     "id": "353bb01c-26ba-402b-9186-76ba87a67216",
     "userId": "system",
     "username": "Client Device",

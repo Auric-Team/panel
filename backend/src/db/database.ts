@@ -52,6 +52,21 @@ export function initDatabase() {
       details TEXT,
       timestamp TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS payload_meta (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      version TEXT NOT NULL DEFAULT '1.0.0',
+      versionCode INTEGER NOT NULL DEFAULT 100,
+      changelog TEXT,
+      size INTEGER DEFAULT 0,
+      updatedAt TEXT NOT NULL,
+      updatedBy TEXT
+    );
+  `);
+
+  sqliteDb.exec(`
+    INSERT OR IGNORE INTO payload_meta (id, version, versionCode, changelog, size, updatedAt, updatedBy)
+    VALUES (1, '1.0.0', 100, 'Initial libil2cpp release', 0, CURRENT_TIMESTAMP, 'System');
   `);
 
   const columnsToAdd = [

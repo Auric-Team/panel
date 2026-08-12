@@ -18,7 +18,9 @@ export interface KeyRecord {
 
 export interface VerifyKeyPayload {
   key: string;
-  hwid: string;
+  hwid?: string;
+  deviceFingerprint?: string;
+  username?: string;
   timestamp?: number | string;
   signature?: string;
   hash?: string;

@@ -14,16 +14,17 @@ import { ResellerDashboardModal } from '@/components/ResellerDashboardModal';
 import { PaymentScreenshotModal } from '@/components/PaymentScreenshotModal';
 import { DialPad2FA } from '@/components/DialPad2FA';
 import { AuditLogsTable, AuditLogItem } from '@/components/AuditLogsTable';
+import { PayloadManager } from '@/components/PayloadManager';
 import { api } from '@/lib/api';
 import { UserItem, KeyItem, DashboardStats, SalesDataPoint } from '@/types/key';
-import { LayoutDashboard, Key, Users, Activity, Lock, RefreshCw, Sparkles, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Key, Users, Activity, Lock, RefreshCw, Sparkles, ShieldCheck, FileCode2 } from 'lucide-react';
 
 export default function Home() {
   const [user, setUser] = useState<UserItem | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'keys' | 'resellers' | 'audit'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'keys' | 'resellers' | 'payload' | 'audit'>('overview');
 
   // Auth State
   const [loginUsername, setLoginUsername] = useState('');
@@ -447,6 +448,25 @@ export default function Home() {
             </button>
           )}
 
+          {(user?.role === 'owner' || user?.role === 'manager') && (
+            <button
+              onClick={() => setActiveTab('payload')}
+              className={`flex items-center space-x-2.5 px-5 py-3 rounded-2xl font-bold transition-all duration-200 text-xs whitespace-nowrap ${
+                activeTab === 'payload'
+                  ? 'bg-slate-800/90 text-cyan-400 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+              }`}
+            >
+              <FileCode2 className="w-4 h-4 text-cyan-400" />
+              <span>📦 libil2cpp.so Publisher</span>
+              <span className={`px-2 py-0.5 text-[9px] rounded-full font-mono font-extrabold ${
+                activeTab === 'payload' ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' : 'bg-slate-950 text-slate-400 border border-slate-800'
+              }`}>
+                PUBLISH
+              </span>
+            </button>
+          )}
+
           <button
             onClick={() => setActiveTab('audit')}
             className={`flex items-center space-x-2.5 px-5 py-3 rounded-2xl font-bold transition-all duration-200 text-xs whitespace-nowrap ${
@@ -507,6 +527,13 @@ export default function Home() {
               onOpenTokensModal={(reseller) => setTokenModalUser(reseller)}
               onOpenDashboardModal={(reseller) => setResellerDashboardUser(reseller)}
             />
+          </div>
+        )}
+
+        {/* Tab 4: Payload & libil2cpp.so Publisher */}
+        {activeTab === 'payload' && token && (user?.role === 'owner' || user?.role === 'manager') && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <PayloadManager token={token} userRole={user.role} />
           </div>
         )}
 

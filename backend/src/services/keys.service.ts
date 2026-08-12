@@ -7,13 +7,13 @@ import { AuthUserPayload } from '../types/common';
 
 export class KeysService {
   static verifyKey(payload: VerifyKeyPayload) {
-    const { key, hwid, timestamp, signature, hash } = payload;
+    const { key, hwid, deviceFingerprint, timestamp, signature, hash } = payload;
     const reqKey = key?.trim();
-    const reqHwid = hwid?.trim();
+    const reqHwid = (hwid || deviceFingerprint || 'GENERIC-DEVICE').trim();
     const sig = signature || hash;
 
-    if (!reqKey || !reqHwid) {
-      throw new AppError('Key and HWID are required', 400);
+    if (!reqKey) {
+      throw new AppError('Activation key is required', 400);
     }
 
     if (timestamp && sig) {
@@ -53,15 +53,19 @@ export class KeysService {
       throw new AppError('Key has been revoked or banned', 403);
     }
 
+    const defaultTargetGame = 'com.herogame.gplay.lastdayrulessurvival';
+
     if (keyItem.isMasterKey === 1) {
       if (!keyItem.activatedAt) {
         db.prepare('UPDATE keys SET activatedAt = ? WHERE id = ?').run(now.toISOString(), keyItem.id);
       }
       LogsService.logAction('system', 'Client Device', 'MASTER_KEY_VERIFIED', `Master Key ${keyItem.key} authenticated for HWID: ${reqHwid} (Bypasses HWID binding)`, { key: keyItem.key, hwid: reqHwid });
       return {
+        success: true,
         status: 'authenticated',
         message: 'Master key authenticated (Unlimited devices)',
         expiresAt: keyItem.expiresAt,
+        targetGame: defaultTargetGame,
         isMasterKey: true,
       };
     }
@@ -70,18 +74,22 @@ export class KeysService {
       db.prepare('UPDATE keys SET hwid = ?, activatedAt = ? WHERE id = ?').run(reqHwid, now.toISOString(), keyItem.id);
       LogsService.logAction('system', 'Client Device', 'KEY_HWID_BOUND', `Key ${keyItem.key} successfully activated and bound to HWID: ${reqHwid}`, { key: keyItem.key, hwid: reqHwid });
       return {
+        success: true,
         status: 'authenticated',
         message: 'Key successfully activated and bound to device',
         expiresAt: keyItem.expiresAt,
+        targetGame: defaultTargetGame,
       };
     }
 
     if (keyItem.hwid === reqHwid) {
       LogsService.logAction('system', 'Client Device', 'KEY_VERIFIED', `Key ${keyItem.key} authenticated for bound HWID: ${reqHwid}`, { key: keyItem.key, hwid: reqHwid });
       return {
+        success: true,
         status: 'authenticated',
         message: 'Key authenticated',
         expiresAt: keyItem.expiresAt,
+        targetGame: defaultTargetGame,
       };
     } else {
       LogsService.logAction('system', 'Client Device', 'KEY_HWID_MISMATCH', `Key ${keyItem.key} HWID Mismatch! Bound to: ${keyItem.hwid}, Attempted from: ${reqHwid}`, { key: keyItem.key, boundHwid: keyItem.hwid, attemptedHwid: reqHwid });
