@@ -91,6 +91,8 @@ export class KeysService {
 
   static getKeys(user: AuthUserPayload): KeyRecord[] {
     const { role, id, username } = user;
+    const nowIso = new Date().toISOString();
+    db.prepare("UPDATE keys SET status = 'expired' WHERE status = 'active' AND expiresAt != 'never' AND expiresAt <= ?").run(nowIso);
 
     if (role === 'owner') {
       return db.prepare('SELECT * FROM keys ORDER BY createdAt DESC').all() as KeyRecord[];

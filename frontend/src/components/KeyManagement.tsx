@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { UserItem, KeyItem } from '@/types/key';
 import { PaymentScreenshotModal } from '@/components/PaymentScreenshotModal';
+import { ExpirationProgressBar } from '@/components/ExpirationProgressBar';
 
 interface KeyManagementProps {
   user: UserItem | null;
@@ -64,7 +65,7 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
 
   // Table & Tool State
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'claimed' | 'revoked' | 'master'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'expired' | 'claimed' | 'revoked' | 'master'>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -226,6 +227,7 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
 
   // Filter keys for table display
   const filteredKeys = useMemo(() => {
+    const now = new Date();
     return keys.filter((k) => {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
@@ -234,9 +236,12 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
         (k.note && k.note.toLowerCase().includes(q)) ||
         (k.hwid && k.hwid.toLowerCase().includes(q));
 
+      const isExpired = k.status === 'expired' || Boolean(k.expiresAt && k.expiresAt !== 'never' && new Date(k.expiresAt) <= now);
+
       let matchesStatus = true;
-      if (statusFilter === 'active') matchesStatus = k.status === 'active' && !k.hwid;
-      else if (statusFilter === 'claimed') matchesStatus = Boolean(k.hwid);
+      if (statusFilter === 'active') matchesStatus = k.status === 'active' && !isExpired && !k.hwid;
+      else if (statusFilter === 'expired') matchesStatus = isExpired;
+      else if (statusFilter === 'claimed') matchesStatus = Boolean(k.hwid) && !isExpired;
       else if (statusFilter === 'revoked') matchesStatus = k.status === 'revoked' || k.status === 'banned';
       else if (statusFilter === 'master') matchesStatus = Boolean(k.isMasterKey);
 
@@ -631,7 +636,7 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
           <div className="flex flex-wrap items-center gap-2.5">
             {/* Status Filter Buttons */}
             <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-2xl border border-slate-800">
-              {(['all', 'active', 'claimed', 'revoked', 'master'] as const).map((st) => (
+              {(['all', 'active', 'expired', 'claimed', 'revoked', 'master'] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
@@ -704,6 +709,7 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
                 </tr>
               ) : (
                 filteredKeys.map((k) => {
+                  const isExpired = k.status === 'expired' || (k.expiresAt && k.expiresAt !== 'never' && new Date(k.expiresAt) <= new Date());
                   const isClaimed = Boolean(k.hwid);
                   const isRevoked = k.status === 'revoked' || k.status === 'banned';
 
@@ -748,16 +754,25 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
                         </span>
                       </td>
 
-                      {/* Duration & Expiry */}
-                      <td className="p-3.5">
-                        <span className="text-white font-medium block">{k.duration || 'Custom'}</span>
-                        {!k.expiresAt || k.expiresAt === 'never' ? (
-                          <span className="text-[10px] text-emerald-400 font-bold block">Lifetime / Never</span>
-                        ) : (
-                          <span className="text-[10px] text-slate-400 block">
-                            {new Date(k.expiresAt).toLocaleDateString()}
-                          </span>
-                        )}
+                      {/* Duration & Expiry + Horizontal Fill Bar & Timer */}
+                      <td className="p-3.5 min-w-[220px]">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between text-xs font-semibold">
+                            <span className="text-white">{k.duration || 'Custom'}</span>
+                            {!k.expiresAt || k.expiresAt === 'never' ? (
+                              <span className="text-[10px] text-emerald-400 font-bold">Lifetime</span>
+                            ) : (
+                              <span className="text-[10px] text-slate-400">
+                                {new Date(k.expiresAt).toLocaleDateString()}
+                              </span>
+                            )}
+                          </div>
+                          <ExpirationProgressBar
+                            createdAt={k.createdAt}
+                            expiresAt={k.expiresAt}
+                            status={k.status}
+                          />
+                        </div>
                       </td>
 
                       {/* Cost Tokens */}
@@ -771,14 +786,14 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
                           className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase ${
                             isRevoked
                               ? 'bg-rose-950/90 text-rose-400 border border-rose-800/80'
+                              : isExpired
+                              ? 'bg-amber-950/90 text-amber-400 border border-amber-800/80 shadow-[0_0_10px_rgba(245,158,11,0.3)] animate-pulse'
                               : isClaimed
                               ? 'bg-cyan-950/90 text-cyan-400 border border-cyan-800/80'
-                              : k.status === 'expired'
-                              ? 'bg-amber-950/90 text-amber-400 border border-amber-800/80'
                               : 'bg-emerald-950/90 text-emerald-400 border border-emerald-800/80'
                           }`}
                         >
-                          {isRevoked ? 'Revoked' : isClaimed ? 'Claimed' : k.status}
+                          {isRevoked ? 'Revoked' : isExpired ? 'Expired' : isClaimed ? 'Claimed' : 'Active'}
                         </span>
                       </td>
 

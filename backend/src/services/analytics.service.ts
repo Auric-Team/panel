@@ -6,6 +6,9 @@ export class AnalyticsService {
   static getAnalytics(user: AuthUserPayload) {
     const { role, id } = user;
 
+    const nowIso = new Date().toISOString();
+    db.prepare("UPDATE keys SET status = 'expired' WHERE status = 'active' AND expiresAt != 'never' AND expiresAt <= ?").run(nowIso);
+
     let totalKeys = 0;
     let activeKeys = 0;
     let expiredKeys = 0;

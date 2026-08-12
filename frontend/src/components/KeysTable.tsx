@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Copy, Check, RotateCcw, Trash2, FileImage, ShieldCheck, Clock, Sparkles, Download, Filter } from 'lucide-react';
 import { KeyItem } from '@/types/key';
+import { ExpirationProgressBar } from '@/components/ExpirationProgressBar';
 
 interface KeysTableProps {
   keys: KeyItem[];
@@ -22,6 +23,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const filteredKeys = useMemo(() => {
+    const now = new Date();
     return keys.filter((k) => {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
@@ -30,10 +32,12 @@ export const KeysTable: React.FC<KeysTableProps> = ({
         (k.note && k.note.toLowerCase().includes(q)) ||
         (k.hwid && k.hwid.toLowerCase().includes(q));
 
+      const isExpired = k.status === 'expired' || Boolean(k.expiresAt && k.expiresAt !== 'never' && new Date(k.expiresAt) <= now);
+
       let matchesStatus = true;
-      if (statusFilter === 'active') matchesStatus = k.status === 'active';
-      else if (statusFilter === 'expired') matchesStatus = k.status === 'expired';
-      else if (statusFilter === 'revoked') matchesStatus = k.status === 'revoked';
+      if (statusFilter === 'active') matchesStatus = k.status === 'active' && !isExpired && !k.hwid;
+      else if (statusFilter === 'expired') matchesStatus = isExpired;
+      else if (statusFilter === 'revoked') matchesStatus = k.status === 'revoked' || k.status === 'banned';
       else if (statusFilter === 'master') matchesStatus = Boolean(k.isMasterKey);
 
       return matchesSearch && matchesStatus;
@@ -147,78 +151,93 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                 </td>
               </tr>
             ) : (
-              filteredKeys.map((k) => (
-                <tr key={k.id} className="hover:bg-slate-800/40 transition">
-                  {/* Key String & Copy & Note */}
-                  <td className="p-3.5 font-bold text-white">
-                    <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
-                        {k.isMasterKey ? (
-                          <span className="p-1 rounded-lg bg-amber-950/80 text-amber-400 border border-amber-800/60" title="Master Key">
-                            <Sparkles className="w-3.5 h-3.5" />
-                          </span>
-                        ) : null}
-                        <span className="truncate max-w-[200px]" title={k.key}>{k.key}</span>
-                        <button
-                          onClick={() => copyToClipboard(k.key, k.id)}
-                          className="text-slate-400 hover:text-white p-1 rounded-lg transition"
-                          title="Copy Key"
-                        >
-                          {copiedId === k.id ? (
-                            <Check className="w-4 h-4 text-emerald-400" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                      {k.note ? (
-                        <div className="text-[10px] font-normal text-cyan-400/90 flex items-center space-x-1">
-                          <span className="px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-800/50 text-[10px] text-cyan-300 font-semibold truncate max-w-[220px]" title={k.note}>
-                            Note: {k.note}
-                          </span>
+              filteredKeys.map((k) => {
+                const isExpired = k.status === 'expired' || (k.expiresAt && k.expiresAt !== 'never' && new Date(k.expiresAt) <= new Date());
+                const isRevoked = k.status === 'revoked' || k.status === 'banned';
+
+                return (
+                  <tr key={k.id} className="hover:bg-slate-800/40 transition">
+                    {/* Key String & Copy & Note */}
+                    <td className="p-3.5 font-bold text-white">
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          {k.isMasterKey ? (
+                            <span className="p-1 rounded-lg bg-amber-950/80 text-amber-400 border border-amber-800/60" title="Master Key">
+                              <Sparkles className="w-3.5 h-3.5" />
+                            </span>
+                          ) : null}
+                          <span className="truncate max-w-[200px]" title={k.key}>{k.key}</span>
+                          <button
+                            onClick={() => copyToClipboard(k.key, k.id)}
+                            className="text-slate-400 hover:text-white p-1 rounded-lg transition"
+                            title="Copy Key"
+                          >
+                            {copiedId === k.id ? (
+                              <Check className="w-4 h-4 text-emerald-400" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </button>
                         </div>
-                      ) : null}
-                    </div>
-                  </td>
+                        {k.note ? (
+                          <div className="text-[10px] font-normal text-cyan-400/90 flex items-center space-x-1">
+                            <span className="px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-800/50 text-[10px] text-cyan-300 font-semibold truncate max-w-[220px]" title={k.note}>
+                              Note: {k.note}
+                            </span>
+                          </div>
+                        ) : null}
+                      </div>
+                    </td>
 
-                  {/* Creator */}
-                  <td className="p-3.5">
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 text-[11px] font-semibold border border-slate-800">
-                      {k.createdByUsername || 'System'}
-                    </span>
-                  </td>
-
-                  {/* Duration & Expiry */}
-                  <td className="p-3.5">
-                    <span className="text-white font-medium block">{k.duration || 'Custom'}</span>
-                    {!k.expiresAt || k.expiresAt === 'never' ? (
-                      <span className="text-[10px] text-emerald-400 font-bold block">Lifetime / Never</span>
-                    ) : (
-                      <span className="text-[10px] text-slate-400 block">
-                        {new Date(k.expiresAt).toLocaleDateString()}
+                    {/* Creator */}
+                    <td className="p-3.5">
+                      <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 text-[11px] font-semibold border border-slate-800">
+                        {k.createdByUsername || 'System'}
                       </span>
-                    )}
-                  </td>
+                    </td>
 
-                  {/* Cost Tokens */}
-                  <td className="p-3.5 font-extrabold text-amber-400 text-sm">
-                    {k.costTokens || 0}
-                  </td>
+                    {/* Duration & Expiry */}
+                    <td className="p-3.5 min-w-[220px]">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-xs font-semibold">
+                          <span className="text-white">{k.duration || 'Custom'}</span>
+                          {!k.expiresAt || k.expiresAt === 'never' ? (
+                            <span className="text-[10px] text-emerald-400 font-bold">Lifetime</span>
+                          ) : (
+                            <span className="text-[10px] text-slate-400">
+                              {new Date(k.expiresAt).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                        <ExpirationProgressBar
+                          createdAt={k.createdAt}
+                          expiresAt={k.expiresAt}
+                          status={k.status}
+                        />
+                      </div>
+                    </td>
 
-                  {/* Status */}
-                  <td className="p-3.5">
-                    <span
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase ${
-                        k.status === 'active'
-                          ? 'bg-emerald-950/90 text-emerald-400 border border-emerald-800/80'
-                          : k.status === 'expired'
-                          ? 'bg-amber-950/90 text-amber-400 border border-amber-800/80'
-                          : 'bg-rose-950/90 text-rose-400 border border-rose-800/80'
-                      }`}
-                    >
-                      {k.status}
-                    </span>
-                  </td>
+                    {/* Cost Tokens */}
+                    <td className="p-3.5 font-extrabold text-amber-400 text-sm">
+                      {k.costTokens || 0}
+                    </td>
+
+                    {/* Status */}
+                    <td className="p-3.5">
+                      <span
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase ${
+                          isRevoked
+                            ? 'bg-rose-950/90 text-rose-400 border border-rose-800/80'
+                            : isExpired
+                            ? 'bg-amber-950/90 text-amber-400 border border-amber-800/80 shadow-[0_0_10px_rgba(245,158,11,0.3)] animate-pulse'
+                            : k.hwid
+                            ? 'bg-cyan-950/90 text-cyan-400 border border-cyan-800/80'
+                            : 'bg-emerald-950/90 text-emerald-400 border border-emerald-800/80'
+                        }`}
+                      >
+                        {isRevoked ? 'Revoked' : isExpired ? 'Expired' : k.hwid ? 'Claimed' : 'Active'}
+                      </span>
+                    </td>
 
                   {/* Payment Proof */}
                   <td className="p-3.5">
@@ -263,8 +282,9 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
+              );
+            })
+          )}
           </tbody>
         </table>
       </div>
