@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Upload, Download, CheckCircle2, AlertTriangle, FileCode2, Sparkles, RefreshCw, Layers } from 'lucide-react';
-import { api } from '@/lib/api';
+import { Upload, Download, CheckCircle2, AlertTriangle, FileCode2, Sparkles, RefreshCw, Layers, Zap, Clock, Activity } from 'lucide-react';
+import { api, UploadProgressPayload } from '@/lib/api';
 
 interface PayloadManagerProps {
   token: string;
@@ -27,6 +27,8 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
   const [versionInput, setVersionInput] = useState<string>('');
   const [changelogInput, setChangelogInput] = useState<string>('');
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const [uploadProgress, setUploadProgress] = useState<UploadProgressPayload | null>(null);
 
   const loadStatus = async () => {
     setLoading(true);
@@ -78,6 +80,7 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
     }
 
     setUploading(true);
+    setUploadProgress({ loaded: 0, total: selectedFile.size, percentage: 0, speedBps: 0, etaSeconds: 0 });
     setMessage(null);
 
     try {
@@ -86,10 +89,14 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
       formData.append('version', versionInput.trim());
       formData.append('changelog', changelogInput.trim() || 'New libil2cpp.so build release.');
 
-      const result = await api.publishPayload(token, formData);
+      const result = await api.publishPayload(token, formData, (prog) => {
+        setUploadProgress(prog);
+      });
+
       setMessage({ type: 'success', text: result.message || 'New libil2cpp.so version published successfully!' });
       setSelectedFile(null);
       setChangelogInput('');
+      setUploadProgress(null);
       await loadStatus();
     } catch (err: any) {
       setMessage({ type: 'error', text: err?.message || 'Failed to upload and publish binary.' });
@@ -114,6 +121,27 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
     if (!bytes) return '0 B';
     const mb = bytes / (1024 * 1024);
     return `${mb.toFixed(2)} MB`;
+  };
+
+  const formatSpeed = (bps: number) => {
+    if (!bps || isNaN(bps)) return '0 KB/s';
+    if (bps >= 1024 * 1024) {
+      return `${(bps / (1024 * 1024)).toFixed(2)} MB/s`;
+    }
+    if (bps >= 1024) {
+      return `${(bps / 1024).toFixed(1)} KB/s`;
+    }
+    return `${Math.round(bps)} B/s`;
+  };
+
+  const formatEta = (seconds: number) => {
+    if (!seconds || !isFinite(seconds) || seconds <= 0) return 'Calculating...';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    if (mins > 0) {
+      return `${mins}m ${secs}s`;
+    }
+    return `${secs}s`;
   };
 
   return (
@@ -246,7 +274,8 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
                   onChange={(e) => setVersionInput(e.target.value)}
                   placeholder="e.g. 1.0.1 or v2.1"
                   required
-                  className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500 transition-all font-mono"
+                  disabled={uploading}
+                  className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500 transition-all font-mono disabled:opacity-50"
                 />
               </div>
 
@@ -260,6 +289,7 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
                     accept=".so,application/octet-stream"
                     onChange={handleFileChange}
                     id="payload-file-input"
+                    disabled={uploading}
                     className="hidden"
                   />
                   <label
@@ -285,18 +315,61 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
                 onChange={(e) => setChangelogInput(e.target.value)}
                 placeholder="Describe fixes or updates (e.g., Updated offset pointers, anti-cheat detection bypass, performance stability)..."
                 rows={3}
-                className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500 transition-all"
+                disabled={uploading}
+                className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-cyan-500 transition-all disabled:opacity-50"
               />
             </div>
 
             {/* Selected File Details Box */}
-            {selectedFile && (
+            {selectedFile && !uploading && (
               <div className="p-3.5 bg-cyan-950/30 border border-cyan-500/30 rounded-xl flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2.5">
                   <Layers className="w-4 h-4 text-cyan-400" />
                   <span className="font-semibold text-slate-200">{selectedFile.name}</span>
                 </div>
                 <span className="font-bold text-cyan-400">{formatSize(selectedFile.size)}</span>
+              </div>
+            )}
+
+            {/* Live Upload Progress Section */}
+            {uploading && uploadProgress && (
+              <div className="p-4 bg-slate-950/90 border border-cyan-500/40 rounded-xl space-y-3.5 shadow-xl backdrop-blur-md">
+                <div className="flex items-center justify-between text-xs font-mono font-bold">
+                  <span className="text-cyan-400 flex items-center gap-2">
+                    <Activity className="w-4 h-4 animate-spin text-cyan-400" />
+                    UPLOADING BINARY PAYLOAD: {uploadProgress.percentage}%
+                  </span>
+                  <span className="text-slate-300">
+                    {formatSize(uploadProgress.loaded)} / {formatSize(uploadProgress.total)}
+                  </span>
+                </div>
+
+                {/* Horizontal Progress Bar */}
+                <div className="relative w-full h-3.5 bg-slate-800/90 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                  <div
+                    className="h-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 rounded-full transition-all duration-150 shadow-[0_0_12px_rgba(6,182,212,0.8)]"
+                    style={{ width: `${uploadProgress.percentage}%` }}
+                  />
+                </div>
+
+                {/* Telemetry Stats: Speed & Estimated Time */}
+                <div className="grid grid-cols-2 gap-3 pt-1 text-xs font-mono">
+                  <div className="flex items-center gap-2 bg-slate-900/90 px-3.5 py-2.5 rounded-lg border border-slate-800">
+                    <Zap className="w-4 h-4 text-amber-400 animate-pulse" />
+                    <div>
+                      <span className="text-[10px] text-slate-500 uppercase block font-semibold">Network Speed</span>
+                      <span className="font-extrabold text-amber-300 text-sm">{formatSpeed(uploadProgress.speedBps)}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 bg-slate-900/90 px-3.5 py-2.5 rounded-lg border border-slate-800">
+                    <Clock className="w-4 h-4 text-cyan-400" />
+                    <div>
+                      <span className="text-[10px] text-slate-500 uppercase block font-semibold">Estimated Time</span>
+                      <span className="font-extrabold text-cyan-300 text-sm">{formatEta(uploadProgress.etaSeconds)}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -309,7 +382,7 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
               {uploading ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  Uploading & Publishing Version {versionInput}...
+                  Publishing Version {versionInput}... ({uploadProgress?.percentage || 0}%)
                 </>
               ) : (
                 <>

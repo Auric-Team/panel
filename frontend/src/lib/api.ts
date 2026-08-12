@@ -316,6 +316,14 @@ export async function deleteUserApi(userId: string, token?: string): Promise<{ s
   }
 }
 
+export interface UploadProgressPayload {
+  loaded: number;
+  total: number;
+  percentage: number;
+  speedBps: number;
+  etaSeconds: number;
+}
+
 // Global API Object Wrapper for Page integration
 export const api = {
   login: async (username: string, password: string) => {
@@ -421,16 +429,54 @@ export const api = {
     return await res.json();
   },
 
-  publishPayload: async (token: string, formData: FormData) => {
-    const res = await fetch(`${API_BASE_URL}/api/deploy/upload`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
+  publishPayload: async (
+    token: string,
+    formData: FormData,
+    onProgress?: (progress: UploadProgressPayload) => void
+  ): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const startTime = Date.now();
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable && onProgress) {
+          const loaded = event.loaded;
+          const total = event.total;
+          const percentage = Math.round((loaded / total) * 100);
+          const elapsedTimeSec = (Date.now() - startTime) / 1000;
+          const speedBps = elapsedTimeSec > 0 ? loaded / elapsedTimeSec : 0;
+          const remainingBytes = total - loaded;
+          const etaSeconds = speedBps > 0 ? Math.ceil(remainingBytes / speedBps) : 0;
+
+          onProgress({
+            loaded,
+            total,
+            percentage,
+            speedBps,
+            etaSeconds,
+          });
+        }
+      };
+
+      xhr.onload = () => {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(response);
+          } else {
+            reject(new Error(response.error || response.message || 'Failed to upload binary'));
+          }
+        } catch {
+          reject(new Error('Invalid response from server'));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Network error during file upload'));
+      xhr.ontimeout = () => reject(new Error('File upload request timed out'));
+
+      xhr.open('POST', `${API_BASE_URL}/api/deploy/upload`);
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      xhr.send(formData);
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || data.message || 'Failed to publish libil2cpp.so');
-    return data;
   },
 };
