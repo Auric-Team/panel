@@ -1,5 +1,29 @@
 [
   {
+    "id": "353bb01c-26ba-402b-9186-76ba87a67216",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-Q7KN-Q5VD-JWTD authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-Q7KN-Q5VD-JWTD",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-12T13:32:04.211Z"
+  },
+  {
+    "id": "a9d8caa9-88e2-44f3-9fa9-6a1ed8d5cc27",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-Q7KN-Q5VD-JWTD authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-Q7KN-Q5VD-JWTD",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-12T13:32:04.115Z"
+  },
+  {
     "id": "f13fa6c4-5804-480a-b6ab-008d2c965365",
     "userId": "system",
     "username": "Client Device",
