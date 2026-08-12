@@ -68,8 +68,8 @@ export default function Home() {
     setIsRefreshing(true);
     try {
       const [analyticsData, keysData, usersData, logsData] = await Promise.all([
-        api.getAnalytics(token),
-        api.getKeys(token),
+        api.getAnalytics(token).catch(() => null),
+        api.getKeys(token).catch(() => []),
         api.getUsers(token).catch(() => []),
         api.getLogs(token).catch(() => []),
       ]);
