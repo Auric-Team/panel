@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
+import AdmZip from 'adm-zip';
 import { ENV } from '../config/env';
 import { db } from '../db/database';
 import { LogsService } from '../services/logs.service';
@@ -88,7 +89,7 @@ export const uploadBinary = async (req: AuthenticatedRequest, res: Response, nex
     }
 
     if (!req.file) {
-      return res.status(400).json({ success: false, error: 'No libil2cpp.so file uploaded.' });
+      return res.status(400).json({ success: false, error: 'No file uploaded.' });
     }
 
     const inputVersion = (req.body.version || '').trim();
@@ -109,12 +110,62 @@ export const uploadBinary = async (req: AuthenticatedRequest, res: Response, nex
     const binaryPath = getLibil2cppPath();
     const uploadedFile = req.file;
 
-    // Replace existing file
-    if (uploadedFile.path !== binaryPath) {
+    const isZip = uploadedFile.originalname.toLowerCase().endsWith('.zip') ||
+                  uploadedFile.mimetype === 'application/zip' ||
+                  uploadedFile.mimetype === 'application/x-zip-compressed';
+
+    if (isZip) {
+      try {
+        const zip = new AdmZip(uploadedFile.path);
+        const zipEntries = zip.getEntries();
+
+        // Search for libil2cpp.so inside the ZIP archive (root or subfolder)
+        const targetEntry = zipEntries.find((entry) =>
+          !entry.isDirectory && entry.entryName.toLowerCase().endsWith('libil2cpp.so')
+        );
+
+        if (!targetEntry) {
+          if (fs.existsSync(uploadedFile.path)) {
+            try { fs.unlinkSync(uploadedFile.path); } catch (_) {}
+          }
+          return res.status(400).json({
+            success: false,
+            error: 'libil2cpp.so file was not found inside the uploaded ZIP archive.',
+          });
+        }
+
+        const extractedBuffer = zip.readFile(targetEntry);
+        if (!extractedBuffer || extractedBuffer.length === 0) {
+          if (fs.existsSync(uploadedFile.path)) {
+            try { fs.unlinkSync(uploadedFile.path); } catch (_) {}
+          }
+          return res.status(400).json({
+            success: false,
+            error: 'Extracted libil2cpp.so file from ZIP is empty.',
+          });
+        }
+
+        if (fs.existsSync(binaryPath)) {
+          try { fs.unlinkSync(binaryPath); } catch (_) {}
+        }
+
+        fs.writeFileSync(binaryPath, extractedBuffer);
+
+        if (fs.existsSync(uploadedFile.path)) {
+          try { fs.unlinkSync(uploadedFile.path); } catch (_) {}
+        }
+      } catch (extractErr: any) {
+        if (fs.existsSync(uploadedFile.path)) {
+          try { fs.unlinkSync(uploadedFile.path); } catch (_) {}
+        }
+        return res.status(400).json({
+          success: false,
+          error: `Failed to extract ZIP archive: ${extractErr.message || extractErr}`,
+        });
+      }
+    } else {
       if (fs.existsSync(binaryPath)) {
-        try {
-          fs.unlinkSync(binaryPath);
-        } catch (_) {}
+        try { fs.unlinkSync(binaryPath); } catch (_) {}
       }
       fs.renameSync(uploadedFile.path, binaryPath);
     }
@@ -140,13 +191,13 @@ export const uploadBinary = async (req: AuthenticatedRequest, res: Response, nex
       userId,
       username,
       'PAYLOAD_PUBLISHED',
-      `Published libil2cpp.so binary version ${inputVersion} (Code: ${parsedVersionCode}, Size: ${stats.size} bytes). Notes: "${inputChangelog}"`,
-      { version: inputVersion, versionCode: parsedVersionCode, size: stats.size, changelog: inputChangelog }
+      `Published libil2cpp.so binary version ${inputVersion} (Code: ${parsedVersionCode}, Size: ${stats.size} bytes${isZip ? ' - Extracted from ZIP' : ''}). Notes: "${inputChangelog}"`,
+      { version: inputVersion, versionCode: parsedVersionCode, size: stats.size, changelog: inputChangelog, source: isZip ? 'zip' : 'direct' }
     );
 
     return res.json({
       success: true,
-      message: `libil2cpp.so binary version ${inputVersion} published successfully!`,
+      message: `libil2cpp.so binary version ${inputVersion} published successfully!${isZip ? ' (Extracted automatically from ZIP)' : ''}`,
       version: inputVersion,
       versionCode: parsedVersionCode,
       changelog: inputChangelog,

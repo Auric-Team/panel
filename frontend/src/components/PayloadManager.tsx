@@ -59,8 +59,9 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (!file.name.endsWith('.so') && !file.name.includes('libil2cpp')) {
-        setMessage({ type: 'error', text: 'Warning: Uploaded file should preferably be libil2cpp.so' });
+      const lower = file.name.toLowerCase();
+      if (!lower.endsWith('.so') && !lower.endsWith('.zip') && !lower.includes('libil2cpp')) {
+        setMessage({ type: 'error', text: 'Warning: Uploaded file should preferably be libil2cpp.so or a .zip archive containing libil2cpp.so' });
       } else {
         setMessage(null);
       }
@@ -281,12 +282,12 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
 
               <div>
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                  Binary File (.so)
+                  Binary File (.so or .zip archive)
                 </label>
                 <div className="relative">
                   <input
                     type="file"
-                    accept=".so,application/octet-stream"
+                    accept=".so,.zip,application/zip,application/x-zip-compressed,application/octet-stream"
                     onChange={handleFileChange}
                     id="payload-file-input"
                     disabled={uploading}
@@ -297,7 +298,7 @@ export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole 
                     className="w-full flex items-center justify-between px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-sm text-slate-300 cursor-pointer hover:border-cyan-500/50 transition-all"
                   >
                     <span className="truncate max-w-[200px]">
-                      {selectedFile ? selectedFile.name : 'Select libil2cpp.so file...'}
+                      {selectedFile ? selectedFile.name : 'Select libil2cpp.so or .zip archive...'}
                     </span>
                     <Upload className="w-4 h-4 text-cyan-400 flex-shrink-0" />
                   </label>

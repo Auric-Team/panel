@@ -10,7 +10,8 @@ const storage = multer.diskStorage({
     cb(null, ENV.UPLOADS_DIR);
   },
   filename: (req, file, cb) => {
-    cb(null, 'libil2cpp.so');
+    const ext = path.extname(file.originalname);
+    cb(null, `temp_upload_${Date.now()}${ext}`);
   },
 });
 
