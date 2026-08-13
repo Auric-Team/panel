@@ -1,5 +1,38 @@
 [
   {
+    "id": "3809192f-7f3b-4e3f-89f8-4b34facee94d",
+    "userId": "3a1b080b-7b93-4499-bae5-6aebee857bb0",
+    "username": "ekamx2",
+    "action": "LOGIN_SUCCESS",
+    "details": "User logged in successfully",
+    "metadata": {},
+    "timestamp": "2026-08-13T11:24:10.225Z"
+  },
+  {
+    "id": "2449faf2-34e2-4b9a-b625-71d8918dc170",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "USER_BLOCK_TOGGLED",
+    "details": "Updated status for @test1: SUSPENDED (Blocked)",
+    "metadata": {
+      "targetUser": "test1",
+      "isBlocked": true
+    },
+    "timestamp": "2026-08-13T11:22:20.459Z"
+  },
+  {
+    "id": "62fd5a7c-fb4f-43c9-8b76-455a234d7ef7",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "USER_BLOCK_TOGGLED",
+    "details": "Updated status for @test1: ACTIVE (Unblocked)",
+    "metadata": {
+      "targetUser": "test1",
+      "isBlocked": false
+    },
+    "timestamp": "2026-08-13T11:22:05.861Z"
+  },
+  {
     "id": "e97901d8-8fc1-433e-9537-cbc95982489d",
     "userId": "owner-root-id",
     "username": "owner",

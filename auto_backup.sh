@@ -3,28 +3,32 @@
 # Navigate to panel directory
 cd /root/panel || exit 1
 
-# Configure git user if needed
+# Configure git environment and credentials
+export HOME="/root"
 git config user.name "AXIOS Backup Bot" 2>/dev/null || true
 git config user.email "backup@axioshacks.com" 2>/dev/null || true
 
-# Force track database, logs, and upload receipts if modified/untracked
-git add backend/data/axios.db backend/data/logs.json backend/uploads/ . 2>/dev/null
+TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M:%S UTC')
 
-# Check if there are any staged changes
-if ! git diff --cached --quiet; then
-    TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M:%S UTC')
-    echo "[$TIMESTAMP] Changes detected. Creating automated backup..." >> /root/panel/auto_backup.log
+# Stage ALL files including database, uploads/receipts, logs, and workspace code
+git add -A . 2>/dev/null
+
+# Check if there are any changes (staged or unstaged)
+if [ -n "$(git status --porcelain)" ]; then
+    echo "[$TIMESTAMP] Data changes detected. Performing automated git commit & push..." >> /root/panel/auto_backup.log
     
-    git commit -m "chore(backup): automated database & receipts backup [$TIMESTAMP]" >> /root/panel/auto_backup.log 2>&1
+    git commit -m "chore(backup): automated database & data backup [$TIMESTAMP]" >> /root/panel/auto_backup.log 2>&1
     
+    # Push to origin main
     git push origin main >> /root/panel/auto_backup.log 2>&1
     
     if [ $? -eq 0 ]; then
-        echo "[$TIMESTAMP] Backup successfully pushed to GitHub." >> /root/panel/auto_backup.log
+        echo "[$TIMESTAMP] SUCCESS: Data backup committed & pushed to GitHub." >> /root/panel/auto_backup.log
     else
-        echo "[$TIMESTAMP] Error pushing backup to GitHub." >> /root/panel/auto_backup.log
+        echo "[$TIMESTAMP] WARNING: Push failed, attempting pull --rebase..." >> /root/panel/auto_backup.log
+        git pull --rebase origin main >> /root/panel/auto_backup.log 2>&1
+        git push origin main >> /root/panel/auto_backup.log 2>&1
     fi
 else
-    TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M:%S UTC')
-    echo "[$TIMESTAMP] No data changes detected. Skipping commit." >> /root/panel/auto_backup.log
+    echo "[$TIMESTAMP] No file/database changes in the last 5 minutes." >> /root/panel/auto_backup.log
 fi
