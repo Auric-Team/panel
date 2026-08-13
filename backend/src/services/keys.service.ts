@@ -7,9 +7,9 @@ import { AuthUserPayload } from '../types/common';
 
 export class KeysService {
   static verifyKey(payload: VerifyKeyPayload) {
-    const { key, hwid, deviceFingerprint, timestamp, signature, hash } = payload;
+    const { key, hwid, deviceFingerprint, timestamp, signature, hash, isInstaller } = payload;
     const reqKey = key?.trim();
-    const reqHwid = (hwid || deviceFingerprint || 'GENERIC-DEVICE').trim();
+    const reqHwid = (hwid || deviceFingerprint || '').trim();
     const sig = signature || hash;
 
     if (!reqKey) {
@@ -24,7 +24,7 @@ export class KeysService {
         throw new AppError('Request timestamp expired', 403);
       }
 
-      if (!verifyClientSignature(reqKey, reqHwid, requestTime, sig)) {
+      if (reqHwid && !verifyClientSignature(reqKey, reqHwid, requestTime, sig)) {
         throw new AppError('Invalid payload integrity hash', 403);
       }
     }
@@ -32,8 +32,13 @@ export class KeysService {
     const keyItem = db.prepare('SELECT * FROM keys WHERE UPPER(key) = UPPER(?)').get(reqKey) as KeyRecord | undefined;
 
     if (!keyItem) {
-      LogsService.logAction('system', 'Client Device', 'KEY_VERIFY_FAILED', `Failed verification attempt for non-existent key: "${reqKey}" from HWID: ${reqHwid}`, { key: reqKey, hwid: reqHwid });
-      throw new AppError('Key does not exist', 404);
+      LogsService.logAction('system', 'Client Device', 'KEY_VERIFY_FAILED', `Failed verification attempt for non-existent key: "${reqKey}"`, { key: reqKey, hwid: reqHwid });
+      return {
+        success: false,
+        status: 'invalid',
+        error: 'Key does not exist',
+        message: 'Invalid key! Key does not exist.',
+      };
     }
 
     const now = new Date();
@@ -44,32 +49,89 @@ export class KeysService {
       if (keyItem.status !== 'expired') {
         db.prepare("UPDATE keys SET status = 'expired' WHERE id = ?").run(keyItem.id);
       }
-      LogsService.logAction('system', 'Client Device', 'KEY_EXPIRED', `Verification attempted on expired key: ${keyItem.key} (HWID: ${reqHwid})`, { key: keyItem.key, hwid: reqHwid });
-      throw new AppError('Key has expired', 403);
+      LogsService.logAction('system', 'Client Device', 'KEY_EXPIRED', `Verification attempted on expired key: ${keyItem.key}`, { key: keyItem.key, hwid: reqHwid });
+      return {
+        success: false,
+        status: 'expired',
+        error: 'Key has expired',
+        message: 'Your key has EXPIRED!',
+      };
     }
 
     if (keyItem.status === 'revoked' || keyItem.status === 'banned') {
-      LogsService.logAction('system', 'Client Device', 'KEY_REVOKED', `Verification attempted on revoked key: ${keyItem.key} (HWID: ${reqHwid})`, { key: keyItem.key, hwid: reqHwid });
-      throw new AppError('Key has been revoked or banned', 403);
+      LogsService.logAction('system', 'Client Device', 'KEY_REVOKED', `Verification attempted on revoked key: ${keyItem.key}`, { key: keyItem.key, hwid: reqHwid });
+      return {
+        success: false,
+        status: 'invalid',
+        error: 'Key has been revoked or banned',
+        message: 'Key has been revoked or banned',
+      };
     }
 
     const defaultTargetGame = 'com.herogame.gplay.lastdayrulessurvival';
 
-    // Unbound Verification Mode (No HWID locking, pure active/expired validation)
-    if (!keyItem.activatedAt) {
-      db.prepare('UPDATE keys SET activatedAt = ? WHERE id = ?').run(now.toISOString(), keyItem.id);
+    // Master Keys bypass HWID restrictions
+    if (keyItem.isMasterKey === 1) {
+      if (!keyItem.activatedAt) {
+        db.prepare('UPDATE keys SET activatedAt = ? WHERE id = ?').run(now.toISOString(), keyItem.id);
+      }
+      LogsService.logAction('system', 'Client Device', 'MASTER_KEY_VERIFIED', `Master Key ${keyItem.key} verified`, { key: keyItem.key, hwid: reqHwid });
+      return {
+        success: true,
+        status: 'authenticated',
+        message: 'Master key authenticated',
+        expiresAt: keyItem.expiresAt,
+        targetGame: defaultTargetGame,
+        isMasterKey: true,
+      };
     }
 
-    LogsService.logAction('system', 'Client Device', 'KEY_VERIFIED', `Key ${keyItem.key} authenticated (Unbound Mode)`, { key: keyItem.key, hwid: reqHwid });
+    // 1. Mobile App Installer Validation -> Validate key active without binding HWID
+    if (isInstaller || !reqHwid) {
+      LogsService.logAction('system', 'Installer App', 'KEY_CHECK_ACTIVE', `Installer verified key ${keyItem.key} is active`, { key: keyItem.key });
+      return {
+        success: true,
+        status: 'authenticated',
+        message: 'Key is active',
+        expiresAt: keyItem.expiresAt,
+        targetGame: defaultTargetGame,
+      };
+    }
 
-    return {
-      success: true,
-      status: 'authenticated',
-      message: 'Key authenticated',
-      expiresAt: keyItem.expiresAt,
-      targetGame: defaultTargetGame,
-      isMasterKey: keyItem.isMasterKey === 1,
-    };
+    // 2. In-Game Mod Menu (KeySystem.cpp) Validation & HWID Binding
+    if (!keyItem.hwid) {
+      // First in-game execution -> Bind key to this device's HWID!
+      db.prepare('UPDATE keys SET hwid = ?, activatedAt = ? WHERE id = ?').run(reqHwid, now.toISOString(), keyItem.id);
+      LogsService.logAction('system', 'Mod Menu', 'KEY_HWID_BOUND', `Key ${keyItem.key} bound to device HWID: ${reqHwid}`, { key: keyItem.key, hwid: reqHwid });
+      return {
+        success: true,
+        status: 'authenticated',
+        message: 'Key Authenticated & Bound Successfully!',
+        expiresAt: keyItem.expiresAt,
+        targetGame: defaultTargetGame,
+      };
+    }
+
+    if (keyItem.hwid === reqHwid) {
+      // Matching HWID -> Authenticated
+      LogsService.logAction('system', 'Mod Menu', 'KEY_VERIFIED', `Key ${keyItem.key} authenticated for bound HWID: ${reqHwid}`, { key: keyItem.key, hwid: reqHwid });
+      return {
+        success: true,
+        status: 'authenticated',
+        message: 'Key Authenticated & Bound Successfully!',
+        expiresAt: keyItem.expiresAt,
+        targetGame: defaultTargetGame,
+      };
+    } else {
+      // Mismatched HWID -> Rejected
+      LogsService.logAction('system', 'Mod Menu', 'KEY_HWID_MISMATCH', `Key ${keyItem.key} HWID Mismatch! Bound: ${keyItem.hwid}, Attempted: ${reqHwid}`, { key: keyItem.key, boundHwid: keyItem.hwid, attemptedHwid: reqHwid });
+      return {
+        success: false,
+        status: 'mismatch',
+        error: 'Key is bound to another device!',
+        message: 'Key is bound to another device!',
+      };
+    }
   }
 
   static getKeys(user: AuthUserPayload): KeyRecord[] {
