@@ -46,3 +46,12 @@ export const deleteKey = (req: AuthenticatedRequest, res: Response, next: NextFu
     next(err);
   }
 };
+
+export const deleteExpiredKeys = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const result = KeysService.deleteExpiredKeys(req.user!);
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};

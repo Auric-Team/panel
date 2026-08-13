@@ -8,16 +8,13 @@ export function generateUUID(): string {
 }
 
 export function generateKeyString(isMasterKey: boolean = false): string {
+  if (isMasterKey) {
+    return '@Axiosofficial';
+  }
+
   const charsUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const segUpper = (len: number) =>
     Array.from({ length: len }, () => charsUpper.charAt(Math.floor(Math.random() * charsUpper.length))).join('');
-
-  if (isMasterKey) {
-    const charsLower = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    const segLower = (len: number) =>
-      Array.from({ length: len }, () => charsLower.charAt(Math.floor(Math.random() * charsLower.length))).join('');
-    return `free-key-${segLower(4)}`;
-  }
 
   return `AXIOS-${segUpper(4)}-${segUpper(4)}-${segUpper(4)}`;
 }

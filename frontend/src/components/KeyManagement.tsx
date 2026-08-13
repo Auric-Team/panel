@@ -40,6 +40,7 @@ interface KeyManagementProps {
   generatedKeys: string[];
   onResetHwid: (id: string) => void;
   onDeleteKey: (id: string) => void;
+  onDeleteExpiredKeys?: () => void;
   onOpenProofModal?: (key: KeyItem) => void;
 }
 
@@ -51,6 +52,7 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
   generatedKeys,
   onResetHwid,
   onDeleteKey,
+  onDeleteExpiredKeys,
   onOpenProofModal,
 }) => {
   // Generator State
@@ -95,10 +97,10 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
     return 70;
   }, [durationOption, customDays]);
 
-  const masterMultiplier = isMasterKey ? 1.5 : 1.0;
   const costPerKey = useMemo(() => {
-    return Math.round(baseTokensPerKey * masterMultiplier * 10) / 10;
-  }, [baseTokensPerKey, masterMultiplier]);
+    if (isMasterKey) return 0;
+    return baseTokensPerKey;
+  }, [baseTokensPerKey, isMasterKey]);
 
   const totalCost = useMemo(() => {
     return Math.round(costPerKey * genCount * 10) / 10;
@@ -303,43 +305,45 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
           </div>
 
           {/* Master Key Toggle Switch */}
-          <div className="flex items-center space-x-3">
-            {isMasterKey && (
-              <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl text-[10px] font-extrabold uppercase bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-[0_0_12px_rgba(6,182,212,0.6)] animate-pulse">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>MASTER KEY ACTIVE</span>
-              </span>
-            )}
+          {(user?.role === 'owner' || user?.role === 'manager') && (
+            <div className="flex items-center space-x-3">
+              {isMasterKey && (
+                <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl text-[10px] font-extrabold uppercase bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-[0_0_12px_rgba(168,85,247,0.6)] animate-pulse">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>MASTER KEY (@Axiosofficial)</span>
+                </span>
+              )}
 
-            <label
-              className={`flex items-center space-x-3 cursor-pointer px-4 py-2.5 rounded-2xl transition duration-300 border ${
-                isMasterKey
-                  ? 'bg-gradient-to-r from-cyan-950/80 via-slate-900 to-purple-950/80 border-cyan-400 shadow-[0_0_20px_rgba(168,85,247,0.4)] ring-2 ring-purple-500/50'
-                  : 'bg-slate-950 border-slate-800 hover:border-slate-700'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={isMasterKey}
-                onChange={(e) => setIsMasterKey(e.target.checked)}
-                className="sr-only"
-              />
-              <div
-                className={`w-10 h-5 rounded-full transition-colors relative p-0.5 ${
-                  isMasterKey ? 'bg-gradient-to-r from-cyan-500 to-purple-600' : 'bg-slate-800'
+              <label
+                className={`flex items-center space-x-3 cursor-pointer px-4 py-2.5 rounded-2xl transition duration-300 border ${
+                  isMasterKey
+                    ? 'bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.4)] ring-2 ring-purple-500/50'
+                    : 'bg-slate-950 border-slate-800 hover:border-slate-700'
                 }`}
               >
-                <div
-                  className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                    isMasterKey ? 'translate-x-5 shadow-md' : 'translate-x-0'
-                  }`}
+                <input
+                  type="checkbox"
+                  checked={isMasterKey}
+                  onChange={(e) => setIsMasterKey(e.target.checked)}
+                  className="sr-only"
                 />
-              </div>
-              <span className={`font-bold text-xs ${isMasterKey ? 'text-cyan-300' : 'text-slate-400'}`}>
-                Master Key
-              </span>
-            </label>
-          </div>
+                <div
+                  className={`w-10 h-5 rounded-full transition-colors relative p-0.5 ${
+                    isMasterKey ? 'bg-gradient-to-r from-purple-500 to-indigo-600' : 'bg-slate-800'
+                  }`}
+                >
+                  <div
+                    className={`w-4 h-4 rounded-full bg-white transition-transform ${
+                      isMasterKey ? 'translate-x-5 shadow-md' : 'translate-x-0'
+                    }`}
+                  />
+                </div>
+                <span className={`font-bold text-xs ${isMasterKey ? 'text-purple-300' : 'text-slate-400'}`}>
+                  Master Key Mode (@Axiosofficial)
+                </span>
+              </label>
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -440,9 +444,9 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
               </div>
 
               <div>
-                <span className="text-[9px] uppercase text-slate-500 block">Master Multiplier</span>
+                <span className="text-[9px] uppercase text-slate-500 block">Master Mode</span>
                 <span className={isMasterKey ? "text-purple-400 font-bold" : "text-slate-400"}>
-                  {isMasterKey ? '+50% (1.5x)' : '1.0x (Standard)'}
+                  {isMasterKey ? '@Axiosofficial (Unlimited)' : 'Standard Key'}
                 </span>
               </div>
 
@@ -454,7 +458,7 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
 
             <div className="text-[10px] text-slate-400 bg-slate-900/60 p-2 rounded-xl border border-slate-800/60 flex items-center justify-between">
               <span>
-                Calculation: {baseTokensPerKey} Base Tokens × {genCount} Key(s) {isMasterKey ? '× 1.5 Master Multiplier' : ''} = <strong className="text-amber-300">{totalCost} Tokens</strong>
+                Calculation: {isMasterKey ? '0 Tokens (Owner/Manager Master Key @Axiosofficial)' : `${baseTokensPerKey} Base Tokens × ${genCount} Key(s) = ${totalCost} Tokens`}
               </span>
 
               {!isUnlimited && (
@@ -682,6 +686,18 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
               <Download className="w-4 h-4 text-cyan-400" />
               <span>CSV Export</span>
             </button>
+
+            {/* One-Click Clean Expired Keys Button */}
+            {onDeleteExpiredKeys && (
+              <button
+                onClick={onDeleteExpiredKeys}
+                className="px-3.5 py-2 rounded-xl bg-rose-950/80 border border-rose-800/80 text-rose-300 hover:text-white hover:bg-rose-900 transition flex items-center space-x-1.5 shadow-sm font-bold"
+                title="Delete All Expired Keys At One Click"
+              >
+                <Trash2 className="w-4 h-4 text-rose-400" />
+                <span>Clean Expired</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -812,19 +828,26 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
                         )}
                       </td>
 
-                      {/* Bound HWID */}
-                      <td className="p-3.5 text-slate-400 max-w-[130px] truncate" title={k.hwid || 'Unbound'}>
-                        {k.hwid || 'Unbound'}
+                      {/* Bound HWID Device */}
+                      <td className="p-3.5 text-slate-400 max-w-[160px] truncate" title={k.isMasterKey ? `${k.deviceCount ?? 0} Devices Bound` : (k.hwid || 'Unbound')}>
+                        {k.isMasterKey ? (
+                          <span className="px-2.5 py-1 rounded-xl bg-purple-950/80 text-purple-300 border border-purple-800/60 font-bold text-[10px] inline-flex items-center space-x-1">
+                            <Sparkles className="w-3 h-3 text-purple-400 shrink-0" />
+                            <span>{k.deviceCount ?? 0} Device{(k.deviceCount ?? 0) === 1 ? '' : 's'} Bound</span>
+                          </span>
+                        ) : (
+                          k.hwid || 'Unbound'
+                        )}
                       </td>
 
                       {/* Actions */}
                       <td className="p-3.5 text-right">
                         <div className="flex items-center justify-end space-x-1.5">
-                          {k.hwid && (
+                          {(k.hwid || (k.isMasterKey && (k.deviceCount ?? 0) > 0)) && (
                             <button
                               onClick={() => onResetHwid(k.id)}
                               className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition"
-                              title="Reset Hardware Binding (HWID)"
+                              title="Reset Hardware Binding / Device Count"
                             >
                               <RotateCcw className="w-4 h-4" />
                             </button>

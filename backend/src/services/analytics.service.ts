@@ -20,21 +20,21 @@ export class AnalyticsService {
       totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys').get() as any).count;
       activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'active'").get() as any).count;
       expiredKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'expired'").get() as any).count;
-      boundDevices = (db.prepare('SELECT COUNT(*) as count FROM keys WHERE hwid IS NOT NULL AND hwid != ""').get() as any).count;
+      boundDevices = (db.prepare('SELECT COUNT(DISTINCT hwid) as count FROM (SELECT hwid FROM keys WHERE hwid IS NOT NULL AND hwid != "" UNION SELECT hwid FROM key_devices WHERE hwid IS NOT NULL AND hwid != "")').get() as any).count;
       totalResellers = (db.prepare("SELECT COUNT(*) as count FROM users WHERE role = 'reseller'").get() as any).count;
       totalTokensSpent = (db.prepare('SELECT COALESCE(SUM(costTokens), 0) as total FROM keys').get() as any).total;
     } else if (role === 'manager') {
       totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys WHERE createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?)').get(id, id) as any).count;
       activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'active' AND (createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?))").get(id, id) as any).count;
       expiredKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'expired' AND (createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?))").get(id, id) as any).count;
-      boundDevices = (db.prepare('SELECT COUNT(*) as count FROM keys WHERE hwid IS NOT NULL AND hwid != "" AND (createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?))').get(id, id) as any).count;
+      boundDevices = (db.prepare('SELECT COUNT(DISTINCT hwid) as count FROM (SELECT hwid FROM keys WHERE (createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?)) AND hwid IS NOT NULL AND hwid != "" UNION SELECT kd.hwid FROM key_devices kd JOIN keys k ON kd.keyId = k.id WHERE (k.createdById = ? OR k.createdById IN (SELECT id FROM users WHERE createdBy = ?)) AND kd.hwid IS NOT NULL AND kd.hwid != "")').get(id, id, id, id) as any).count;
       totalResellers = (db.prepare("SELECT COUNT(*) as count FROM users WHERE createdBy = ? AND role = 'reseller'").get(id) as any).count;
       totalTokensSpent = (db.prepare('SELECT COALESCE(SUM(costTokens), 0) as total FROM keys WHERE createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?)').get(id, id) as any).total;
     } else {
       totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys WHERE createdById = ?').get(id) as any).count;
       activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE createdById = ? AND status = 'active'").get(id) as any).count;
       expiredKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE createdById = ? AND status = 'expired'").get(id) as any).count;
-      boundDevices = (db.prepare('SELECT COUNT(*) as count FROM keys WHERE createdById = ? AND hwid IS NOT NULL AND hwid != ""').get(id) as any).count;
+      boundDevices = (db.prepare('SELECT COUNT(DISTINCT hwid) as count FROM (SELECT hwid FROM keys WHERE createdById = ? AND hwid IS NOT NULL AND hwid != "" UNION SELECT kd.hwid FROM key_devices kd JOIN keys k ON kd.keyId = k.id WHERE k.createdById = ? AND kd.hwid IS NOT NULL AND kd.hwid != "")').get(id, id) as any).count;
       totalResellers = (db.prepare("SELECT COUNT(*) as count FROM users WHERE createdBy = ? AND role = 'reseller'").get(id) as any).count;
       totalTokensSpent = (db.prepare('SELECT COALESCE(SUM(costTokens), 0) as total FROM keys WHERE createdById = ?').get(id) as any).total;
     }

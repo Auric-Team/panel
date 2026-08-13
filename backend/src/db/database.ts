@@ -83,6 +83,15 @@ export function initDatabase() {
       timestamp TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS key_devices (
+      id TEXT PRIMARY KEY,
+      keyId TEXT NOT NULL,
+      hwid TEXT NOT NULL,
+      boundAt TEXT NOT NULL,
+      UNIQUE(keyId, hwid),
+      FOREIGN KEY (keyId) REFERENCES keys(id) ON DELETE CASCADE
+    );
+
     CREATE TABLE IF NOT EXISTS payload_meta (
       id INTEGER PRIMARY KEY CHECK (id = 1),
       version TEXT NOT NULL DEFAULT '1.0.0',

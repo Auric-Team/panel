@@ -109,6 +109,7 @@ export async function fetchAllKeys(token?: string): Promise<{ keys: KeyItem[]; i
           createdByUsername: k.createdByUsername || k.createdBy || 'System',
           paymentScreenshot: k.paymentScreenshot || null,
           isMasterKey: k.isMasterKey || 0,
+          deviceCount: k.deviceCount !== undefined ? Number(k.deviceCount) : (k.hwid ? 1 : 0),
         };
       });
       localKeysStore = formattedKeys;
@@ -235,6 +236,7 @@ export async function generateKeysApi(
         createdByUsername: currentUser?.username || 'Owner',
         paymentScreenshot: paymentScreenshot || null,
         isMasterKey: isMasterKey ? 1 : 0,
+        deviceCount: k.deviceCount !== undefined ? Number(k.deviceCount) : 0,
       }));
       return {
         newKeys: createdKeys,
@@ -280,6 +282,25 @@ export async function deleteKeyApi(keyId: string, token?: string): Promise<boole
     // API fallback
   }
   return true;
+}
+
+export async function deleteExpiredKeysApi(token?: string): Promise<{ success: boolean; count?: number; message?: string }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/keys/delete-expired`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      return { success: true, count: data.count, message: data.message };
+    }
+    return { success: false, message: data.message || 'Failed to delete expired keys' };
+  } catch (err: any) {
+    return { success: false, message: err?.message || 'Network error' };
+  }
 }
 
 export async function toggleBlockUserApi(userId: string, isBlocked: boolean, token?: string): Promise<boolean> {
@@ -409,6 +430,10 @@ export const api = {
 
   deleteKey: async (token: string, keyId: string) => {
     return await deleteKeyApi(keyId, token);
+  },
+
+  deleteExpiredKeys: async (token: string) => {
+    return await deleteExpiredKeysApi(token);
   },
 
   createUser: async (token: string, payload: any) => {

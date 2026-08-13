@@ -297,4 +297,71 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     });
     expect(delAppUser.status).toBe(200);
   });
+
+  test("11. Master Key (@Axiosofficial) Generation, Unlimited Devices & Bound Count", async () => {
+    // Generate Master Key
+    const masterRes = await fetch(`${BASE_URL}/api/keys/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ownerToken}`,
+      },
+      body: JSON.stringify({
+        isMaster: true,
+        durationDays: 0,
+        note: "Master Key Test",
+      }),
+    });
+    expect(masterRes.status).toBe(200);
+    const masterData = await masterRes.json();
+    expect(masterData.success).toBe(true);
+    expect(masterData.keys[0].key).toBe("@Axiosofficial");
+    expect(masterData.keys[0].isMasterKey).toBe(1);
+
+    // Verify key with Device 1
+    const dev1Res = await fetch(`${BASE_URL}/api/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: "@Axiosofficial", hwid: "MASTER-DEV-001" }),
+    });
+    expect(dev1Res.status).toBe(200);
+    const dev1Data = await dev1Res.json();
+    expect(dev1Data.status).toBe("authenticated");
+    expect(dev1Data.deviceCount).toBeGreaterThanOrEqual(1);
+
+    // Verify key with Device 2 (Unlimited Devices check)
+    const dev2Res = await fetch(`${BASE_URL}/api/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: "@Axiosofficial", hwid: "MASTER-DEV-002" }),
+    });
+    expect(dev2Res.status).toBe(200);
+    const dev2Data = await dev2Res.json();
+    expect(dev2Data.status).toBe("authenticated");
+    expect(dev2Data.deviceCount).toBeGreaterThanOrEqual(2);
+
+    // Fetch keys list and verify deviceCount is included
+    const keysRes = await fetch(`${BASE_URL}/api/keys`, {
+      headers: { Authorization: `Bearer ${ownerToken}` },
+    });
+    expect(keysRes.status).toBe(200);
+    const keysList = await keysRes.json();
+    const masterKeyInList = keysList.find((k: any) => k.key === "@Axiosofficial");
+    expect(masterKeyInList).toBeDefined();
+    expect(masterKeyInList.deviceCount).toBeGreaterThanOrEqual(2);
+  });
+
+  test("12. One-Click Delete All Expired Keys Endpoint", async () => {
+    const res = await fetch(`${BASE_URL}/api/keys/delete-expired`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ownerToken}`,
+      },
+    });
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.success).toBe(true);
+    expect(data.count).toBeDefined();
+  });
 });

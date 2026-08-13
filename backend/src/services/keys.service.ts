@@ -70,12 +70,23 @@ export class KeysService {
 
     const defaultTargetGame = 'com.herogame.gplay.lastdayrulessurvival';
 
-    // Master Keys bypass HWID restrictions
-    if (keyItem.isMasterKey === 1) {
+    // Master Keys bypass single HWID restriction and support unlimited devices
+    if (keyItem.isMasterKey === 1 || keyItem.key === '@Axiosofficial') {
       if (!keyItem.activatedAt) {
         db.prepare('UPDATE keys SET activatedAt = ? WHERE id = ?').run(now.toISOString(), keyItem.id);
       }
-      LogsService.logAction('system', 'Client Device', 'MASTER_KEY_VERIFIED', `Master Key ${keyItem.key} verified`, { key: keyItem.key, hwid: reqHwid });
+      if (reqHwid) {
+        const deviceId = generateUUID();
+        db.prepare('INSERT OR IGNORE INTO key_devices (id, keyId, hwid, boundAt) VALUES (?, ?, ?, ?)').run(
+          deviceId,
+          keyItem.id,
+          reqHwid,
+          now.toISOString()
+        );
+      }
+      const deviceCount = (db.prepare('SELECT COUNT(*) as count FROM key_devices WHERE keyId = ?').get(keyItem.id) as any)?.count || 0;
+
+      LogsService.logAction('system', 'Client Device', 'MASTER_KEY_VERIFIED', `Master Key ${keyItem.key} verified (Bound Devices: ${deviceCount})`, { key: keyItem.key, hwid: reqHwid, deviceCount });
       return {
         success: true,
         status: 'authenticated',
@@ -83,6 +94,7 @@ export class KeysService {
         expiresAt: keyItem.expiresAt,
         targetGame: defaultTargetGame,
         isMasterKey: true,
+        deviceCount,
       };
     }
 
@@ -102,6 +114,12 @@ export class KeysService {
     if (!keyItem.hwid) {
       // First in-game execution -> Bind key to this device's HWID!
       db.prepare('UPDATE keys SET hwid = ?, activatedAt = ? WHERE id = ?').run(reqHwid, now.toISOString(), keyItem.id);
+      db.prepare('INSERT OR IGNORE INTO key_devices (id, keyId, hwid, boundAt) VALUES (?, ?, ?, ?)').run(
+        generateUUID(),
+        keyItem.id,
+        reqHwid,
+        now.toISOString()
+      );
       LogsService.logAction('system', 'Mod Menu', 'KEY_HWID_BOUND', `Key ${keyItem.key} bound to device HWID: ${reqHwid}`, { key: keyItem.key, hwid: reqHwid });
       return {
         success: true,
@@ -139,22 +157,31 @@ export class KeysService {
     const nowIso = new Date().toISOString();
     db.prepare("UPDATE keys SET status = 'expired' WHERE status = 'active' AND expiresAt != 'never' AND expiresAt <= ?").run(nowIso);
 
+    let rawKeys: KeyRecord[] = [];
     if (role === 'owner') {
-      return db.prepare('SELECT * FROM keys ORDER BY createdAt DESC').all() as KeyRecord[];
+      rawKeys = db.prepare('SELECT * FROM keys ORDER BY createdAt DESC').all() as KeyRecord[];
     } else if (role === 'manager') {
-      return db.prepare(`
+      rawKeys = db.prepare(`
         SELECT DISTINCT k.* FROM keys k
         LEFT JOIN users u ON k.createdById = u.id
         WHERE k.createdById = ? OR k.createdByUsername = ? OR u.createdBy = ? OR u.createdBy = ?
         ORDER BY k.createdAt DESC
       `).all(id, username, id, username) as KeyRecord[];
     } else {
-      return db.prepare('SELECT * FROM keys WHERE createdById = ? OR createdByUsername = ? ORDER BY createdAt DESC').all(id, username) as KeyRecord[];
+      rawKeys = db.prepare('SELECT * FROM keys WHERE createdById = ? OR createdByUsername = ? ORDER BY createdAt DESC').all(id, username) as KeyRecord[];
     }
+
+    return rawKeys.map((k) => {
+      const deviceCount = (db.prepare('SELECT COUNT(*) as count FROM key_devices WHERE keyId = ?').get(k.id) as any)?.count || (k.hwid ? 1 : 0);
+      return {
+        ...k,
+        deviceCount: Number(deviceCount),
+      };
+    });
   }
 
   static generateKeys(user: AuthUserPayload, payload: GenerateKeysPayload & { customDays?: number; duration?: string }) {
-    const { durationDays, customDays, duration, count, note, isMaster, paymentScreenshot } = payload;
+    const { durationDays, customDays, duration, count, note, isMaster, isMasterKey, paymentScreenshot } = payload as any;
     const numKeys = Math.max(1, parseInt(String(count), 10) || 1);
 
     let days = 0;
@@ -180,7 +207,7 @@ export class KeysService {
       }
     }
 
-    const isMasterKeyFlag = isMaster === true || isMaster === 'true' || isMaster === 1;
+    const isMasterKeyFlag = isMaster === true || isMaster === 'true' || isMaster === 1 || isMasterKey === true || isMasterKey === 'true' || isMasterKey === 1;
 
     if (isMasterKeyFlag && user.role !== 'owner' && user.role !== 'manager') {
       throw new AppError('Only Manager and Owner can create Master Keys.', 403);
@@ -195,7 +222,7 @@ export class KeysService {
       costPerKey = days * 10;
     }
 
-    const totalCost = costPerKey * numKeys;
+    const totalCost = isMasterKeyFlag ? 0 : costPerKey * numKeys;
 
     if (user.role === 'reseller') {
       const userRow = db.prepare('SELECT COALESCE(tokens, credits, 0) as balance FROM users WHERE id = ?').get(user.id) as { balance: number } | undefined;
@@ -224,9 +251,29 @@ export class KeysService {
       }
 
       const keyStr = generateKeyString(isMasterKeyFlag);
-      const keyId = generateUUID();
       const noteText = note || (isMasterKeyFlag ? (days === 0 ? 'Master Key (Lifetime)' : `Master Key (${days} Days)`) : (days === 0 ? 'Lifetime Key' : `${days} Days Key`));
 
+      if (isMasterKeyFlag) {
+        const existingMaster = db.prepare('SELECT * FROM keys WHERE UPPER(key) = UPPER(?)').get(keyStr) as KeyRecord | undefined;
+        if (existingMaster) {
+          db.prepare(`
+            UPDATE keys 
+            SET expiresAt = ?, status = 'active', createdById = ?, createdByUsername = ?, note = ?, isMasterKey = 1, paymentScreenshot = COALESCE(?, paymentScreenshot)
+            WHERE id = ?
+          `).run(expiresAt, user.id, user.username, noteText, savedScreenshotUrl, existingMaster.id);
+
+          const updatedMaster = db.prepare('SELECT * FROM keys WHERE id = ?').get(existingMaster.id) as KeyRecord;
+          const deviceCount = (db.prepare('SELECT COUNT(*) as count FROM key_devices WHERE keyId = ?').get(existingMaster.id) as any)?.count || 0;
+
+          createdKeys.push({
+            ...updatedMaster,
+            deviceCount: Number(deviceCount),
+          });
+          break;
+        }
+      }
+
+      const keyId = generateUUID();
       insertStmt.run(
         keyId,
         keyStr,
@@ -239,6 +286,8 @@ export class KeysService {
         savedScreenshotUrl,
         costPerKey
       );
+
+      const deviceCount = (db.prepare('SELECT COUNT(*) as count FROM key_devices WHERE keyId = ?').get(keyId) as any)?.count || 0;
 
       createdKeys.push({
         id: keyId,
@@ -254,6 +303,7 @@ export class KeysService {
         isMasterKey: isMasterKeyFlag ? 1 : 0,
         paymentScreenshot: savedScreenshotUrl,
         costTokens: costPerKey,
+        deviceCount: Number(deviceCount),
       });
     }
 
@@ -278,17 +328,22 @@ export class KeysService {
   static resetHwid(user: AuthUserPayload, keyId: string) {
     if (!keyId) throw new AppError('Key ID is required.', 400);
 
-    const keyItem = db.prepare('SELECT key, hwid FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
+    const keyItem = db.prepare('SELECT id, key, hwid FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
     const keyStr = keyItem ? keyItem.key : keyId;
     const oldHwid = keyItem?.hwid || 'Unknown';
 
-    db.prepare('UPDATE keys SET hwid = null WHERE id = ? OR key = ?').run(keyId, keyId);
+    if (keyItem) {
+      db.prepare('UPDATE keys SET hwid = null WHERE id = ?').run(keyItem.id);
+      db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(keyItem.id);
+    } else {
+      db.prepare('UPDATE keys SET hwid = null WHERE key = ?').run(keyId);
+    }
 
     LogsService.logAction(
       user.id,
       user.username,
       'KEY_HWID_RESET',
-      `Unbound HWID for key ${keyStr} (Previously bound to: ${oldHwid})`,
+      `Unbound HWID / devices for key ${keyStr} (Previously bound: ${oldHwid})`,
       { key: keyStr, oldHwid }
     );
 
@@ -298,11 +353,16 @@ export class KeysService {
   static deleteKey(user: AuthUserPayload, keyId: string) {
     if (!keyId) throw new AppError('Key ID is required.', 400);
 
-    const keyItem = db.prepare('SELECT key, createdByUsername FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
+    const keyItem = db.prepare('SELECT id, key, createdByUsername FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
     const keyStr = keyItem ? keyItem.key : keyId;
     const creator = keyItem ? keyItem.createdByUsername : 'Unknown';
 
-    db.prepare('DELETE FROM keys WHERE id = ? OR key = ?').run(keyId, keyId);
+    if (keyItem) {
+      db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(keyItem.id);
+      db.prepare('DELETE FROM keys WHERE id = ?').run(keyItem.id);
+    } else {
+      db.prepare('DELETE FROM keys WHERE key = ?').run(keyId);
+    }
 
     LogsService.logAction(
       user.id,
@@ -313,5 +373,49 @@ export class KeysService {
     );
 
     return { success: true, message: 'Key deleted successfully.' };
+  }
+
+  static deleteExpiredKeys(user: AuthUserPayload) {
+    const { role, id, username } = user;
+    const nowIso = new Date().toISOString();
+
+    db.prepare("UPDATE keys SET status = 'expired' WHERE status = 'active' AND expiresAt != 'never' AND expiresAt <= ?").run(nowIso);
+
+    let expiredKeys: { id: string; key: string }[] = [];
+    if (role === 'owner') {
+      expiredKeys = db.prepare("SELECT id, key FROM keys WHERE status = 'expired'").all() as any[];
+    } else if (role === 'manager') {
+      expiredKeys = db.prepare(`
+        SELECT DISTINCT k.id, k.key FROM keys k
+        LEFT JOIN users u ON k.createdById = u.id
+        WHERE k.status = 'expired' AND (k.createdById = ? OR k.createdByUsername = ? OR u.createdBy = ? OR u.createdBy = ?)
+      `).all(id, username, id, username) as any[];
+    } else {
+      expiredKeys = db.prepare("SELECT id, key FROM keys WHERE status = 'expired' AND (createdById = ? OR createdByUsername = ?)").all(id, username) as any[];
+    }
+
+    if (expiredKeys.length === 0) {
+      return { success: true, count: 0, message: 'No expired keys found to delete.' };
+    }
+
+    const deletedCount = expiredKeys.length;
+    for (const item of expiredKeys) {
+      db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(item.id);
+      db.prepare('DELETE FROM keys WHERE id = ?').run(item.id);
+    }
+
+    LogsService.logAction(
+      user.id,
+      user.username,
+      'KEYS_EXPIRED_DELETED',
+      `Deleted all ${deletedCount} expired license key(s)`,
+      { count: deletedCount }
+    );
+
+    return {
+      success: true,
+      count: deletedCount,
+      message: `Successfully deleted ${deletedCount} expired key(s).`,
+    };
   }
 }

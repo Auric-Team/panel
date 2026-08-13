@@ -211,7 +211,8 @@ export default function Home() {
         count,
         note,
         paymentScreenshot,
-        isMasterKey,
+        isMaster: isMasterKey,
+        isMasterKey: isMasterKey,
       });
 
       if (res.success && Array.isArray(res.keys)) {
@@ -244,6 +245,25 @@ export default function Home() {
       await fetchData();
     } catch (err: any) {
       alert(err.message || 'Delete key failed.');
+    }
+  };
+
+  // Delete Expired Keys Handler
+  const handleDeleteExpiredKeys = async () => {
+    if (!token) return;
+    const now = new Date();
+    const expiredCount = keys.filter((k) => k.status === 'expired' || (k.expiresAt && k.expiresAt !== 'never' && new Date(k.expiresAt) <= now)).length;
+    if (expiredCount === 0) {
+      alert('No expired keys found to delete.');
+      return;
+    }
+    if (!confirm(`Are you sure you want to delete all ${expiredCount} expired license keys at once?\n\nReal active customer keys will NOT be affected.`)) return;
+    try {
+      const res = await api.deleteExpiredKeys(token);
+      alert(res.message || `Deleted ${res.count || expiredCount} expired key(s).`);
+      await fetchData();
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete expired keys.');
     }
   };
 
@@ -511,6 +531,7 @@ export default function Home() {
               generatedKeys={generatedKeys}
               onResetHwid={handleResetHwid}
               onDeleteKey={handleDeleteKey}
+              onDeleteExpiredKeys={handleDeleteExpiredKeys}
               onOpenProofModal={(k) => setSelectedProofKey(k)}
             />
           </div>

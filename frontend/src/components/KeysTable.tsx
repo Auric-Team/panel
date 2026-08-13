@@ -9,6 +9,7 @@ interface KeysTableProps {
   keys: KeyItem[];
   onResetHwid: (id: string) => void;
   onDeleteKey: (id: string) => void;
+  onDeleteExpiredKeys?: () => void;
   onOpenProofModal: (key: KeyItem) => void;
 }
 
@@ -16,6 +17,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
   keys,
   onResetHwid,
   onDeleteKey,
+  onDeleteExpiredKeys,
   onOpenProofModal,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -125,6 +127,18 @@ export const KeysTable: React.FC<KeysTableProps> = ({
             <Download className="w-4 h-4 text-cyan-400" />
             <span className="hidden sm:inline">Export</span>
           </button>
+
+          {/* Clean Expired Keys Button */}
+          {onDeleteExpiredKeys && (
+            <button
+              onClick={onDeleteExpiredKeys}
+              className="p-2 rounded-xl bg-rose-950/80 border border-rose-800/80 text-rose-300 hover:text-white hover:bg-rose-900 transition flex items-center space-x-1 font-bold"
+              title="Delete All Expired Keys At One Click"
+            >
+              <Trash2 className="w-4 h-4 text-rose-400" />
+              <span>Clean Expired</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -254,19 +268,26 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                     )}
                   </td>
 
-                  {/* Bound HWID */}
-                  <td className="p-3.5 text-slate-400 max-w-[130px] truncate" title={k.hwid || 'Unbound'}>
-                    {k.hwid || 'Unbound'}
+                  {/* Bound HWID Device */}
+                  <td className="p-3.5 text-slate-400 max-w-[160px] truncate" title={k.isMasterKey ? `${k.deviceCount ?? 0} Devices Bound` : (k.hwid || 'Unbound')}>
+                    {k.isMasterKey ? (
+                      <span className="px-2.5 py-1 rounded-xl bg-purple-950/80 text-purple-300 border border-purple-800/60 font-bold text-[10px] inline-flex items-center space-x-1">
+                        <Sparkles className="w-3 h-3 text-purple-400 shrink-0" />
+                        <span>{k.deviceCount ?? 0} Device{(k.deviceCount ?? 0) === 1 ? '' : 's'} Bound</span>
+                      </span>
+                    ) : (
+                      k.hwid || 'Unbound'
+                    )}
                   </td>
 
                   {/* Actions */}
                   <td className="p-3.5 text-right">
                     <div className="flex items-center justify-end space-x-1.5">
-                      {k.hwid && (
+                      {(k.hwid || (k.isMasterKey && (k.deviceCount ?? 0) > 0)) && (
                         <button
                           onClick={() => onResetHwid(k.id)}
                           className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition"
-                          title="Reset Hardware Binding (HWID)"
+                          title="Reset Hardware Binding / Device Count"
                         >
                           <RotateCcw className="w-4 h-4" />
                         </button>

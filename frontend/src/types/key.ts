@@ -11,6 +11,7 @@ export interface KeyItem {
   createdByUsername: string;
   paymentScreenshot?: string | null;
   isMasterKey?: number | boolean;
+  deviceCount?: number;
 }
 
 export interface UserItem {
