@@ -55,46 +55,21 @@ export class KeysService {
 
     const defaultTargetGame = 'com.herogame.gplay.lastdayrulessurvival';
 
-    if (keyItem.isMasterKey === 1) {
-      if (!keyItem.activatedAt) {
-        db.prepare('UPDATE keys SET activatedAt = ? WHERE id = ?').run(now.toISOString(), keyItem.id);
-      }
-      LogsService.logAction('system', 'Client Device', 'MASTER_KEY_VERIFIED', `Master Key ${keyItem.key} authenticated for HWID: ${reqHwid} (Bypasses HWID binding)`, { key: keyItem.key, hwid: reqHwid });
-      return {
-        success: true,
-        status: 'authenticated',
-        message: 'Master key authenticated (Unlimited devices)',
-        expiresAt: keyItem.expiresAt,
-        targetGame: defaultTargetGame,
-        isMasterKey: true,
-      };
+    // Unbound Verification Mode (No HWID locking, pure active/expired validation)
+    if (!keyItem.activatedAt) {
+      db.prepare('UPDATE keys SET activatedAt = ? WHERE id = ?').run(now.toISOString(), keyItem.id);
     }
 
-    if (!keyItem.hwid) {
-      db.prepare('UPDATE keys SET hwid = ?, activatedAt = ? WHERE id = ?').run(reqHwid, now.toISOString(), keyItem.id);
-      LogsService.logAction('system', 'Client Device', 'KEY_HWID_BOUND', `Key ${keyItem.key} successfully activated and bound to HWID: ${reqHwid}`, { key: keyItem.key, hwid: reqHwid });
-      return {
-        success: true,
-        status: 'authenticated',
-        message: 'Key successfully activated and bound to device',
-        expiresAt: keyItem.expiresAt,
-        targetGame: defaultTargetGame,
-      };
-    }
+    LogsService.logAction('system', 'Client Device', 'KEY_VERIFIED', `Key ${keyItem.key} authenticated (Unbound Mode)`, { key: keyItem.key, hwid: reqHwid });
 
-    if (keyItem.hwid === reqHwid) {
-      LogsService.logAction('system', 'Client Device', 'KEY_VERIFIED', `Key ${keyItem.key} authenticated for bound HWID: ${reqHwid}`, { key: keyItem.key, hwid: reqHwid });
-      return {
-        success: true,
-        status: 'authenticated',
-        message: 'Key authenticated',
-        expiresAt: keyItem.expiresAt,
-        targetGame: defaultTargetGame,
-      };
-    } else {
-      LogsService.logAction('system', 'Client Device', 'KEY_HWID_MISMATCH', `Key ${keyItem.key} HWID Mismatch! Bound to: ${keyItem.hwid}, Attempted from: ${reqHwid}`, { key: keyItem.key, boundHwid: keyItem.hwid, attemptedHwid: reqHwid });
-      throw new AppError('Key is bound to another device', 403);
-    }
+    return {
+      success: true,
+      status: 'authenticated',
+      message: 'Key authenticated',
+      expiresAt: keyItem.expiresAt,
+      targetGame: defaultTargetGame,
+      isMasterKey: keyItem.isMasterKey === 1,
+    };
   }
 
   static getKeys(user: AuthUserPayload): KeyRecord[] {
@@ -119,13 +94,13 @@ export class KeysService {
   static generateKeys(user: AuthUserPayload, payload: GenerateKeysPayload & { customDays?: number; duration?: string }) {
     const { durationDays, customDays, duration, count, note, isMaster, paymentScreenshot } = payload;
     const numKeys = Math.max(1, parseInt(String(count), 10) || 1);
-    
+
     let days = 0;
     if (durationDays !== undefined && durationDays !== null && durationDays !== '') {
       const parsed = parseInt(String(durationDays), 10);
       days = isNaN(parsed) ? 0 : parsed;
     }
-    
+
     if (days === 0 && customDays !== undefined && customDays !== null && customDays !== '') {
       const parsed = parseInt(String(customDays), 10);
       if (!isNaN(parsed) && parsed > 0) {
