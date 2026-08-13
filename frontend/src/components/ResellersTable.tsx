@@ -41,7 +41,8 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
   const [isCreating, setIsCreating] = useState(false);
 
   const effectiveUsers = useMemo(() => {
-    return resellers || users || [];
+    const list = resellers || users || [];
+    return list.filter((u) => u.role === 'reseller' || u.role === 'manager');
   }, [resellers, users]);
 
   const roleString = userRole || currentUser?.role || 'reseller';
@@ -240,8 +241,8 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                       </div>
                     </td>
 
-                    <td className="p-3 text-slate-400">
-                      {u.createdBy || 'System'}
+                    <td className="p-3 text-cyan-300 font-bold">
+                      @{u.createdByUsername || u.createdBy || 'System'}
                     </td>
 
                     <td className="p-3">

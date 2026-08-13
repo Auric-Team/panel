@@ -438,11 +438,11 @@ export default function Home() {
             >
               <Users className="w-4 h-4" />
               <span>👥 Reseller Network & Token Allocation</span>
-              {resellers.length > 0 && (
+              {resellers.filter((r) => r.role === 'reseller' || r.role === 'manager').length > 0 && (
                 <span className={`px-2 py-0.5 text-[9px] rounded-full font-mono font-extrabold ${
                   activeTab === 'resellers' ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' : 'bg-slate-950 text-slate-400 border border-slate-800'
                 }`}>
-                  {resellers.length}
+                  {resellers.filter((r) => r.role === 'reseller' || r.role === 'manager').length}
                 </span>
               )}
             </button>
@@ -519,13 +519,14 @@ export default function Home() {
         {/* Tab 3: Reseller Network */}
         {activeTab === 'resellers' && (user?.role === 'owner' || user?.role === 'manager') && (
           <div className="space-y-6 animate-in fade-in duration-200">
-            <ResellersTable
+            <ResellerManagement
+              currentUser={user}
               resellers={resellers}
-              userRole={user.role}
+              keys={keys}
               onCreateReseller={handleCreateReseller}
-              onToggleBlock={handleToggleBlockUser}
-              onOpenTokensModal={(reseller) => setTokenModalUser(reseller)}
-              onOpenDashboardModal={(reseller) => setResellerDashboardUser(reseller)}
+              onToggleBlockUser={handleToggleBlockUser}
+              onDeleteUser={handleDeleteUser}
+              onUpdateTokens={handleUpdateTokens}
             />
           </div>
         )}

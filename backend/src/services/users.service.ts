@@ -9,10 +9,25 @@ export class UsersService {
   static getUsers(user: AuthUserPayload): UserRecord[] {
     const { role, id } = user;
 
+    const baseSql = `
+      SELECT 
+        u.id, 
+        u.username, 
+        u.role, 
+        COALESCE(c.username, u.createdBy, 'System') AS createdBy,
+        COALESCE(c.username, u.createdBy, 'System') AS createdByUsername,
+        u.isBlocked, 
+        u.credits, 
+        COALESCE(u.tokens, u.credits, 0) AS tokens, 
+        u.createdAt 
+      FROM users u
+      LEFT JOIN users c ON u.createdBy = c.id
+    `;
+
     if (role === 'owner') {
-      return db.prepare('SELECT id, username, role, createdBy, isBlocked, credits, COALESCE(tokens, credits, 0) AS tokens, createdAt FROM users').all() as UserRecord[];
+      return db.prepare(`${baseSql} ORDER BY u.createdAt DESC`).all() as UserRecord[];
     } else if (role === 'manager') {
-      return db.prepare('SELECT id, username, role, createdBy, isBlocked, credits, COALESCE(tokens, credits, 0) AS tokens, createdAt FROM users WHERE createdBy = ? OR id = ?').all(id, id) as UserRecord[];
+      return db.prepare(`${baseSql} WHERE u.createdBy = ? OR u.id = ? ORDER BY u.createdAt DESC`).all(id, id) as UserRecord[];
     } else {
       throw new AppError('Access denied.', 403);
     }

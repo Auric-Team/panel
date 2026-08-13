@@ -100,9 +100,13 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
     return map;
   }, [keys]);
 
+  const resellerPartners = useMemo(() => {
+    return resellers.filter((u) => u.role === 'reseller' || u.role === 'manager');
+  }, [resellers]);
+
   // Filter logic
   const filteredResellers = useMemo(() => {
-    return resellers.filter((u) => {
+    return resellerPartners.filter((u) => {
       const q = searchQuery.toLowerCase();
       const status = getResellerStatus(u);
 
@@ -111,13 +115,14 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
         u.role.toLowerCase().includes(q) ||
         u.id.toLowerCase().includes(q) ||
         (u.email && u.email.toLowerCase().includes(q)) ||
-        (u.createdBy && u.createdBy.toLowerCase().includes(q));
+        (u.createdBy && u.createdBy.toLowerCase().includes(q)) ||
+        (u.createdByUsername && u.createdByUsername.toLowerCase().includes(q));
 
       const matchesStatus = statusFilter === 'all' || status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-  }, [resellers, searchQuery, statusFilter]);
+  }, [resellerPartners, searchQuery, statusFilter]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -298,7 +303,7 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
                   : 'bg-slate-950/60 text-slate-400 border-slate-800/80 hover:text-slate-200'
               }`}
             >
-              <span>All ({resellers.length})</span>
+              <span>All ({resellerPartners.length})</span>
             </button>
 
             {/* Active Badge */}
@@ -361,6 +366,7 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
               <tr>
                 <th className="p-3.5">Reseller Partner</th>
                 <th className="p-3.5">Role Tier</th>
+                <th className="p-3.5">Created By</th>
                 <th className="p-3.5">Status</th>
                 <th className="p-3.5">Token Balance</th>
                 <th className="p-3.5">Keys Issued</th>
@@ -371,7 +377,7 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
             <tbody className="divide-y divide-slate-800/60 font-mono text-slate-300">
               {filteredResellers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-500 font-sans">
+                  <td colSpan={8} className="p-8 text-center text-slate-500 font-sans">
                     No reseller partners match the active filters.
                   </td>
                 </tr>
@@ -381,6 +387,7 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
                   const stats = resellerKeyStats[u.username.toLowerCase()] || { totalKeys: 0, totalSpent: 0 };
                   const tokens = (u.tokens !== undefined ? u.tokens : u.credits) ?? 0;
                   const displayEmail = u.email || `${u.username}@axios-network.internal`;
+                  const creatorName = u.createdByUsername || u.createdBy || 'System';
 
                   return (
                     <tr key={u.id} className="hover:bg-slate-800/40 transition">
@@ -405,6 +412,14 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
                       <td className="p-3.5">
                         <span className="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-extrabold uppercase border border-slate-700">
                           {u.role}
+                        </span>
+                      </td>
+
+                      {/* Created By Account */}
+                      <td className="p-3.5">
+                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 flex items-center space-x-1 w-max">
+                          <User className="w-3 h-3 text-cyan-400" />
+                          <span>@{creatorName}</span>
                         </span>
                       </td>
 

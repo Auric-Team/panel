@@ -14,12 +14,42 @@ sqliteDb.exec('PRAGMA journal_mode = WAL;');
 sqliteDb.exec('PRAGMA foreign_keys = ON;');
 
 export function initDatabase() {
+  // Check if users table schema needs updating for 'user' role constraint
+  try {
+    const tableSql = (sqliteDb.query("SELECT sql FROM sqlite_master WHERE type='table' AND name='users'").get() as any)?.sql || '';
+    if (tableSql && !tableSql.includes("'user'")) {
+      console.log('[Database] Migrating users table schema to support role "user"...');
+      sqliteDb.exec(`
+        BEGIN TRANSACTION;
+        CREATE TABLE users_new (
+          id TEXT PRIMARY KEY,
+          username TEXT UNIQUE NOT NULL,
+          password TEXT NOT NULL,
+          role TEXT NOT NULL CHECK(role IN ('owner', 'manager', 'reseller', 'user')),
+          createdBy TEXT,
+          pin2fa TEXT,
+          isBlocked INTEGER DEFAULT 0,
+          credits INTEGER DEFAULT 0,
+          tokens INTEGER DEFAULT 0,
+          createdAt TEXT NOT NULL
+        );
+        INSERT INTO users_new SELECT id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt FROM users;
+        DROP TABLE users;
+        ALTER TABLE users_new RENAME TO users;
+        COMMIT;
+      `);
+      console.log('[Database] Users table schema migration complete.');
+    }
+  } catch (err) {
+    console.error('[Database] Schema migration note:', err);
+  }
+
   sqliteDb.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       username TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
-      role TEXT NOT NULL CHECK(role IN ('owner', 'manager', 'reseller')),
+      role TEXT NOT NULL CHECK(role IN ('owner', 'manager', 'reseller', 'user')),
       createdBy TEXT,
       pin2fa TEXT,
       isBlocked INTEGER DEFAULT 0,
@@ -82,6 +112,13 @@ export function initDatabase() {
     } catch {
       // Column already exists
     }
+  }
+
+  // Update existing app-registered users to role 'user'
+  try {
+    sqliteDb.exec("UPDATE users SET role = 'user' WHERE createdBy = 'self_registration' AND role = 'reseller';");
+  } catch (err) {
+    // Migration ignore
   }
 
   const ownerUser = sqliteDb.query('SELECT * FROM users WHERE role = ? OR username = ?').get('owner', ENV.OWNER_USERNAME) as any;

@@ -154,7 +154,21 @@ export class AnalyticsService {
   }
 
   static getResellerAnalytics(resellerId: string) {
-    const resellerInfo = db.prepare('SELECT id, username, role, createdBy, isBlocked, credits, COALESCE(tokens, credits, 0) as tokens, createdAt FROM users WHERE id = ?').get(resellerId);
+    const resellerInfo = db.prepare(`
+      SELECT 
+        u.id, 
+        u.username, 
+        u.role, 
+        COALESCE(c.username, u.createdBy, 'System') AS createdBy,
+        COALESCE(c.username, u.createdBy, 'System') AS createdByUsername,
+        u.isBlocked, 
+        u.credits, 
+        COALESCE(u.tokens, u.credits, 0) as tokens, 
+        u.createdAt 
+      FROM users u
+      LEFT JOIN users c ON u.createdBy = c.id
+      WHERE u.id = ?
+    `).get(resellerId);
 
     if (!resellerInfo) {
       throw new AppError('Reseller not found', 404);

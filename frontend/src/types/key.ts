@@ -16,12 +16,13 @@ export interface KeyItem {
 export interface UserItem {
   id: string;
   username: string;
-  role: 'owner' | 'manager' | 'reseller';
+  role: 'owner' | 'manager' | 'reseller' | 'user';
   tokens: number;
   credits?: number;
   isBlocked: number;
   createdAt: string;
   createdBy?: string;
+  createdByUsername?: string;
   status?: string;
   email?: string;
 }

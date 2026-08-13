@@ -150,7 +150,7 @@ export const ResellerAnalyticsModal: React.FC<ResellerAnalyticsModalProps> = ({
                 <div className="text-[11px] text-slate-400 mt-1 flex items-center space-x-3">
                   <span className="flex items-center space-x-1">
                     <User className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Manager: <strong className="text-slate-200">{reseller.createdBy || 'System'}</strong></span>
+                    <span>Created by: <strong className="text-cyan-300">@{reseller.createdByUsername || reseller.createdBy || 'System'}</strong></span>
                   </span>
                   <span>•</span>
                   <span className="flex items-center space-x-1">

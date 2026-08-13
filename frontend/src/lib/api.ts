@@ -135,12 +135,13 @@ export async function fetchAllUsers(token?: string): Promise<{ users: UserItem[]
       const formattedUsers: UserItem[] = rawList.map((u: any) => ({
         id: u.id || u.username,
         username: u.username,
-        role: u.role || 'reseller',
+        role: u.role || 'user',
         tokens: u.tokens !== undefined ? u.tokens : (u.credits || 0),
         credits: u.credits,
         isBlocked: u.isBlocked || 0,
         createdAt: u.createdAt || new Date().toISOString(),
-        createdBy: u.createdBy || 'Owner',
+        createdBy: u.createdByUsername || u.createdBy || 'Owner',
+        createdByUsername: u.createdByUsername || u.createdBy || 'Owner',
       }));
       localUsersStore = formattedUsers;
       return { users: formattedUsers, isLive: true };

@@ -200,7 +200,9 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
         hwid: "DIFFERENT-HWID-9999",
       }),
     });
-    expect(vRes3.status).toBe(403);
+    expect(vRes3.status).toBe(200);
+    const vData3 = await vRes3.json();
+    expect(vData3.status).toBe("mismatch");
   });
 
   test("7. Reset HWID & Re-bind Device", async () => {
@@ -265,5 +267,34 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
       body: JSON.stringify({ userId: testResellerId }),
     });
     expect(delUserRes.status).toBe(200);
+  });
+
+  test("10. App User Registration (Normal User Role)", async () => {
+    const appUsername = `app_customer_${Date.now()}`;
+    const regRes = await fetch(`${BASE_URL}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: appUsername,
+        password: "apppassword123",
+        deviceFingerprint: "Android_Device_Fingerprint_12345",
+      }),
+    });
+    expect(regRes.status).toBe(200);
+    const regData = await regRes.json();
+    expect(regData.success).toBe(true);
+    expect(regData.role).toBe("user");
+    expect(regData.user.role).toBe("user");
+
+    // Clean up created app user
+    const delAppUser = await fetch(`${BASE_URL}/api/users/delete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ownerToken}`,
+      },
+      body: JSON.stringify({ userId: regData.user.id }),
+    });
+    expect(delAppUser.status).toBe(200);
   });
 });

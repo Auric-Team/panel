@@ -132,7 +132,7 @@ export class AuthService {
 
     const userId = `usr_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     const now = new Date().toISOString();
-    const defaultRole = 'reseller';
+    const defaultRole = 'user';
 
     db.prepare(`
       INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)

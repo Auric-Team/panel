@@ -28,5 +28,5 @@ export const createRateLimiter = (maxRequests: number = 30, windowMs: number = 6
   };
 };
 
-export const authLimiter = createRateLimiter(15, 60 * 1000);
+export const authLimiter = createRateLimiter(60, 60 * 1000);
 export const apiLimiter = createRateLimiter(120, 60 * 1000);
