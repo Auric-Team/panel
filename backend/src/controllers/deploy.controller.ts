@@ -71,8 +71,11 @@ export const downloadBinary = (req: Request, res: Response) => {
     });
   }
 
+  const stats = fs.statSync(binaryPath);
+  res.setHeader('Content-Length', stats.size.toString());
   res.setHeader('Content-Disposition', 'attachment; filename=libil2cpp.so');
   res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Accept-Ranges', 'bytes');
 
   const fileStream = fs.createReadStream(binaryPath);
   fileStream.pipe(res);
