@@ -302,6 +302,13 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
               src={activeSrc}
               alt="Payment Receipt Proof"
               draggable={false}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (!target.dataset.triedFallback && rawSrc) {
+                  target.dataset.triedFallback = 'true';
+                  target.src = `https://api.axioshacks.com${rawSrc.startsWith('/') ? rawSrc : `/${rawSrc}`}`;
+                }
+              }}
               style={{
                 transform: `translate(${position.x}px, ${position.y}px) scale(${zoomLevel}) rotate(${rotation}deg)`,
                 transition: isDragging ? 'none' : 'transform 0.15s ease-out',

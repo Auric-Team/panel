@@ -437,7 +437,11 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                         alt="Payment Receipt"
                         className="w-10 h-10 object-cover rounded-lg border border-emerald-700/60 shadow-md shrink-0 bg-slate-900"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = k.paymentScreenshot || '';
+                          const target = e.target as HTMLImageElement;
+                          if (!target.dataset.triedFallback && k.paymentScreenshot) {
+                            target.dataset.triedFallback = 'true';
+                            target.src = `https://api.axioshacks.com${k.paymentScreenshot.startsWith('/') ? k.paymentScreenshot : `/${k.paymentScreenshot}`}`;
+                          }
                         }}
                       />
                       <div className="min-w-0">
@@ -606,6 +610,13 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                               alt="Receipt"
                               className="w-full h-full object-cover group-hover:scale-110 transition duration-150"
                               loading="lazy"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                if (!target.dataset.triedFallback && k.paymentScreenshot) {
+                                  target.dataset.triedFallback = 'true';
+                                  target.src = `https://api.axioshacks.com${k.paymentScreenshot.startsWith('/') ? k.paymentScreenshot : `/${k.paymentScreenshot}`}`;
+                                }
+                              }}
                             />
                           </div>
                           <span className="text-[11px] font-bold text-emerald-400 font-mono flex items-center space-x-1 pr-1">

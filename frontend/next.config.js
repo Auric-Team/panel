@@ -8,7 +8,7 @@ const nextConfig = {
     return config;
   },
   async rewrites() {
-    const backendUrl = process.env.BACKEND_INTERNAL_URL || 'http://localhost:20067';
+    const backendUrl = process.env.BACKEND_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067';
     return [
       {
         source: '/api/:path*',
