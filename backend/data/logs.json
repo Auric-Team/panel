@@ -1,5 +1,14 @@
 [
   {
+    "id": "1955fa36-9338-4c78-8c5b-0ce1c5ad2709",
+    "userId": "owner-root-id",
+    "username": "owner",
+    "action": "LOGIN_SUCCESS",
+    "details": "User verified 2FA successfully",
+    "metadata": {},
+    "timestamp": "2026-08-16T07:19:48.501Z"
+  },
+  {
     "id": "198f6d16-7385-43ea-b9bc-39ac323581b8",
     "userId": "system",
     "username": "Mod Menu",
@@ -24193,17 +24202,5 @@
       "oldHwid": "AXIOS-FP-6F31C2F4-1768-4B8E-B21B-FE7B9FCBECFE-10EC3668"
     },
     "timestamp": "2026-08-13T06:21:29.846Z"
-  },
-  {
-    "id": "8eaefcd9-677e-4c00-b90f-d09ebac41e08",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T06:18:32.738Z"
   }
 ]

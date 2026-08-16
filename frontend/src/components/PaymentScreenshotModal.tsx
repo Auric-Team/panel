@@ -17,6 +17,7 @@ import {
   Coins,
   Key,
   Expand,
+  UploadCloud,
 } from 'lucide-react';
 import { KeyItem } from '@/types/key';
 import { getReceiptImageUrl } from '@/lib/api';
@@ -27,6 +28,7 @@ export interface PaymentScreenshotModalProps {
   imageSrc?: string | null;
   imageTitle?: string;
   onClose: () => void;
+  onUpdateReceipt?: (keyId: string, base64: string) => Promise<void>;
 }
 
 export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
@@ -35,11 +37,13 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
   imageSrc,
   imageTitle,
   onClose,
+  onUpdateReceipt,
 }) => {
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [fitMode, setFitMode] = useState<'fit' | 'actual'>('fit');
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   // Drag Pan state
   const [isDragging, setIsDragging] = useState(false);
@@ -47,6 +51,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const rawSrc = imageSrc || keyItem?.paymentScreenshot || null;
   const activeSrc = rawSrc ? getReceiptImageUrl(rawSrc) : null;
@@ -142,6 +147,28 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
     }
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (JPG, PNG, WebP).');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64 = event.target?.result as string;
+      if (base64 && onUpdateReceipt && keyItem) {
+        setIsUploading(true);
+        try {
+          await onUpdateReceipt(keyItem.id, base64);
+        } finally {
+          setIsUploading(false);
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/90 backdrop-blur-2xl animate-in fade-in duration-200 font-mono text-xs">
       <div
@@ -149,6 +176,15 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
           isFullscreen ? 'max-w-[98vw] h-[96vh]' : 'max-w-4xl h-[90vh]'
         }`}
       >
+        {/* Hidden File Input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800/80 bg-slate-950/70 shrink-0">
           <div className="flex items-center space-x-3">
@@ -166,6 +202,19 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
           </div>
 
           <div className="flex items-center space-x-2">
+            {/* Re-Upload / Replace Receipt Button */}
+            {onUpdateReceipt && keyItem && (
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-700/80 text-emerald-300 hover:bg-emerald-900/90 hover:text-white transition text-xs font-bold shadow-sm cursor-pointer disabled:opacity-50"
+                title="Upload or Replace Receipt Screenshot"
+              >
+                <UploadCloud className={`w-3.5 h-3.5 ${isUploading ? 'animate-bounce text-emerald-400' : ''}`} />
+                <span>{isUploading ? 'Uploading...' : 'Replace Receipt'}</span>
+              </button>
+            )}
+
             {/* Download Button */}
             <button
               onClick={handleDownload}

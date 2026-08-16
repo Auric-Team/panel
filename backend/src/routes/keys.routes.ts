@@ -8,6 +8,7 @@ import {
   deleteExpiredKeys,
   extendKey,
   updateKeyNote,
+  updateReceipt,
   bulkResetHwid,
   bulkDeleteKeys,
   bulkExtendKeys,
@@ -27,6 +28,8 @@ router.post('/delete', deleteKey);
 router.post('/delete-expired', deleteExpiredKeys);
 router.post('/extend', extendKey);
 router.post('/update-note', updateKeyNote);
+router.post('/upload-receipt', updateReceipt);
+router.post('/update-receipt', updateReceipt);
 router.post('/bulk-reset-hwid', bulkResetHwid);
 router.post('/bulk-delete', bulkDeleteKeys);
 router.post('/bulk-extend', bulkExtendKeys);

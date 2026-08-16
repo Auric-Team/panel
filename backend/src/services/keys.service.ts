@@ -415,6 +415,39 @@ export class KeysService {
     return { success: true, message: 'Key note updated successfully.' };
   }
 
+  static updateKeyReceipt(user: AuthUserPayload, keyId: string, paymentScreenshot: string) {
+    if (!keyId) throw new AppError('Key ID is required.', 400);
+    const keyItem = db.prepare('SELECT * FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
+    if (!keyItem) throw new AppError('License key not found.', 404);
+
+    let savedUrl: string | null = null;
+    if (paymentScreenshot) {
+      if (paymentScreenshot.startsWith('data:image/')) {
+        savedUrl = saveBase64Image(paymentScreenshot);
+      } else {
+        savedUrl = paymentScreenshot;
+      }
+    }
+
+    db.prepare('UPDATE keys SET paymentScreenshot = ? WHERE id = ?').run(savedUrl, keyItem.id);
+
+    LogsService.logAction(
+      user.id,
+      user.username,
+      'RECEIPT_UPDATED',
+      `Updated payment receipt proof for key ${keyItem.key} (${savedUrl ? 'New Proof Attached' : 'Proof Cleared'})`,
+      { key: keyItem.key, paymentScreenshot: savedUrl }
+    );
+
+    return {
+      success: true,
+      message: 'Payment receipt proof updated successfully.',
+      keyId: keyItem.id,
+      key: keyItem.key,
+      paymentScreenshot: savedUrl,
+    };
+  }
+
   static resetHwid(user: AuthUserPayload, keyId: string) {
     if (!keyId) throw new AppError('Key ID is required.', 400);
 

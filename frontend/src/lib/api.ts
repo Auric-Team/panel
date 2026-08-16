@@ -504,6 +504,20 @@ export const api = {
     return data;
   },
 
+  updateReceipt: async (token: string, keyId: string, paymentScreenshot: string) => {
+    const res = await fetch(`${API_BASE_URL}/api/keys/upload-receipt`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id: keyId, paymentScreenshot }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to update payment receipt');
+    return data;
+  },
+
   bulkResetHwid: async (token: string, ids: string[]) => {
     const res = await fetch(`${API_BASE_URL}/api/keys/bulk-reset-hwid`, {
       method: 'POST',

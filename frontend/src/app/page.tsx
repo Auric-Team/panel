@@ -284,6 +284,18 @@ function DashboardContent() {
     await fetchData();
   };
 
+  // Update Key Receipt Handler
+  const handleUpdateKeyReceipt = async (keyId: string, paymentScreenshot: string) => {
+    if (!token) return;
+    try {
+      const res = await api.updateReceipt(token, keyId, paymentScreenshot);
+      toast.success(res?.message || 'Payment receipt proof updated successfully.');
+      await fetchData();
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to update payment receipt.');
+    }
+  };
+
   // Bulk Actions Handlers
   const handleBulkResetHwid = async (ids: string[]) => {
     if (!token) return;
@@ -542,6 +554,7 @@ function DashboardContent() {
               onDeleteExpiredKeys={handleDeleteExpiredKeys}
               onExtendKey={handleExtendKey}
               onUpdateKeyNote={handleUpdateKeyNote}
+              onUpdateReceipt={handleUpdateKeyReceipt}
               onBulkResetHwid={handleBulkResetHwid}
               onBulkDeleteKeys={handleBulkDeleteKeys}
               onBulkExtendKeys={handleBulkExtendKeys}

@@ -22,7 +22,7 @@ import {
   ChevronDown,
   Layers,
   MoreVertical,
-  Eye,
+  UploadCloud,
 } from 'lucide-react';
 import { KeyItem } from '@/types/key';
 import { useToast } from '@/components/ui/ToastContext';
@@ -40,6 +40,7 @@ interface KeysTableProps {
   onBulkResetHwid?: (ids: string[]) => Promise<void>;
   onBulkDeleteKeys?: (ids: string[]) => Promise<void>;
   onBulkExtendKeys?: (ids: string[], days: number) => Promise<void>;
+  onUpdateReceipt?: (keyId: string, base64: string) => Promise<void>;
 }
 
 export const KeysTable: React.FC<KeysTableProps> = ({
@@ -53,6 +54,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
   onBulkResetHwid,
   onBulkDeleteKeys,
   onBulkExtendKeys,
+  onUpdateReceipt,
 }) => {
   const { toast } = useToast();
 
@@ -61,6 +63,34 @@ export const KeysTable: React.FC<KeysTableProps> = ({
   const [resellerFilter, setResellerFilter] = useState<string>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedKeyIds, setSelectedKeyIds] = useState<Set<string>>(new Set());
+  const [selectedKeyForUpload, setSelectedKeyForUpload] = useState<string | null>(null);
+  const [isUploadingReceipt, setIsUploadingReceipt] = useState<boolean>(false);
+
+  const tableFileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleTableFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedKeyForUpload || !onUpdateReceipt) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file (JPG, PNG, WebP).');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64 = event.target?.result as string;
+      if (base64) {
+        setIsUploadingReceipt(true);
+        try {
+          await onUpdateReceipt(selectedKeyForUpload, base64);
+        } finally {
+          setIsUploadingReceipt(false);
+          setSelectedKeyForUpload(null);
+          if (tableFileInputRef.current) tableFileInputRef.current.value = '';
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Unique list of resellers
   const uniqueResellers = useMemo(() => {
@@ -173,6 +203,15 @@ export const KeysTable: React.FC<KeysTableProps> = ({
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-xl space-y-4 font-sans text-xs">
+      {/* Hidden File Input for Key-Level Upload */}
+      <input
+        ref={tableFileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleTableFileChange}
+        className="hidden"
+      />
+
       {/* Controls & Multi-Filter Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div className="flex items-center space-x-3">
@@ -559,7 +598,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                         <button
                           onClick={() => onOpenProofModal(k)}
                           className="flex items-center space-x-2 group px-2 py-1 bg-slate-950 hover:bg-slate-800 border border-emerald-800/70 hover:border-emerald-500 rounded-xl transition shadow-sm cursor-pointer"
-                          title="Click to view full receipt screenshot"
+                          title="Click to view full receipt screenshot or replace"
                         >
                           <div className="w-8 h-8 rounded-lg overflow-hidden border border-emerald-800/60 bg-slate-900 shrink-0 flex items-center justify-center">
                             <img
@@ -575,7 +614,18 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                           </span>
                         </button>
                       ) : (
-                        <span className="text-slate-600 text-[10px] italic">No Proof</span>
+                        <button
+                          onClick={() => {
+                            setSelectedKeyForUpload(k.id);
+                            tableFileInputRef.current?.click();
+                          }}
+                          disabled={isUploadingReceipt}
+                          className="flex items-center space-x-1.5 px-2.5 py-1 bg-slate-950/80 hover:bg-slate-800 border border-dashed border-slate-700 hover:border-emerald-500 rounded-xl text-[10px] text-slate-400 hover:text-emerald-300 transition cursor-pointer disabled:opacity-50"
+                          title="Click to upload proof for this key"
+                        >
+                          <UploadCloud className="w-3 h-3 text-slate-400" />
+                          <span>+ Add Proof</span>
+                        </button>
                       )}
                     </td>
 

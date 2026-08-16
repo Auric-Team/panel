@@ -29,6 +29,7 @@ interface KeyManagementProps {
   onDeleteExpiredKeys?: () => Promise<void> | void;
   onExtendKey?: (id: string, additionalDays: number, note?: string) => Promise<void>;
   onUpdateKeyNote?: (id: string, note: string) => Promise<void>;
+  onUpdateReceipt?: (keyId: string, paymentScreenshot: string) => Promise<void>;
   onBulkResetHwid?: (ids: string[]) => Promise<void>;
   onBulkDeleteKeys?: (ids: string[]) => Promise<void>;
   onBulkExtendKeys?: (ids: string[], days: number) => Promise<void>;
@@ -46,6 +47,7 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
   onDeleteExpiredKeys,
   onExtendKey,
   onUpdateKeyNote,
+  onUpdateReceipt,
   onBulkResetHwid,
   onBulkDeleteKeys,
   onBulkExtendKeys,
@@ -239,6 +241,7 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
         onBulkResetHwid={handleBulkResetHwidPrompt}
         onBulkDeleteKeys={handleBulkDeletePrompt}
         onBulkExtendKeys={handleBulkExtend}
+        onUpdateReceipt={onUpdateReceipt}
       />
 
       {/* Proof Image Lightbox Modal */}
@@ -246,6 +249,12 @@ export const KeyManagement: React.FC<KeyManagementProps> = ({
         isOpen={!!selectedProofKey}
         keyItem={selectedProofKey}
         onClose={() => setSelectedProofKey(null)}
+        onUpdateReceipt={async (keyId, base64) => {
+          if (onUpdateReceipt) {
+            await onUpdateReceipt(keyId, base64);
+            setSelectedProofKey((prev) => (prev ? { ...prev, paymentScreenshot: base64 } : null));
+          }
+        }}
       />
 
       {/* Key Extension & Note Editor Modal */}

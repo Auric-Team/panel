@@ -35,19 +35,36 @@ export function saveBase64Image(base64DataStr: string): string | null {
   if (!base64DataStr.startsWith('data:image/')) return base64DataStr;
 
   try {
-    const matches = base64DataStr.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+    const matches = base64DataStr.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
     if (!matches || matches.length !== 3) return base64DataStr;
 
-    const ext = matches[1].toLowerCase() === 'jpeg' ? 'jpg' : matches[1].toLowerCase();
+    let ext = matches[1].toLowerCase();
+    if (ext === 'jpeg' || ext === 'jpg') ext = 'jpg';
+    else if (ext === 'png') ext = 'png';
+    else if (ext === 'webp') ext = 'webp';
+    else ext = 'jpg';
+
     const rawData = matches[2];
     const fileName = `screenshot-${Date.now()}-${crypto.randomBytes(4).toString('hex')}.${ext}`;
+    const buffer = Buffer.from(rawData, 'base64');
 
-    if (!fs.existsSync(ENV.UPLOADS_DIR)) {
-      fs.mkdirSync(ENV.UPLOADS_DIR, { recursive: true });
-    }
+    const targetDirs = [
+      ENV.UPLOADS_DIR,
+      path.resolve(process.cwd(), 'uploads'),
+      path.resolve(process.cwd(), 'backend', 'uploads'),
+      path.resolve(process.cwd(), 'backup_db', 'uploads'),
+      path.resolve(__dirname, '..', '..', 'uploads'),
+      path.resolve(__dirname, '..', '..', 'backend', 'uploads'),
+      path.resolve(__dirname, '..', '..', 'backup_db', 'uploads'),
+    ];
 
-    const filePath = path.join(ENV.UPLOADS_DIR, fileName);
-    fs.writeFileSync(filePath, Buffer.from(rawData, 'base64'));
+    targetDirs.forEach((dir) => {
+      try {
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(path.join(dir, fileName), buffer);
+      } catch {}
+    });
+
     return `/uploads/${fileName}`;
   } catch (error) {
     console.error('Failed to save base64 image:', error);

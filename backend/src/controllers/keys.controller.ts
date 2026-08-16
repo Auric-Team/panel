@@ -72,6 +72,17 @@ export const updateKeyNote = (req: AuthenticatedRequest, res: Response, next: Ne
   }
 };
 
+export const updateReceipt = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const keyId = req.body.id || req.body.keyId;
+    const paymentScreenshot = req.body.paymentScreenshot || req.body.screenshot || req.body.receipt;
+    const result = KeysService.updateKeyReceipt(req.user!, keyId, paymentScreenshot);
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const bulkResetHwid = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const ids = req.body.ids || req.body.keyIds;
