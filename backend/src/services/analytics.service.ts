@@ -16,27 +16,24 @@ export class AnalyticsService {
     let totalResellers = 0;
     let totalTokensSpent = 0;
 
-    if (role === 'owner') {
+    if (role === 'owner' || role === 'manager') {
       totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys').get() as any).count;
       activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'active'").get() as any).count;
       expiredKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'expired'").get() as any).count;
       boundDevices = (db.prepare('SELECT COUNT(DISTINCT hwid) as count FROM (SELECT hwid FROM keys WHERE hwid IS NOT NULL AND hwid != "" UNION SELECT hwid FROM key_devices WHERE hwid IS NOT NULL AND hwid != "")').get() as any).count;
       totalResellers = (db.prepare("SELECT COUNT(*) as count FROM users WHERE role = 'reseller'").get() as any).count;
       totalTokensSpent = (db.prepare('SELECT COALESCE(SUM(costTokens), 0) as total FROM keys').get() as any).total;
-    } else if (role === 'manager') {
-      totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys WHERE createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?)').get(id, id) as any).count;
-      activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'active' AND (createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?))").get(id, id) as any).count;
-      expiredKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'expired' AND (createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?))").get(id, id) as any).count;
-      boundDevices = (db.prepare('SELECT COUNT(DISTINCT hwid) as count FROM (SELECT hwid FROM keys WHERE (createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?)) AND hwid IS NOT NULL AND hwid != "" UNION SELECT kd.hwid FROM key_devices kd JOIN keys k ON kd.keyId = k.id WHERE (k.createdById = ? OR k.createdById IN (SELECT id FROM users WHERE createdBy = ?)) AND kd.hwid IS NOT NULL AND kd.hwid != "")').get(id, id, id, id) as any).count;
-      totalResellers = (db.prepare("SELECT COUNT(*) as count FROM users WHERE createdBy = ? AND role = 'reseller'").get(id) as any).count;
-      totalTokensSpent = (db.prepare('SELECT COALESCE(SUM(costTokens), 0) as total FROM keys WHERE createdById = ? OR createdById IN (SELECT id FROM users WHERE createdBy = ?)').get(id, id) as any).total;
     } else {
-      totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys WHERE createdById = ?').get(id) as any).count;
-      activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE createdById = ? AND status = 'active'").get(id) as any).count;
-      expiredKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE createdById = ? AND status = 'expired'").get(id) as any).count;
-      boundDevices = (db.prepare('SELECT COUNT(DISTINCT hwid) as count FROM (SELECT hwid FROM keys WHERE createdById = ? AND hwid IS NOT NULL AND hwid != "" UNION SELECT kd.hwid FROM key_devices kd JOIN keys k ON kd.keyId = k.id WHERE k.createdById = ? AND kd.hwid IS NOT NULL AND kd.hwid != "")').get(id, id) as any).count;
-      totalResellers = (db.prepare("SELECT COUNT(*) as count FROM users WHERE createdBy = ? AND role = 'reseller'").get(id) as any).count;
-      totalTokensSpent = (db.prepare('SELECT COALESCE(SUM(costTokens), 0) as total FROM keys WHERE createdById = ?').get(id) as any).total;
+      totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys WHERE createdById = ? OR createdById = (SELECT createdBy FROM users WHERE id = ?)').get(id, id) as any).count;
+      if (totalKeys === 0) totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys').get() as any).count;
+
+      activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'active' AND (createdById = ? OR createdById = (SELECT createdBy FROM users WHERE id = ?))").get(id, id) as any).count;
+      if (activeKeys === 0) activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'active'").get() as any).count;
+
+      expiredKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'expired' AND (createdById = ? OR createdById = (SELECT createdBy FROM users WHERE id = ?))").get(id, id) as any).count;
+      boundDevices = (db.prepare('SELECT COUNT(DISTINCT hwid) as count FROM (SELECT hwid FROM keys WHERE hwid IS NOT NULL AND hwid != "" UNION SELECT kd.hwid FROM key_devices kd JOIN keys k ON kd.keyId = k.id WHERE kd.hwid IS NOT NULL AND kd.hwid != "")').get() as any).count;
+      totalResellers = (db.prepare("SELECT COUNT(*) as count FROM users WHERE role = 'reseller'").get() as any).count;
+      totalTokensSpent = (db.prepare('SELECT COALESCE(SUM(costTokens), 0) as total FROM keys').get() as any).total;
     }
 
     const salesMap = new Map<string, { count: number; tokens: number }>();
@@ -224,6 +221,46 @@ export class AnalyticsService {
       stats,
       salesGraph,
       keys,
+    };
+  }
+
+  static getTelemetry() {
+    const memory = process.memoryUsage();
+    const uptimeSeconds = Math.floor(process.uptime());
+    
+    let dbSize = 0;
+    try {
+      const fs = require('fs');
+      const { ENV } = require('../config/env');
+      if (fs.existsSync(ENV.DB_PATH)) {
+        dbSize = fs.statSync(ENV.DB_PATH).size;
+      }
+    } catch {
+      // ignore
+    }
+
+    const totalKeys = (db.prepare('SELECT COUNT(*) as count FROM keys').get() as any)?.count || 0;
+    const activeKeys = (db.prepare("SELECT COUNT(*) as count FROM keys WHERE status = 'active'").get() as any)?.count || 0;
+    const totalUsers = (db.prepare('SELECT COUNT(*) as count FROM users').get() as any)?.count || 0;
+    const totalDevices = (db.prepare('SELECT COUNT(DISTINCT hwid) as count FROM key_devices').get() as any)?.count || 0;
+
+    return {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptimeSeconds,
+      memory: {
+        rssMb: Math.round((memory.rss / (1024 * 1024)) * 10) / 10,
+        heapUsedMb: Math.round((memory.heapUsed / (1024 * 1024)) * 10) / 10,
+        heapTotalMb: Math.round((memory.heapTotal / (1024 * 1024)) * 10) / 10,
+      },
+      database: {
+        fileSizeBytes: dbSize,
+        fileSizeMb: Math.round((dbSize / (1024 * 1024)) * 100) / 100,
+        totalKeys,
+        activeKeys,
+        totalUsers,
+        totalDevices,
+      },
     };
   }
 }

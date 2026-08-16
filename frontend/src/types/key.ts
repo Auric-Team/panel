@@ -52,3 +52,35 @@ export interface StatsOverviewData {
   totalRevenueTokens: number;
   salesHistory: SalesDataPoint[];
 }
+
+export interface TokenTransactionItem {
+  id: string;
+  userId: string;
+  username: string;
+  amount: number;
+  type: 'add' | 'deduct' | 'key_generation' | 'key_extension' | 'system_adjustment';
+  balanceAfter: number;
+  note?: string;
+  createdById?: string;
+  createdByUsername?: string;
+  createdAt: string;
+}
+
+export interface TelemetryData {
+  status: string;
+  timestamp: string;
+  uptimeSeconds: number;
+  memory: {
+    rssMb: number;
+    heapUsedMb: number;
+    heapTotalMb: number;
+  };
+  database: {
+    fileSizeBytes: number;
+    fileSizeMb: number;
+    totalKeys: number;
+    activeKeys: number;
+    totalUsers: number;
+    totalDevices: number;
+  };
+}

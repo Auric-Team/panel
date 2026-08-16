@@ -6,7 +6,7 @@ import { api, UploadProgressPayload } from '@/lib/api';
 
 interface PayloadManagerProps {
   token: string;
-  userRole: 'owner' | 'manager' | 'reseller';
+  userRole?: 'owner' | 'manager' | 'reseller' | 'user' | string;
 }
 
 export const PayloadManager: React.FC<PayloadManagerProps> = ({ token, userRole }) => {

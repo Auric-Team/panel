@@ -101,7 +101,35 @@ export function initDatabase() {
       updatedAt TEXT NOT NULL,
       updatedBy TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS token_transactions (
+      id TEXT PRIMARY KEY,
+      userId TEXT NOT NULL,
+      username TEXT NOT NULL,
+      amount INTEGER NOT NULL,
+      type TEXT NOT NULL CHECK(type IN ('add', 'deduct', 'key_generation', 'key_extension', 'system_adjustment')),
+      balanceAfter INTEGER NOT NULL,
+      note TEXT,
+      createdById TEXT,
+      createdByUsername TEXT,
+      createdAt TEXT NOT NULL
+    );
   `);
+
+  // Create performance indexes
+  try {
+    sqliteDb.exec(`
+      CREATE INDEX IF NOT EXISTS idx_keys_status ON keys(status);
+      CREATE INDEX IF NOT EXISTS idx_keys_createdby ON keys(createdById);
+      CREATE INDEX IF NOT EXISTS idx_keys_createdby_user ON keys(createdByUsername);
+      CREATE INDEX IF NOT EXISTS idx_keys_expires ON keys(expiresAt);
+      CREATE INDEX IF NOT EXISTS idx_token_tx_user ON token_transactions(userId);
+      CREATE INDEX IF NOT EXISTS idx_logs_user ON logs(userId);
+      CREATE INDEX IF NOT EXISTS idx_logs_time ON logs(timestamp);
+    `);
+  } catch (idxErr) {
+    // ignore if already indexed
+  }
 
   sqliteDb.exec(`
     INSERT OR IGNORE INTO payload_meta (id, version, versionCode, changelog, size, updatedAt, updatedBy)
@@ -112,6 +140,7 @@ export function initDatabase() {
     { table: 'keys', column: 'isMasterKey INTEGER DEFAULT 0' },
     { table: 'keys', column: 'paymentScreenshot TEXT' },
     { table: 'keys', column: 'costTokens INTEGER DEFAULT 0' },
+    { table: 'keys', column: 'duration TEXT' },
     { table: 'users', column: 'tokens INTEGER DEFAULT 0' },
   ];
 
@@ -122,6 +151,11 @@ export function initDatabase() {
       // Column already exists
     }
   }
+
+  // Update tokens from credits if tokens is 0
+  try {
+    sqliteDb.exec("UPDATE users SET tokens = credits WHERE (tokens = 0 OR tokens IS NULL) AND credits > 0 AND role != 'owner';");
+  } catch (err) {}
 
   // Update existing app-registered users to role 'user'
   try {

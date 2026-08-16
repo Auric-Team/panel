@@ -31,7 +31,8 @@ export const generateKeys = (req: AuthenticatedRequest, res: Response, next: Nex
 
 export const resetHwid = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const result = KeysService.resetHwid(req.user!, req.body.id);
+    const keyId = req.body.id || req.body.keyId;
+    const result = KeysService.resetHwid(req.user!, keyId);
     return res.json(result);
   } catch (err) {
     next(err);
@@ -40,7 +41,62 @@ export const resetHwid = (req: AuthenticatedRequest, res: Response, next: NextFu
 
 export const deleteKey = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const result = KeysService.deleteKey(req.user!, req.body.id);
+    const keyId = req.body.id || req.body.keyId;
+    const result = KeysService.deleteKey(req.user!, keyId);
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const extendKey = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const keyId = req.body.id || req.body.keyId;
+    const days = req.body.days !== undefined ? req.body.days : req.body.additionalDays;
+    const note = req.body.note;
+    const result = KeysService.extendKey(req.user!, keyId, days, note);
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateKeyNote = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const keyId = req.body.id || req.body.keyId;
+    const { note } = req.body;
+    const result = KeysService.updateKeyNote(req.user!, keyId, note);
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const bulkResetHwid = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const ids = req.body.ids || req.body.keyIds;
+    const result = KeysService.bulkResetHwid(req.user!, ids);
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const bulkDeleteKeys = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const ids = req.body.ids || req.body.keyIds;
+    const result = KeysService.bulkDeleteKeys(req.user!, ids);
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const bulkExtendKeys = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const ids = req.body.ids || req.body.keyIds;
+    const days = req.body.days !== undefined ? req.body.days : req.body.additionalDays;
+    const result = KeysService.bulkExtendKeys(req.user!, ids, days);
     return res.json(result);
   } catch (err) {
     next(err);
