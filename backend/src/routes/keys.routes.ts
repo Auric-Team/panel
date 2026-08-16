@@ -1,5 +1,17 @@
 import { Router } from 'express';
-import { verifyKey, getKeys, generateKeys, resetHwid, deleteKey, deleteExpiredKeys } from '../controllers/keys.controller';
+import {
+  verifyKey,
+  getKeys,
+  generateKeys,
+  resetHwid,
+  deleteKey,
+  deleteExpiredKeys,
+  extendKey,
+  updateKeyNote,
+  bulkResetHwid,
+  bulkDeleteKeys,
+  bulkExtendKeys,
+} from '../controllers/keys.controller';
 import { authenticate } from '../middlewares/auth.middleware';
 import { apiLimiter } from '../middlewares/rateLimiter';
 
@@ -13,5 +25,10 @@ router.post('/generate', generateKeys);
 router.post('/reset-hwid', resetHwid);
 router.post('/delete', deleteKey);
 router.post('/delete-expired', deleteExpiredKeys);
+router.post('/extend', extendKey);
+router.post('/update-note', updateKeyNote);
+router.post('/bulk-reset-hwid', bulkResetHwid);
+router.post('/bulk-delete', bulkDeleteKeys);
+router.post('/bulk-extend', bulkExtendKeys);
 
 export default router;

@@ -1,9 +1,21 @@
 import { KeyItem, UserItem } from '@/types/key';
+import { TelemetryData } from '@/types/key';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.axioshacks.com';
+export function getBackendBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067';
+}
 
-let localKeysStore: KeyItem[] = [];
-let localUsersStore: UserItem[] = [];
+export function getReceiptImageUrl(path: string | null | undefined): string {
+  if (!path) return '';
+  if (path.startsWith('data:') || path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const base = getBackendBaseUrl();
+  return `${base}${cleanPath}`;
+}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067';
 
 export interface AuditLogItem {
   id: string;
@@ -70,7 +82,7 @@ export async function fetchAllKeys(token?: string): Promise<{ keys: KeyItem[]; i
       headers: { Authorization: `Bearer ${token || ''}` },
       cache: 'no-store',
     });
-    if (res.status === 401 || res.status === 403) {
+    if (res.status === 401) {
       return { keys: [], isLive: false, isAuthError: true };
     }
     if (res.ok) {
@@ -127,8 +139,11 @@ export async function fetchAllUsers(token?: string): Promise<{ users: UserItem[]
       headers: { Authorization: `Bearer ${token || ''}` },
       cache: 'no-store',
     });
-    if (res.status === 401 || res.status === 403) {
+    if (res.status === 401) {
       return { users: [], isLive: false, isAuthError: true };
+    }
+    if (res.status === 403) {
+      return { users: [], isLive: true, isAuthError: false };
     }
     if (res.ok) {
       const data = await res.json();
@@ -456,6 +471,99 @@ export const api = {
 
   updateTokens: async (token: string, userId: string, amount: number, action: 'add' | 'deduct') => {
     return await updateUserTokensApi(userId, amount, action, token);
+  },
+
+  extendKey: async (token: string, keyId: string, days: number, note?: string) => {
+    const res = await fetch(`${API_BASE_URL}/api/keys/extend`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id: keyId, days, note }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to extend key');
+    return data;
+  },
+
+  updateKeyNote: async (token: string, keyId: string, note: string) => {
+    const res = await fetch(`${API_BASE_URL}/api/keys/update-note`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ id: keyId, note }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to update key note');
+    return data;
+  },
+
+  bulkResetHwid: async (token: string, ids: string[]) => {
+    const res = await fetch(`${API_BASE_URL}/api/keys/bulk-reset-hwid`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to bulk reset HWID');
+    return data;
+  },
+
+  bulkDeleteKeys: async (token: string, ids: string[]) => {
+    const res = await fetch(`${API_BASE_URL}/api/keys/bulk-delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to bulk delete keys');
+    return data;
+  },
+
+  bulkExtendKeys: async (token: string, ids: string[], days: number) => {
+    const res = await fetch(`${API_BASE_URL}/api/keys/bulk-extend`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids, days }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || data.message || 'Failed to bulk extend keys');
+    return data;
+  },
+
+  getTokenTransactions: async (token: string, userId?: string) => {
+    const query = userId ? `?userId=${encodeURIComponent(userId)}` : '';
+    const res = await fetch(`${API_BASE_URL}/api/users/transactions${query}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+    return [];
+  },
+
+  getTelemetry: async (token: string) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/analytics/telemetry`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      });
+      if (res.ok) return await res.json();
+    } catch (_) {}
+    return null;
   },
 
   deleteUser: async (token: string, userId: string) => {

@@ -3,23 +3,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Header } from '@/components/Header';
 import { StatsOverview } from '@/components/StatsOverview';
-import { KeyGenerator } from '@/components/KeyGenerator';
-import { KeysTable } from '@/components/KeysTable';
 import { KeyManagement } from '@/components/KeyManagement';
-import { ResellersTable } from '@/components/ResellersTable';
 import { ResellerManagement } from '@/components/ResellerManagement';
 import { SalesChart } from '@/components/SalesChart';
-import { TokenBalanceModal } from '@/components/TokenBalanceModal';
-import { ResellerDashboardModal } from '@/components/ResellerDashboardModal';
-import { PaymentScreenshotModal } from '@/components/PaymentScreenshotModal';
 import { DialPad2FA } from '@/components/DialPad2FA';
 import { AuditLogsTable, AuditLogItem } from '@/components/AuditLogsTable';
 import { PayloadManager } from '@/components/PayloadManager';
-import { api } from '@/lib/api';
+import { MobileNav } from '@/components/layout/MobileNav';
+import { ToastProvider, useToast } from '@/components/ui/ToastContext';
+import { api, fetchAllKeys, fetchAllUsers, fetchLogsApi } from '@/lib/api';
 import { UserItem, KeyItem, DashboardStats, SalesDataPoint } from '@/types/key';
-import { LayoutDashboard, Key, Users, Activity, Lock, RefreshCw, Sparkles, ShieldCheck, FileCode2 } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Key,
+  Users,
+  Activity,
+  Lock,
+  RefreshCw,
+  Sparkles,
+  ShieldCheck,
+  FileCode2,
+} from 'lucide-react';
 
-export default function Home() {
+function DashboardContent() {
+  const { toast } = useToast();
+
   const [user, setUser] = useState<UserItem | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(true);
@@ -42,11 +50,6 @@ export default function Home() {
   const [generatedKeys, setGeneratedKeys] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Modals
-  const [tokenModalUser, setTokenModalUser] = useState<UserItem | null>(null);
-  const [resellerDashboardUser, setResellerDashboardUser] = useState<UserItem | null>(null);
-  const [selectedProofKey, setSelectedProofKey] = useState<KeyItem | null>(null);
-
   // Load Saved Auth Token
   useEffect(() => {
     const savedToken = localStorage.getItem('axios_token');
@@ -67,12 +70,23 @@ export default function Home() {
     if (!token) return;
     setIsRefreshing(true);
     try {
-      const [analyticsData, keysData, usersData, logsData] = await Promise.all([
+      const isManagerOrOwner = user?.role === 'owner' || user?.role === 'manager';
+
+      const [analyticsData, keysRes, usersRes, logsRes] = await Promise.all([
         api.getAnalytics(token).catch(() => null),
-        api.getKeys(token).catch(() => []),
-        api.getUsers(token).catch(() => []),
-        api.getLogs(token).catch(() => []),
+        fetchAllKeys(token),
+        isManagerOrOwner ? fetchAllUsers(token) : Promise.resolve({ users: [], isLive: true }),
+        isManagerOrOwner ? fetchLogsApi(token) : Promise.resolve({ logs: [], isLive: true }),
       ]);
+
+      if (keysRes.isAuthError) {
+        localStorage.removeItem('axios_token');
+        localStorage.removeItem('axios_user');
+        setToken(null);
+        setUser(null);
+        toast.error('Session expired. Please log in again.');
+        return;
+      }
 
       if (analyticsData) {
         setStats({
@@ -95,16 +109,16 @@ export default function Home() {
         }
       }
 
-      if (Array.isArray(keysData)) {
-        setKeys(keysData);
+      if (Array.isArray(keysRes.keys)) {
+        setKeys(keysRes.keys);
       }
 
-      if (Array.isArray(usersData)) {
-        setResellers(usersData);
+      if (Array.isArray(usersRes.users)) {
+        setResellers(usersRes.users);
       }
 
-      if (Array.isArray(logsData)) {
-        setAuditLogs(logsData);
+      if (Array.isArray(logsRes.logs)) {
+        setAuditLogs(logsRes.logs);
       }
 
       setIsConnected(true);
@@ -114,7 +128,7 @@ export default function Home() {
     } finally {
       setIsRefreshing(false);
     }
-  }, [token]);
+  }, [token, user, toast]);
 
   useEffect(() => {
     if (token) {
@@ -125,12 +139,8 @@ export default function Home() {
   // Clear Logs Handler
   const handleClearLogs = async () => {
     if (!token) return;
-    try {
-      await api.clearLogs(token);
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to clear audit logs.');
-    }
+    await api.clearLogs(token);
+    await fetchData();
   };
 
   // Login Handler
@@ -146,14 +156,17 @@ export default function Home() {
           role: res.role,
           username: res.username,
         });
+        toast.info('Enter your 6-digit security PIN to complete sign in.');
       } else if (res.token) {
         setToken(res.token);
         setUser(res.user);
         localStorage.setItem('axios_token', res.token);
         localStorage.setItem('axios_user', JSON.stringify(res.user));
+        toast.success(`Welcome back, ${res.user.username}!`);
       }
     } catch (err: any) {
       setAuthError(err.message || 'Authentication failed. Check credentials.');
+      toast.error(err.message || 'Authentication failed');
     } finally {
       setIsLoggingIn(false);
     }
@@ -171,9 +184,13 @@ export default function Home() {
         localStorage.setItem('axios_token', res.token);
         localStorage.setItem('axios_user', JSON.stringify(res.user));
         setPending2FA(null);
+        toast.success(`Authenticated as ${res.user.username}`);
       }
     } catch (err: any) {
-      setAuthError(err.message || 'Invalid 2FA Security PIN.');
+      const msg = err.message || 'Invalid 2FA Security PIN.';
+      setAuthError(msg);
+      toast.error(msg);
+      throw err;
     }
   };
 
@@ -183,6 +200,7 @@ export default function Home() {
     setUser(null);
     localStorage.removeItem('axios_token');
     localStorage.removeItem('axios_user');
+    toast.info('Signed out of executive panel.');
   };
 
   // Generate Keys Handler
@@ -191,7 +209,9 @@ export default function Home() {
     count: number,
     note: string,
     paymentScreenshot: string | null,
-    isMasterKey: boolean
+    isMasterKey: boolean,
+    prefix?: string,
+    format?: 'hyphenated' | 'raw16' | 'uuid'
   ) => {
     if (!token) return;
     setIsGenerating(true);
@@ -213,14 +233,17 @@ export default function Home() {
         paymentScreenshot,
         isMaster: isMasterKey,
         isMasterKey: isMasterKey,
+        prefix,
+        format,
       });
 
       if (res.success && Array.isArray(res.keys)) {
         setGeneratedKeys(res.keys.map((k: any) => k.key));
+        toast.success(`Issued ${res.keys.length} license key(s) successfully!`);
         await fetchData();
       }
     } catch (err: any) {
-      alert(err.message || 'Key generation failed.');
+      toast.error(err.message || 'Key generation failed.');
     } finally {
       setIsGenerating(false);
     }
@@ -228,127 +251,123 @@ export default function Home() {
 
   // Reset HWID Handler
   const handleResetHwid = async (keyId: string) => {
-    if (!token || !confirm('Are you sure you want to reset HWID for this license key?')) return;
-    try {
-      await api.resetHwid(token, keyId);
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message || 'Reset HWID failed.');
-    }
+    if (!token) return;
+    await api.resetHwid(token, keyId);
+    await fetchData();
   };
 
   // Delete Key Handler
   const handleDeleteKey = async (keyId: string) => {
-    if (!token || !confirm('Are you sure you want to delete / revoke this key?')) return;
-    try {
-      await api.deleteKey(token, keyId);
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message || 'Delete key failed.');
-    }
+    if (!token) return;
+    await api.deleteKey(token, keyId);
+    await fetchData();
   };
 
   // Delete Expired Keys Handler
   const handleDeleteExpiredKeys = async () => {
     if (!token) return;
-    const now = new Date();
-    const expiredCount = keys.filter((k) => k.status === 'expired' || (k.expiresAt && k.expiresAt !== 'never' && new Date(k.expiresAt) <= now)).length;
-    if (expiredCount === 0) {
-      alert('No expired keys found to delete.');
-      return;
-    }
-    if (!confirm(`Are you sure you want to delete all ${expiredCount} expired license keys at once?\n\nReal active customer keys will NOT be affected.`)) return;
-    try {
-      const res = await api.deleteExpiredKeys(token);
-      alert(res.message || `Deleted ${res.count || expiredCount} expired key(s).`);
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete expired keys.');
-    }
+    await api.deleteExpiredKeys(token);
+    await fetchData();
+  };
+
+  // Extend Key Handler
+  const handleExtendKey = async (keyId: string, days: number, note?: string) => {
+    if (!token) return;
+    await api.extendKey(token, keyId, days, note);
+    await fetchData();
+  };
+
+  // Update Note Handler
+  const handleUpdateKeyNote = async (keyId: string, note: string) => {
+    if (!token) return;
+    await api.updateKeyNote(token, keyId, note);
+    await fetchData();
+  };
+
+  // Bulk Actions Handlers
+  const handleBulkResetHwid = async (ids: string[]) => {
+    if (!token) return;
+    await api.bulkResetHwid(token, ids);
+    await fetchData();
+  };
+
+  const handleBulkDeleteKeys = async (ids: string[]) => {
+    if (!token) return;
+    await api.bulkDeleteKeys(token, ids);
+    await fetchData();
+  };
+
+  const handleBulkExtendKeys = async (ids: string[], days: number) => {
+    if (!token) return;
+    await api.bulkExtendKeys(token, ids, days);
+    await fetchData();
   };
 
   // Create Reseller Handler
   const handleCreateReseller = async (resellerData: any) => {
     if (!token) return;
-    try {
-      await api.createUser(token, resellerData);
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to create reseller.');
-    }
+    await api.createUser(token, resellerData);
+    await fetchData();
   };
 
   // Toggle Block User Handler
   const handleToggleBlockUser = async (userId: string, isBlocked: boolean) => {
     if (!token) return;
-    try {
-      await api.toggleBlockUser(token, userId, isBlocked);
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to update user block status.');
-    }
+    await api.toggleBlockUser(token, userId, isBlocked);
+    toast.success(isBlocked ? 'Partner account suspended.' : 'Partner account activated.');
+    await fetchData();
   };
 
   // Update Tokens Handler
   const handleUpdateTokens = async (userId: string, amount: number, action: 'add' | 'deduct', note?: string) => {
     if (!token) return;
-    try {
-      await api.updateTokens(token, userId, amount, action);
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to update user tokens.');
-    }
+    await api.updateTokens(token, userId, amount, action);
+    await fetchData();
   };
 
   // Delete User Handler
   const handleDeleteUser = async (userId: string) => {
     if (!token) return;
-    try {
-      await api.deleteUser(token, userId);
-      await fetchData();
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete user.');
-    }
+    await api.deleteUser(token, userId);
+    await fetchData();
   };
 
-  // Render Login & 2FA Modal
+  // Render Login & 2FA Interface
   if (!token) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-mono text-xs selection:bg-cyan-500 relative overflow-hidden">
-        {/* Ambient Glow Effects */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans text-xs relative overflow-hidden">
+        {/* Subtle Ambient Background */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[160px] pointer-events-none" />
 
         {pending2FA ? (
           <DialPad2FA
             username={pending2FA.username}
+            role={pending2FA.role}
             onVerify={handle2FAVerify}
             onCancel={() => setPending2FA(null)}
+            errorMsg={authError}
           />
         ) : (
-          <div className="w-full max-w-md bg-slate-900/90 border border-slate-800/90 rounded-3xl p-8 shadow-2xl space-y-6 backdrop-blur-xl relative z-10">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-7 sm:p-9 shadow-2xl space-y-6 backdrop-blur-2xl relative z-10 animate-in fade-in zoom-in-95 duration-200">
             <div className="text-center space-y-2">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-cyan-600 via-indigo-600 to-purple-600 p-[1px] shadow-lg shadow-cyan-500/20">
-                <div className="w-full h-full rounded-2xl bg-slate-950 flex items-center justify-center text-cyan-400">
-                  <ShieldCheck className="w-7 h-7" />
-                </div>
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-cyan-400 shadow-inner">
+                <ShieldCheck className="w-7 h-7 text-cyan-400" />
               </div>
-              <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center justify-center space-x-1">
-                <span>AXIOS</span>
-                <span className="text-cyan-400">EXECUTIVE</span>
+              <h1 className="text-2xl font-black text-white tracking-tight font-mono">
+                AXIOS <span className="text-cyan-400">EXECUTIVE</span>
               </h1>
-              <p className="text-xs text-slate-400">Hardware Licensing & Token Operations Portal</p>
+              <p className="text-xs text-slate-400 font-mono">Hardware Licensing & Token Management</p>
             </div>
 
             {authError && (
-              <div className="p-3.5 rounded-2xl bg-rose-950/70 border border-rose-800 text-rose-300 text-xs text-center font-medium">
+              <div className="p-3.5 rounded-2xl bg-rose-950/70 border border-rose-800/80 text-rose-300 text-xs text-center font-semibold font-mono">
                 {authError}
               </div>
             )}
 
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1.5">
+                <label className="text-[11px] font-mono font-semibold text-slate-400 block mb-1.5 uppercase">
                   Account Username
                 </label>
                 <input
@@ -362,7 +381,7 @@ export default function Home() {
               </div>
 
               <div>
-                <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1.5">
+                <label className="text-[11px] font-mono font-semibold text-slate-400 block mb-1.5 uppercase">
                   Security Password
                 </label>
                 <input
@@ -378,14 +397,14 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isLoggingIn}
-                className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold py-3.5 rounded-2xl transition shadow-lg shadow-cyan-600/20 text-sm flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3.5 rounded-2xl transition shadow-lg shadow-cyan-600/20 text-xs flex items-center justify-center space-x-2 disabled:opacity-50 font-mono uppercase tracking-wider"
               >
                 {isLoggingIn ? (
                   <span>Authenticating...</span>
                 ) : (
                   <>
                     <Lock className="w-4 h-4" />
-                    <span>Sign In to Executive Panel</span>
+                    <span>Sign In to Executive Portal</span>
                   </>
                 )}
               </button>
@@ -397,9 +416,11 @@ export default function Home() {
   }
 
   // Main Dashboard View
+  const isManagerOrOwner = user?.role === 'owner' || user?.role === 'manager';
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-mono text-xs selection:bg-cyan-500 pb-12">
-      {/* Top Fixed Header */}
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans text-xs pb-24 sm:pb-12 selection:bg-cyan-500 selection:text-slate-950">
+      {/* Top Header */}
       <Header
         user={user}
         isConnected={isConnected}
@@ -408,98 +429,85 @@ export default function Home() {
         onLogout={handleLogout}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 mt-6 space-y-6">
-        {/* Navigation Tabs Bar */}
-        <div className="flex items-center space-x-2 bg-slate-900/60 border border-slate-800/80 p-2 rounded-3xl backdrop-blur-xl shadow-2xl overflow-x-auto scrollbar-none">
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 mt-5 space-y-6">
+        {/* Desktop Navigation Tabs Bar */}
+        <div className="hidden sm:flex items-center space-x-1.5 bg-slate-900 border border-slate-800 p-1.5 rounded-3xl shadow-xl overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex items-center space-x-2.5 px-5 py-3 rounded-2xl font-bold transition-all duration-200 text-xs whitespace-nowrap ${
+            className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
               activeTab === 'overview'
-                ? 'bg-slate-800/90 text-cyan-400 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span>📊 Executive Overview & Analytics</span>
-            <span className={`px-2 py-0.5 text-[9px] rounded-full font-mono font-extrabold ${
-              activeTab === 'overview' ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' : 'bg-slate-950 text-slate-400 border border-slate-800'
-            }`}>
+            <span>Overview & Analytics</span>
+            <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">
               LIVE
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('keys')}
-            className={`flex items-center space-x-2.5 px-5 py-3 rounded-2xl font-bold transition-all duration-200 text-xs whitespace-nowrap ${
+            className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
               activeTab === 'keys'
-                ? 'bg-slate-800/90 text-cyan-400 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Key className="w-4 h-4" />
-            <span>🔑 License Key Management & Generation</span>
+            <span>Key Management & Generator</span>
             {keys.length > 0 && (
-              <span className={`px-2 py-0.5 text-[9px] rounded-full font-mono font-extrabold ${
-                activeTab === 'keys' ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' : 'bg-slate-950 text-slate-400 border border-slate-800'
-              }`}>
+              <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-slate-950 text-slate-300 border border-slate-800">
                 {keys.length}
               </span>
             )}
           </button>
 
-          {(user?.role === 'owner' || user?.role === 'manager') && (
+          {isManagerOrOwner && (
             <button
               onClick={() => setActiveTab('resellers')}
-              className={`flex items-center space-x-2.5 px-5 py-3 rounded-2xl font-bold transition-all duration-200 text-xs whitespace-nowrap ${
+              className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
                 activeTab === 'resellers'
-                  ? 'bg-slate-800/90 text-cyan-400 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                  ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Users className="w-4 h-4" />
-              <span>👥 Reseller Network & Token Allocation</span>
+              <span>Reseller Network</span>
               {resellers.filter((r) => r.role === 'reseller' || r.role === 'manager').length > 0 && (
-                <span className={`px-2 py-0.5 text-[9px] rounded-full font-mono font-extrabold ${
-                  activeTab === 'resellers' ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' : 'bg-slate-950 text-slate-400 border border-slate-800'
-                }`}>
+                <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-slate-950 text-slate-300 border border-slate-800">
                   {resellers.filter((r) => r.role === 'reseller' || r.role === 'manager').length}
                 </span>
               )}
             </button>
           )}
 
-          {(user?.role === 'owner' || user?.role === 'manager') && (
+          {isManagerOrOwner && (
             <button
               onClick={() => setActiveTab('payload')}
-              className={`flex items-center space-x-2.5 px-5 py-3 rounded-2xl font-bold transition-all duration-200 text-xs whitespace-nowrap ${
+              className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
                 activeTab === 'payload'
-                  ? 'bg-slate-800/90 text-cyan-400 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                  ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <FileCode2 className="w-4 h-4 text-cyan-400" />
-              <span>📦 libil2cpp.so Publisher</span>
-              <span className={`px-2 py-0.5 text-[9px] rounded-full font-mono font-extrabold ${
-                activeTab === 'payload' ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' : 'bg-slate-950 text-slate-400 border border-slate-800'
-              }`}>
-                PUBLISH
-              </span>
+              <FileCode2 className="w-4 h-4" />
+              <span>libil2cpp.so Publisher</span>
             </button>
           )}
 
           <button
             onClick={() => setActiveTab('audit')}
-            className={`flex items-center space-x-2.5 px-5 py-3 rounded-2xl font-bold transition-all duration-200 text-xs whitespace-nowrap ${
+            className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
               activeTab === 'audit'
-                ? 'bg-slate-800/90 text-cyan-400 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.2)]'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Activity className="w-4 h-4" />
-            <span>📜 System Audit Logs & Security</span>
-            <span className={`px-2 py-0.5 text-[9px] rounded-full font-mono font-extrabold ${
-              activeTab === 'audit' ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' : 'bg-slate-950 text-slate-400 border border-slate-800'
-            }`}>
+            <span>Audit Logs</span>
+            <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-slate-950 text-slate-300 border border-slate-800">
               {auditLogs.length}
             </span>
           </button>
@@ -507,7 +515,7 @@ export default function Home() {
 
         {/* Tab 1: Overview & Analytics */}
         {activeTab === 'overview' && (
-          <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-6 animate-in fade-in duration-150">
             <StatsOverview stats={stats} userRole={user?.role} />
 
             <SalesChart
@@ -520,9 +528,9 @@ export default function Home() {
           </div>
         )}
 
-        {/* Tab 2: License Key Management & Generation */}
+        {/* Tab 2: Key Management & Studio */}
         {activeTab === 'keys' && (
-          <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-6 animate-in fade-in duration-150">
             <KeyManagement
               user={user}
               keys={keys}
@@ -532,18 +540,23 @@ export default function Home() {
               onResetHwid={handleResetHwid}
               onDeleteKey={handleDeleteKey}
               onDeleteExpiredKeys={handleDeleteExpiredKeys}
-              onOpenProofModal={(k) => setSelectedProofKey(k)}
+              onExtendKey={handleExtendKey}
+              onUpdateKeyNote={handleUpdateKeyNote}
+              onBulkResetHwid={handleBulkResetHwid}
+              onBulkDeleteKeys={handleBulkDeleteKeys}
+              onBulkExtendKeys={handleBulkExtendKeys}
             />
           </div>
         )}
 
-        {/* Tab 3: Reseller Network */}
-        {activeTab === 'resellers' && (user?.role === 'owner' || user?.role === 'manager') && (
-          <div className="space-y-6 animate-in fade-in duration-200">
+        {/* Tab 3: Resellers */}
+        {activeTab === 'resellers' && isManagerOrOwner && (
+          <div className="space-y-6 animate-in fade-in duration-150">
             <ResellerManagement
               currentUser={user}
               resellers={resellers}
               keys={keys}
+              token={token}
               onCreateReseller={handleCreateReseller}
               onToggleBlockUser={handleToggleBlockUser}
               onDeleteUser={handleDeleteUser}
@@ -552,16 +565,16 @@ export default function Home() {
           </div>
         )}
 
-        {/* Tab 4: Payload & libil2cpp.so Publisher */}
-        {activeTab === 'payload' && token && (user?.role === 'owner' || user?.role === 'manager') && (
-          <div className="space-y-6 animate-in fade-in duration-200">
+        {/* Tab 4: Payload Publisher */}
+        {activeTab === 'payload' && token && isManagerOrOwner && (
+          <div className="space-y-6 animate-in fade-in duration-150">
             <PayloadManager token={token} userRole={user.role} />
           </div>
         )}
 
-        {/* Tab 4: Audit Logs */}
+        {/* Tab 5: Audit Logs */}
         {activeTab === 'audit' && (
-          <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-6 animate-in fade-in duration-150">
             <AuditLogsTable
               logs={auditLogs}
               currentUser={user}
@@ -572,30 +585,23 @@ export default function Home() {
         )}
       </main>
 
-      {/* Token Balance Modal */}
-      <TokenBalanceModal
-        isOpen={!!tokenModalUser}
-        user={tokenModalUser}
-        reseller={tokenModalUser}
-        onClose={() => setTokenModalUser(null)}
-        onUpdateTokens={handleUpdateTokens}
-      />
-
-      {/* Reseller Deep Analytics Modal */}
-      <ResellerDashboardModal
-        isOpen={!!resellerDashboardUser}
-        reseller={resellerDashboardUser}
-        keys={keys}
-        onClose={() => setResellerDashboardUser(null)}
-        onOpenManageTokens={(reseller) => setTokenModalUser(reseller)}
-      />
-
-      {/* High-Res Payment Proof Modal */}
-      <PaymentScreenshotModal
-        isOpen={!!selectedProofKey}
-        keyItem={selectedProofKey}
-        onClose={() => setSelectedProofKey(null)}
+      {/* Persistent Mobile Bottom Navigation Bar */}
+      <MobileNav
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        user={user}
+        keysCount={keys.length}
+        resellersCount={resellers.filter((r) => r.role === 'reseller' || r.role === 'manager').length}
+        auditCount={auditLogs.length}
       />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <ToastProvider>
+      <DashboardContent />
+    </ToastProvider>
   );
 }
