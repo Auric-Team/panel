@@ -19,7 +19,6 @@ import {
   Expand,
 } from 'lucide-react';
 import { KeyItem } from '@/types/key';
-import { getReceiptImageUrl } from '@/lib/api';
 
 export interface PaymentScreenshotModalProps {
   isOpen: boolean;
@@ -48,8 +47,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const rawSrc = imageSrc || keyItem?.paymentScreenshot || null;
-  const activeSrc = rawSrc ? getReceiptImageUrl(rawSrc) : null;
+  const activeSrc = imageSrc || keyItem?.paymentScreenshot || null;
   const activeTitle = imageTitle || (keyItem ? `Key: ${keyItem.key}` : 'Payment Proof Screenshot');
 
   useEffect(() => {

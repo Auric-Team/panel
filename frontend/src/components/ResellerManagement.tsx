@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   UserPlus,
   Search,
@@ -18,24 +18,16 @@ import {
   BarChart2,
   Lock,
   Mail,
-  Key,
-  History,
-  ArrowUpRight,
-  ArrowDownLeft,
-  Calendar,
+  Key
 } from 'lucide-react';
-import { UserItem, KeyItem, TokenTransactionItem } from '@/types/key';
-import { TokenBalanceModal } from '@/components/TokenBalanceModal';
-import { ResellerDashboardModal } from '@/components/ResellerDashboardModal';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
-import { useToast } from '@/components/ui/ToastContext';
-import { api } from '@/lib/api';
+import { UserItem, KeyItem } from '@/types/key';
+import { TokenAdjustmentModal } from '@/components/TokenAdjustmentModal';
+import { ResellerAnalyticsModal } from '@/components/ResellerAnalyticsModal';
 
 interface ResellerManagementProps {
   currentUser: UserItem | null;
   resellers: UserItem[];
   keys?: KeyItem[];
-  token?: string;
   onCreateReseller: (resellerData: {
     username: string;
     password?: string;
@@ -57,22 +49,19 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
   currentUser,
   resellers,
   keys = [],
-  token,
   onCreateReseller,
   onToggleBlockUser,
   onDeleteUser,
   onUpdateTokens,
 }) => {
-  const { toast } = useToast();
-
-  const [activeSubTab, setActiveSubTab] = useState<'partners' | 'transactions'>('partners');
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended' | 'pending'>('all');
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   // Form State
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [newEmail, setNewEmail] = useState('');
   const [newRole, setNewRole] = useState<'reseller' | 'manager'>('reseller');
   const [newTokens, setNewTokens] = useState<number>(100);
   const [isCreating, setIsCreating] = useState(false);
@@ -81,42 +70,24 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
   const [tokenModalUser, setTokenModalUser] = useState<UserItem | null>(null);
   const [analyticsModalUser, setAnalyticsModalUser] = useState<UserItem | null>(null);
 
-  // Transactions State
-  const [transactions, setTransactions] = useState<TokenTransactionItem[]>([]);
-  const [loadingTx, setLoadingTx] = useState(false);
+  // Toast Notification State
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Confirm Dialog State
-  const [confirmDialog, setConfirmDialog] = useState<{
-    isOpen: boolean;
-    title: string;
-    description: string;
-    variant: 'danger' | 'warning' | 'info';
-    confirmText: string;
-    onConfirm: () => Promise<void>;
-  }>({
-    isOpen: false,
-    title: '',
-    description: '',
-    variant: 'danger',
-    confirmText: 'Confirm',
-    onConfirm: async () => {},
-  });
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((current) => (current === msg ? null : current));
+    }, 4000);
+  };
 
-  const [isProcessingAction, setIsProcessingAction] = useState(false);
+  // Derive status badge for reseller (Active, Suspended, Pending)
+  const getResellerStatus = (user: UserItem): 'active' | 'suspended' | 'pending' => {
+    if (user.isBlocked === 1) return 'suspended';
+    if (user.status === 'pending' || (user.tokens === 0 && !user.createdBy)) return 'pending';
+    return 'active';
+  };
 
-  // Fetch token transactions if tab active
-  useEffect(() => {
-    if (activeSubTab === 'transactions' && token) {
-      setLoadingTx(true);
-      api
-        .getTokenTransactions(token)
-        .then((data) => setTransactions(Array.isArray(data) ? data : []))
-        .catch(() => setTransactions([]))
-        .finally(() => setLoadingTx(false));
-    }
-  }, [activeSubTab, token]);
-
-  // Keys breakdown per reseller
+  // Map keys counts to resellers
   const resellerKeyStats = useMemo(() => {
     const map: { [username: string]: { totalKeys: number; totalSpent: number } } = {};
     keys.forEach((k) => {
@@ -129,460 +100,456 @@ export const ResellerManagement: React.FC<ResellerManagementProps> = ({
     return map;
   }, [keys]);
 
-  // Filtered Resellers
+  const resellerPartners = useMemo(() => {
+    return resellers.filter((u) => u.role === 'reseller' || u.role === 'manager');
+  }, [resellers]);
+
+  // Filter logic
   const filteredResellers = useMemo(() => {
-    return resellers
-      .filter((u) => u.role === 'reseller' || u.role === 'manager')
-      .filter((u) => {
-        const q = searchQuery.toLowerCase();
-        const matchesSearch =
-          u.username.toLowerCase().includes(q) ||
-          (u.createdByUsername && u.createdByUsername.toLowerCase().includes(q));
+    return resellerPartners.filter((u) => {
+      const q = searchQuery.toLowerCase();
+      const status = getResellerStatus(u);
 
-        let matchesStatus = true;
-        if (statusFilter === 'active') matchesStatus = u.isBlocked === 0;
-        else if (statusFilter === 'suspended') matchesStatus = u.isBlocked === 1;
+      const matchesSearch =
+        u.username.toLowerCase().includes(q) ||
+        u.role.toLowerCase().includes(q) ||
+        u.id.toLowerCase().includes(q) ||
+        (u.email && u.email.toLowerCase().includes(q)) ||
+        (u.createdBy && u.createdBy.toLowerCase().includes(q)) ||
+        (u.createdByUsername && u.createdByUsername.toLowerCase().includes(q));
 
-        return matchesSearch && matchesStatus;
-      });
-  }, [resellers, searchQuery, statusFilter]);
+      const matchesStatus = statusFilter === 'all' || status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [resellerPartners, searchQuery, statusFilter]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newUsername.trim() || !newPassword.trim()) {
-      toast.error('Username and password are required.');
-      return;
-    }
-
+    if (!newUsername || !newPassword) return;
     setIsCreating(true);
     try {
       await onCreateReseller({
-        username: newUsername.trim(),
-        password: newPassword.trim(),
+        username: newUsername,
+        password: newPassword,
         role: newRole,
         tokens: newTokens,
+        email: newEmail || `${newUsername}@axios-network.internal`,
       });
-      toast.success(`Partner @${newUsername.trim()} created successfully!`);
+      showToast(`Successfully created reseller @${newUsername} with ${newTokens} initial tokens!`);
       setNewUsername('');
       setNewPassword('');
+      setNewEmail('');
       setNewTokens(100);
       setShowCreateForm(false);
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to create partner account.');
+      alert(err?.message || 'Failed to create reseller account.');
     } finally {
       setIsCreating(false);
     }
   };
 
-  const handlePromptDeleteUser = (u: UserItem) => {
-    setConfirmDialog({
-      isOpen: true,
-      title: `Delete Partner @${u.username}`,
-      description: `Are you sure you want to permanently delete partner account @${u.username}? This will remove all their access permissions.`,
-      variant: 'danger',
-      confirmText: 'Delete Account',
-      onConfirm: async () => {
-        if (!onDeleteUser) return;
-        setIsProcessingAction(true);
-        try {
-          await onDeleteUser(u.id);
-          toast.success(`Partner @${u.username} deleted.`);
-          setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
-        } catch (err: any) {
-          toast.error(err?.message || 'Failed to delete partner.');
-        } finally {
-          setIsProcessingAction(false);
-        }
-      },
-    });
-  };
-
   return (
-    <div className="space-y-6 font-sans text-xs">
-      {/* Sub Tab Navigation */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center space-x-1.5 p-1 bg-slate-900 border border-slate-800 rounded-2xl">
+    <div className="space-y-6 font-mono text-xs">
+      {/* Toast Notification Banner */}
+      {toastMessage && (
+        <div className="p-4 rounded-2xl bg-emerald-950/90 border border-emerald-500/50 text-emerald-300 text-xs flex items-center justify-between shadow-lg shadow-emerald-500/10 animate-in fade-in duration-200">
+          <div className="flex items-center space-x-2.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span className="font-bold">{toastMessage}</span>
+          </div>
           <button
-            onClick={() => setActiveSubTab('partners')}
-            className={`px-4 py-2 rounded-xl font-bold transition flex items-center space-x-2 ${
-              activeSubTab === 'partners'
-                ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            onClick={() => setToastMessage(null)}
+            className="text-emerald-400 hover:text-white text-xs font-bold"
           >
-            <Shield className="w-4 h-4" />
-            <span>Reseller Directory</span>
-            <span className="px-1.5 py-0.5 rounded-full text-[9px] bg-slate-950 font-mono">
-              {filteredResellers.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveSubTab('transactions')}
-            className={`px-4 py-2 rounded-xl font-bold transition flex items-center space-x-2 ${
-              activeSubTab === 'transactions'
-                ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <History className="w-4 h-4" />
-            <span>Token Transaction Ledger</span>
+            Dismiss
           </button>
         </div>
+      )}
 
-        {activeSubTab === 'partners' && (
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="px-4 py-2 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition flex items-center space-x-1.5 shadow-lg shadow-cyan-600/20"
-          >
-            <UserPlus className="w-4 h-4" />
-            <span>{showCreateForm ? 'Close Form' : 'Provision Reseller'}</span>
-          </button>
-        )}
-      </div>
+      {/* Glassmorphism Reseller Management Container */}
+      <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl space-y-6">
+        {/* Header & Primary Actions */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-800/80">
+          <div>
+            <h2 className="text-lg font-extrabold text-white tracking-tight flex items-center space-x-2">
+              <span>AXIOS Reseller Network & Token Allocation</span>
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Manage distribution partner accounts, status lifecycle, token balance adjustments, and key telemetry.
+            </p>
+          </div>
 
-      {/* Tab 1: Partners Directory */}
-      {activeSubTab === 'partners' && (
-        <div className="space-y-6">
-          {/* Create Reseller Form Accordion */}
-          {showCreateForm && (
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4 animate-in fade-in duration-150">
-              <div className="flex items-center space-x-2 text-white font-bold text-sm border-b border-slate-800 pb-3">
-                <UserPlus className="w-5 h-5 text-cyan-400" />
-                <span>Provision New Partner Account</span>
-              </div>
-
-              <form onSubmit={handleCreateSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  <div>
-                    <label className="text-[10px] uppercase font-mono font-semibold text-slate-400 block mb-1.5">
-                      Username
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. VIPReseller99"
-                      value={newUsername}
-                      onChange={(e) => setNewUsername(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] uppercase font-mono font-semibold text-slate-400 block mb-1.5">
-                      Initial Password
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Access password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] uppercase font-mono font-semibold text-slate-400 block mb-1.5">
-                      Partner Role
-                    </label>
-                    <select
-                      value={newRole}
-                      onChange={(e: any) => setNewRole(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs outline-none"
-                    >
-                      <option value="reseller">Reseller (Key Issuer)</option>
-                      {currentUser?.role === 'owner' && <option value="manager">Manager (Admin)</option>}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] uppercase font-mono font-semibold text-slate-400 block mb-1.5">
-                      Initial Tokens
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={newTokens}
-                      onChange={(e) => setNewTokens(parseInt(e.target.value, 10) || 0)}
-                      className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateForm(false)}
-                    className="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isCreating}
-                    className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition flex items-center space-x-1.5 disabled:opacity-50"
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    <span>{isCreating ? 'Provisioning...' : 'Confirm Account Creation'}</span>
-                  </button>
-                </div>
-              </form>
-            </div>
+          {(currentUser?.role === 'owner' || currentUser?.role === 'manager') && (
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-extrabold px-5 py-2.5 rounded-2xl transition flex items-center justify-center space-x-2 shadow-lg shadow-cyan-600/20 text-xs"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>{showCreateForm ? 'Close Form' : 'Add New Reseller'}</span>
+            </button>
           )}
+        </div>
 
-          {/* Directory Filter & Search */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center space-x-3">
-                <h3 className="text-sm font-bold text-white tracking-tight">Active Partners Network</h3>
-                <span className="px-2.5 py-0.5 rounded-lg bg-slate-950 text-cyan-400 border border-slate-800 font-mono font-bold text-xs">
-                  {filteredResellers.length} Accounts
-                </span>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-2xl border border-slate-800">
-                  {(['all', 'active', 'suspended'] as const).map((st) => (
-                    <button
-                      key={st}
-                      onClick={() => setStatusFilter(st)}
-                      className={`px-3 py-1.5 rounded-xl uppercase text-[10px] font-mono font-bold transition ${
-                        statusFilter === st
-                          ? 'bg-slate-800 text-cyan-300 border border-slate-700'
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      {st}
-                    </button>
-                  ))}
-                </div>
-              </div>
+        {/* Account Creation Form Drawer (Collapsible) */}
+        {showCreateForm && (
+          <div className="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-5 shadow-inner space-y-4 animate-in fade-in duration-200">
+            <div className="flex items-center space-x-2 pb-3 border-b border-slate-800">
+              <UserPlus className="w-4 h-4 text-cyan-400" />
+              <h3 className="text-sm font-bold text-white">Create Reseller / Manager Partner Account</h3>
             </div>
 
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by Partner @Username or Manager..."
-                className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl pl-10 pr-4 py-2.5 text-white font-mono text-xs outline-none transition"
-              />
-            </div>
+            <form onSubmit={handleCreateSubmit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
+              <div>
+                <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Partner username..."
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-cyan-500/80 transition"
+                />
+              </div>
 
-            {/* Mobile & Desktop Resellers List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
-              {filteredResellers.length === 0 ? (
-                <div className="col-span-full text-center py-12 text-slate-500 font-mono">
-                  No partners found matching criteria.
+              <div>
+                <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Partner password..."
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-cyan-500/80 transition"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder="partner@axios.internal"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-cyan-500/80 transition"
+                />
+              </div>
+
+              {currentUser?.role === 'owner' ? (
+                <div>
+                  <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+                    Role Tier
+                  </label>
+                  <select
+                    value={newRole}
+                    onChange={(e) => setNewRole(e.target.value as any)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-cyan-500/80 transition cursor-pointer"
+                  >
+                    <option value="reseller">Reseller</option>
+                    <option value="manager">Manager</option>
+                  </select>
                 </div>
               ) : (
+                <div>
+                  <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+                    Initial Tokens
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={newTokens}
+                    onChange={(e) => setNewTokens(parseInt(e.target.value, 10) || 0)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-cyan-500/80 transition"
+                  />
+                </div>
+              )}
+
+              <div className="flex items-end">
+                <button
+                  type="submit"
+                  disabled={isCreating}
+                  className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 rounded-xl transition flex items-center justify-center space-x-1.5 shadow-md disabled:opacity-50"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>{isCreating ? 'Creating...' : 'Provision Partner'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Executive Filter Bar (Search by Name/ID & Status Filter Badges) */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Status Filter Badges */}
+          <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
+            <span className="text-[10px] uppercase font-extrabold text-slate-400 mr-1 flex items-center space-x-1">
+              <Filter className="w-3.5 h-3.5 text-slate-500" />
+              <span>Status Filter:</span>
+            </span>
+
+            {/* All */}
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`px-3 py-1.5 rounded-xl font-bold transition text-xs flex items-center space-x-1.5 border ${
+                statusFilter === 'all'
+                  ? 'bg-slate-800 text-white border-slate-700 shadow-sm'
+                  : 'bg-slate-950/60 text-slate-400 border-slate-800/80 hover:text-slate-200'
+              }`}
+            >
+              <span>All ({resellerPartners.length})</span>
+            </button>
+
+            {/* Active Badge */}
+            <button
+              onClick={() => setStatusFilter('active')}
+              className={`px-3 py-1.5 rounded-xl font-bold transition text-xs flex items-center space-x-1.5 border ${
+                statusFilter === 'active'
+                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
+                  : 'bg-slate-950/60 text-slate-400 border-slate-800/80 hover:text-emerald-400'
+              }`}
+            >
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Active</span>
+            </button>
+
+            {/* Suspended Badge */}
+            <button
+              onClick={() => setStatusFilter('suspended')}
+              className={`px-3 py-1.5 rounded-xl font-bold transition text-xs flex items-center space-x-1.5 border ${
+                statusFilter === 'suspended'
+                  ? 'bg-rose-500/20 text-rose-400 border-rose-500/40 shadow-[0_0_10px_rgba(244,63,94,0.2)]'
+                  : 'bg-slate-950/60 text-slate-400 border-slate-800/80 hover:text-rose-400'
+              }`}
+            >
+              <div className="w-2 h-2 rounded-full bg-rose-400" />
+              <span>Suspended</span>
+            </button>
+
+            {/* Pending Badge */}
+            <button
+              onClick={() => setStatusFilter('pending')}
+              className={`px-3 py-1.5 rounded-xl font-bold transition text-xs flex items-center space-x-1.5 border ${
+                statusFilter === 'pending'
+                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                  : 'bg-slate-950/60 text-slate-400 border-slate-800/80 hover:text-amber-400'
+              }`}
+            >
+              <div className="w-2 h-2 rounded-full bg-amber-400" />
+              <span>Pending</span>
+            </button>
+          </div>
+
+          {/* Search by Name/ID */}
+          <div className="relative w-full sm:w-72">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
+            <input
+              type="text"
+              placeholder="Search partner name, ID, email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-9 pr-4 py-2 text-xs text-white font-mono outline-none focus:border-cyan-500/80 transition"
+            />
+          </div>
+        </div>
+
+        {/* Executive Reseller Table */}
+        <div className="overflow-x-auto rounded-2xl border border-slate-800/90 bg-slate-950/40 shadow-inner">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800 font-semibold">
+              <tr>
+                <th className="p-3.5">Reseller Partner</th>
+                <th className="p-3.5">Role Tier</th>
+                <th className="p-3.5">Created By</th>
+                <th className="p-3.5">Status</th>
+                <th className="p-3.5">Token Balance</th>
+                <th className="p-3.5">Keys Issued</th>
+                <th className="p-3.5">Total Revenue</th>
+                <th className="p-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60 font-mono text-slate-300">
+              {filteredResellers.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="p-8 text-center text-slate-500 font-sans">
+                    No reseller partners match the active filters.
+                  </td>
+                </tr>
+              ) : (
                 filteredResellers.map((u) => {
+                  const status = getResellerStatus(u);
                   const stats = resellerKeyStats[u.username.toLowerCase()] || { totalKeys: 0, totalSpent: 0 };
-                  const isBlocked = u.isBlocked === 1;
+                  const tokens = (u.tokens !== undefined ? u.tokens : u.credits) ?? 0;
+                  const displayEmail = u.email || `${u.username}@axios-network.internal`;
+                  const creatorName = u.createdByUsername || u.createdBy || 'System';
 
                   return (
-                    <div
-                      key={u.id}
-                      className="p-4 bg-slate-950 border border-slate-800/90 hover:border-slate-700 rounded-2xl space-y-3 transition"
-                    >
-                      {/* Top Row: User & Role */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 min-w-0">
-                          <div className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-xs font-bold text-cyan-400 font-mono">
-                            {u.username.slice(0, 1).toUpperCase()}
+                    <tr key={u.id} className="hover:bg-slate-800/40 transition">
+                      {/* Avatar, Username & Email/ID */}
+                      <td className="p-3.5 font-bold text-white">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-900 border border-slate-700 flex items-center justify-center text-cyan-400 font-extrabold text-xs shadow-md">
+                            {u.username.slice(0, 2).toUpperCase()}
                           </div>
-                          <div className="min-w-0">
-                            <span className="font-bold text-white block truncate text-xs">
-                              @{u.username}
-                            </span>
-                            <span className="text-[10px] text-slate-400 font-mono">
-                              By {u.createdByUsername || 'System'}
-                            </span>
+                          <div>
+                            <div className="font-extrabold text-white text-xs flex items-center space-x-1.5">
+                              <span>@{u.username}</span>
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-normal truncate max-w-[160px]">
+                              {displayEmail} • #{u.id.slice(0, 6)}
+                            </div>
                           </div>
                         </div>
+                      </td>
 
-                        <div className="flex items-center space-x-1">
-                          <span
-                            className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold uppercase ${
-                              isBlocked
-                                ? 'bg-rose-950 text-rose-300 border border-rose-800'
-                                : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                            }`}
-                          >
-                            {isBlocked ? 'Suspended' : 'Active'}
+                      {/* Role Tier */}
+                      <td className="p-3.5">
+                        <span className="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-extrabold uppercase border border-slate-700">
+                          {u.role}
+                        </span>
+                      </td>
+
+                      {/* Created By Account */}
+                      <td className="p-3.5">
+                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 flex items-center space-x-1 w-max">
+                          <User className="w-3 h-3 text-cyan-400" />
+                          <span>@{creatorName}</span>
+                        </span>
+                      </td>
+
+                      {/* Status Badge */}
+                      <td className="p-3.5">
+                        {status === 'active' && (
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.15)] flex items-center space-x-1.5 w-max">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            <span>Active</span>
                           </span>
-                        </div>
-                      </div>
-
-                      {/* Token Balance & Keys Issued */}
-                      <div className="grid grid-cols-2 gap-2 p-2.5 bg-slate-900 rounded-xl border border-slate-800 font-mono text-[11px]">
-                        <div>
-                          <span className="text-[9px] text-slate-500 uppercase block font-sans">Token Balance</span>
-                          <span className="text-amber-400 font-bold">
-                            {(u.tokens !== undefined ? u.tokens : (u.credits || 0)).toLocaleString()} T
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[9px] text-slate-500 uppercase block font-sans">Keys Issued</span>
-                          <span className="text-cyan-300 font-bold">{stats.totalKeys} Keys</span>
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex items-center justify-between gap-1.5 pt-1 border-t border-slate-800">
-                        <button
-                          onClick={() => setTokenModalUser(u)}
-                          className="flex-1 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-amber-300 rounded-xl font-mono text-xs font-semibold flex items-center justify-center space-x-1"
-                        >
-                          <Coins className="w-3.5 h-3.5" />
-                          <span>Tokens</span>
-                        </button>
-
-                        <button
-                          onClick={() => setAnalyticsModalUser(u)}
-                          className="p-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 rounded-xl"
-                          title="Deep Analytics"
-                        >
-                          <BarChart2 className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          onClick={() => onToggleBlockUser(u.id, !isBlocked)}
-                          className={`p-1.5 rounded-xl border transition ${
-                            isBlocked
-                              ? 'bg-emerald-950/60 border-emerald-800 text-emerald-400 hover:bg-emerald-900'
-                              : 'bg-amber-950/60 border-amber-800 text-amber-400 hover:bg-amber-900'
-                          }`}
-                          title={isBlocked ? 'Activate Account' : 'Suspend Account'}
-                        >
-                          <Lock className="w-4 h-4" />
-                        </button>
-
-                        {onDeleteUser && (
-                          <button
-                            onClick={() => handlePromptDeleteUser(u)}
-                            className="p-1.5 bg-rose-950/40 hover:bg-rose-900 border border-rose-900 text-rose-400 rounded-xl"
-                            title="Delete Account"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
                         )}
-                      </div>
-                    </div>
+
+                        {status === 'suspended' && (
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-rose-500/10 text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.15)] flex items-center space-x-1.5 w-max">
+                            <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                            <span>Suspended</span>
+                          </span>
+                        )}
+
+                        {status === 'pending' && (
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.15)] flex items-center space-x-1.5 w-max">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                            <span>Pending</span>
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Token Balance */}
+                      <td className="p-3.5 font-extrabold text-amber-400">
+                        <div className="flex items-center space-x-1.5">
+                          <Coins className="w-4 h-4 text-amber-400" />
+                          <span className="text-sm">{tokens.toLocaleString()}</span>
+                        </div>
+                      </td>
+
+                      {/* Total Keys Issued */}
+                      <td className="p-3.5 font-bold text-white">
+                        <div className="flex items-center space-x-1.5">
+                          <Key className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>{stats.totalKeys}</span>
+                        </div>
+                      </td>
+
+                      {/* Revenue / Tokens Spent */}
+                      <td className="p-3.5 font-bold text-purple-400">
+                        <span>{stats.totalSpent.toLocaleString()} Tokens</span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="p-3.5 text-right">
+                        <div className="flex items-center justify-end space-x-1.5">
+                          {/* Token Adjustment Button */}
+                          <button
+                            onClick={() => setTokenModalUser(u)}
+                            className="px-3 py-1.5 rounded-xl bg-amber-950/50 border border-amber-800/60 text-amber-300 hover:bg-amber-900/80 transition flex items-center space-x-1.5 shadow-sm font-bold"
+                            title="Adjust Token Balance"
+                          >
+                            <Coins className="w-3.5 h-3.5" />
+                            <span>Tokens</span>
+                          </button>
+
+                          {/* Analytics Drilldown Modal Button */}
+                          <button
+                            onClick={() => setAnalyticsModalUser(u)}
+                            className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700 transition flex items-center space-x-1.5 font-bold"
+                            title="Open Reseller Analytics Drilldown"
+                          >
+                            <BarChart2 className="w-3.5 h-3.5 text-cyan-400" />
+                            <span>Analytics</span>
+                          </button>
+
+                          {/* Toggle Status / Block */}
+                          <button
+                            onClick={() => {
+                              const newStatus = u.isBlocked === 0;
+                              onToggleBlockUser(u.id, newStatus);
+                              showToast(`Reseller @${u.username} status updated to ${newStatus ? 'Suspended' : 'Active'}.`);
+                            }}
+                            className={`p-2 rounded-xl border transition ${
+                              u.isBlocked === 1
+                                ? 'bg-emerald-950/50 text-emerald-400 border-emerald-800/60 hover:bg-emerald-900/80'
+                                : 'bg-amber-950/50 text-amber-400 border-amber-800/60 hover:bg-amber-900/80'
+                            }`}
+                            title={u.isBlocked === 1 ? 'Activate Reseller' : 'Suspend Reseller'}
+                          >
+                            <ShieldAlert className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* Delete Reseller (Owner / Manager only, non-owner target) */}
+                          {onDeleteUser && u.role !== 'owner' && u.id !== currentUser?.id && (
+                            <button
+                              onClick={() => {
+                                if (confirm(`Are you sure you want to delete reseller @${u.username}?`)) {
+                                  onDeleteUser(u.id);
+                                  showToast(`Reseller @${u.username} has been deleted.`);
+                                }
+                              }}
+                              className="p-2 rounded-xl bg-rose-950/60 text-rose-400 border border-rose-800/60 hover:bg-rose-900/80 transition"
+                              title="Delete Partner Account"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
                   );
                 })
               )}
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
 
-      {/* Tab 2: Token Transaction Ledger */}
-      {activeSubTab === 'transactions' && (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4 font-mono text-xs">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <div className="flex items-center space-x-2">
-              <History className="w-4 h-4 text-cyan-400" />
-              <h3 className="text-sm font-bold text-white font-sans">Token Balance Ledger Audit</h3>
-            </div>
-            <span className="text-slate-400 text-[11px]">{transactions.length} Transactions Logged</span>
-          </div>
-
-          {loadingTx ? (
-            <div className="text-center py-12 text-slate-500 animate-pulse">Loading transaction records...</div>
-          ) : transactions.length === 0 ? (
-            <div className="text-center py-12 text-slate-500">No token transaction records found yet.</div>
-          ) : (
-            <div className="overflow-x-auto rounded-2xl border border-slate-800">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-slate-950 text-slate-400 text-[10px] uppercase border-b border-slate-800">
-                    <th className="p-3">Timestamp</th>
-                    <th className="p-3">Reseller</th>
-                    <th className="p-3">Type</th>
-                    <th className="p-3">Amount</th>
-                    <th className="p-3">Balance After</th>
-                    <th className="p-3">Note / Issuer</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-950/40">
-                  {transactions.map((tx) => {
-                    const isAdd = tx.type === 'add' || tx.amount > 0;
-                    return (
-                      <tr key={tx.id} className="hover:bg-slate-800/30">
-                        <td className="p-3 text-slate-400 text-[11px]">
-                          {new Date(tx.createdAt).toLocaleString()}
-                        </td>
-                        <td className="p-3 font-bold text-white">@{tx.username}</td>
-                        <td className="p-3">
-                          <span
-                            className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
-                              tx.type === 'add'
-                                ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                                : tx.type === 'key_generation'
-                                ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
-                                : 'bg-rose-950 text-rose-300 border border-rose-800'
-                            }`}
-                          >
-                            {tx.type}
-                          </span>
-                        </td>
-                        <td className="p-3 font-bold font-mono">
-                          <span className={tx.type === 'add' ? 'text-emerald-400' : 'text-rose-400'}>
-                            {tx.type === 'add' ? `+${tx.amount}` : `-${tx.amount}`} T
-                          </span>
-                        </td>
-                        <td className="p-3 text-amber-400 font-bold font-mono">
-                          {tx.balanceAfter.toLocaleString()} T
-                        </td>
-                        <td className="p-3 text-slate-400 text-[11px]">{tx.note || '-'}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Token Balance Modal */}
-      <TokenBalanceModal
+      {/* Token Adjustment Modal */}
+      <TokenAdjustmentModal
         isOpen={!!tokenModalUser}
         reseller={tokenModalUser}
         onClose={() => setTokenModalUser(null)}
-        onUpdateTokens={async (id, amt, act, note) => {
-          await onUpdateTokens(id, amt, act, note);
-          toast.success(`Tokens updated successfully.`);
-          setTokenModalUser(null);
-        }}
+        onUpdateTokens={onUpdateTokens}
+        onSuccessToast={showToast}
       />
 
-      {/* Analytics Modal */}
-      <ResellerDashboardModal
+      {/* Reseller Deep Analytics Modal */}
+      <ResellerAnalyticsModal
         isOpen={!!analyticsModalUser}
         reseller={analyticsModalUser}
         keys={keys}
         onClose={() => setAnalyticsModalUser(null)}
-        onOpenManageTokens={(r) => {
-          setAnalyticsModalUser(null);
-          setTokenModalUser(r);
-        }}
-      />
-
-      {/* Custom Global Action Confirmation Modal */}
-      <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        title={confirmDialog.title}
-        description={confirmDialog.description}
-        variant={confirmDialog.variant}
-        confirmText={confirmDialog.confirmText}
-        isLoading={isProcessingAction}
-        onConfirm={confirmDialog.onConfirm}
-        onClose={() => setConfirmDialog((prev) => ({ ...prev, isOpen: false }))}
+        onOpenManageTokens={(reseller) => setTokenModalUser(reseller)}
       />
     </div>
   );

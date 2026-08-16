@@ -7,27 +7,16 @@ export function generateUUID(): string {
   return crypto.randomUUID();
 }
 
-export function generateKeyString(isMasterKey: boolean = false, prefix?: string, format?: 'hyphenated' | 'raw16' | 'uuid'): string {
+export function generateKeyString(isMasterKey: boolean = false): string {
   if (isMasterKey) {
     return '@Axiosofficial';
-  }
-
-  if (format === 'uuid') {
-    return crypto.randomUUID();
   }
 
   const charsUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const segUpper = (len: number) =>
     Array.from({ length: len }, () => charsUpper.charAt(Math.floor(Math.random() * charsUpper.length))).join('');
 
-  const cleanPrefix = (prefix || 'AXIOS').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const prefixStr = cleanPrefix ? `${cleanPrefix}-` : '';
-
-  if (format === 'raw16') {
-    return `${prefixStr}${segUpper(16)}`;
-  }
-
-  return `${prefixStr}${segUpper(4)}-${segUpper(4)}-${segUpper(4)}`;
+  return `AXIOS-${segUpper(4)}-${segUpper(4)}-${segUpper(4)}`;
 }
 
 export function saveBase64Image(base64DataStr: string): string | null {

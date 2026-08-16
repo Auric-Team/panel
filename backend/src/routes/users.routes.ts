@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getUsers, createUser, toggleBlockUser, deleteUser, updateTokens, getTokenTransactions } from '../controllers/users.controller';
+import { getUsers, createUser, toggleBlockUser, deleteUser, updateTokens } from '../controllers/users.controller';
 import { authenticate, authorizeRole } from '../middlewares/auth.middleware';
 
 const router = Router();
@@ -11,6 +11,5 @@ router.post('/toggle-block', authorizeRole(['owner', 'manager']), toggleBlockUse
 router.post('/delete', authorizeRole(['owner', 'manager']), deleteUser);
 router.post('/tokens', updateTokens);
 router.post('/update-tokens', updateTokens);
-router.get('/transactions', getTokenTransactions);
 
 export default router;

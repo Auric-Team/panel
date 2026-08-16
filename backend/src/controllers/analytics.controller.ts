@@ -20,12 +20,3 @@ export const getResellerAnalytics = (req: AuthenticatedRequest, res: Response, n
     next(err);
   }
 };
-
-export const getTelemetry = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  try {
-    const data = AnalyticsService.getTelemetry();
-    return res.json(data);
-  } catch (err) {
-    next(err);
-  }
-};

@@ -162,27 +162,6 @@ export class UsersService {
     const updatedUser = db.prepare('SELECT COALESCE(tokens, credits, 0) AS tokens FROM users WHERE id = ?').get(userId) as { tokens: number };
     const newBalance = updatedUser ? updatedUser.tokens : 0;
 
-    // Record into token_transactions ledger
-    try {
-      db.prepare(`
-        INSERT INTO token_transactions (id, userId, username, amount, type, balanceAfter, note, createdById, createdByUsername, createdAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).run(
-        generateUUID(),
-        targetUser.id,
-        targetUser.username,
-        parsedAmount,
-        action === 'add' ? 'add' : 'deduct',
-        newBalance,
-        (payload as any)?.note || `${action === 'add' ? 'Added' : 'Deducted'} by ${currentUser.username}`,
-        currentUser.id,
-        currentUser.username,
-        new Date().toISOString()
-      );
-    } catch (txErr) {
-      // ignore
-    }
-
     LogsService.logAction(
       currentUser.id,
       currentUser.username,
@@ -196,22 +175,5 @@ export class UsersService {
       newBalance,
       message: `Successfully ${action === 'add' ? 'added' : 'deducted'} ${parsedAmount} tokens.`,
     };
-  }
-
-  static getTokenTransactions(currentUser: AuthUserPayload, targetUserId?: string) {
-    const userId = targetUserId || currentUser.id;
-
-    if (currentUser.role === 'reseller' && userId !== currentUser.id) {
-      throw new AppError('Access denied.', 403);
-    }
-
-    const txs = db.prepare(`
-      SELECT * FROM token_transactions 
-      WHERE userId = ? 
-      ORDER BY createdAt DESC 
-      LIMIT 100
-    `).all(userId);
-
-    return txs;
   }
 }

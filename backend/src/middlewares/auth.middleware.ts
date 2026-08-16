@@ -15,16 +15,12 @@ export const authenticate = (req: AuthenticatedRequest, res: Response, next: Nex
   try {
     const decoded = jwt.verify(token, ENV.JWT_SECRET) as AuthUserPayload;
 
-    const userRecord = db.prepare('SELECT isBlocked, id, username, role FROM users WHERE id = ? OR username = ?').get(decoded.id || '', decoded.username || '') as any;
+    const userRecord = db.prepare('SELECT isBlocked FROM users WHERE id = ?').get(decoded.id) as { isBlocked: number } | undefined;
     if (!userRecord || userRecord.isBlocked === 1) {
       return next(new AppError('Account is blocked or no longer exists.', 403));
     }
 
-    req.user = {
-      id: userRecord.id,
-      username: userRecord.username,
-      role: userRecord.role,
-    };
+    req.user = decoded;
     next();
   } catch {
     return next(new AppError('Invalid or expired token.', 401));

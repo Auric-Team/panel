@@ -42,20 +42,10 @@ export const deleteUser = (req: AuthenticatedRequest, res: Response, next: NextF
 
 export const updateTokens = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const { userId, amount, tokens, action, note } = req.body;
+    const { userId, amount, tokens, action } = req.body;
     const actualAmount = amount !== undefined ? amount : tokens;
     const actualAction = action || (actualAmount >= 0 ? 'add' : 'deduct');
     const result = UsersService.updateTokens(req.user!, userId, Math.abs(Number(actualAmount)), actualAction);
-    return res.json(result);
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getTokenTransactions = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  try {
-    const targetUserId = (req.query.userId as string) || req.user!.id;
-    const result = UsersService.getTokenTransactions(req.user!, targetUserId);
     return res.json(result);
   } catch (err) {
     next(err);
