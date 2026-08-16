@@ -17,6 +17,9 @@ export function getReceiptImageUrl(path: string | null | undefined): string {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067';
 
+let localKeysStore: KeyItem[] = [];
+let localUsersStore: UserItem[] = [];
+
 export interface AuditLogItem {
   id: string;
   userId: string;
