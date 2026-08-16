@@ -5,17 +5,18 @@ import path from 'path';
 dotenv.config();
 
 function findUploadsDir(): string {
+  const panelRoot = path.resolve(__dirname, '..', '..', '..');
+  const backendDir = path.resolve(__dirname, '..', '..');
   const candidates = [
+    path.resolve(panelRoot, 'uploads'),
+    path.resolve(panelRoot, 'backup_db', 'uploads'),
+    path.resolve(backendDir, 'uploads'),
     path.resolve(process.cwd(), 'uploads'),
-    path.resolve(process.cwd(), 'backend', 'uploads'),
-    path.resolve(__dirname, '..', '..', 'uploads'),
-    path.resolve(process.cwd(), 'backup_db', 'uploads'),
-    path.resolve(__dirname, '..', '..', 'backup_db', 'uploads'),
   ];
   for (const c of candidates) {
     if (fs.existsSync(c)) return c;
   }
-  const fallback = path.resolve(__dirname, '..', '..', 'uploads');
+  const fallback = path.resolve(panelRoot, 'uploads');
   try {
     fs.mkdirSync(fallback, { recursive: true });
   } catch {}
@@ -23,16 +24,17 @@ function findUploadsDir(): string {
 }
 
 function findDbPath(): string {
+  const panelRoot = path.resolve(__dirname, '..', '..', '..');
+  const backendDir = path.resolve(__dirname, '..', '..');
   const candidates = [
+    path.resolve(backendDir, 'data', 'axios.db'),
+    path.resolve(panelRoot, 'backup_db', 'axios.db'),
     path.resolve(process.cwd(), 'data', 'axios.db'),
-    path.resolve(process.cwd(), 'backend', 'data', 'axios.db'),
-    path.resolve(__dirname, '..', '..', 'data', 'axios.db'),
-    path.resolve(process.cwd(), 'backup_db', 'axios.db'),
   ];
   for (const c of candidates) {
     if (fs.existsSync(c)) return c;
   }
-  return path.resolve(__dirname, '..', '..', 'data', 'axios.db');
+  return path.resolve(backendDir, 'data', 'axios.db');
 }
 
 export const ENV = {

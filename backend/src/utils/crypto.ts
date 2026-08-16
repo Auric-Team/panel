@@ -48,14 +48,13 @@ export function saveBase64Image(base64DataStr: string): string | null {
     const fileName = `screenshot-${Date.now()}-${crypto.randomBytes(4).toString('hex')}.${ext}`;
     const buffer = Buffer.from(rawData, 'base64');
 
+    const panelRoot = path.resolve(__dirname, '..', '..', '..');
+    const backendDir = path.resolve(__dirname, '..', '..');
     const targetDirs = [
       ENV.UPLOADS_DIR,
-      path.resolve(process.cwd(), 'uploads'),
-      path.resolve(process.cwd(), 'backend', 'uploads'),
-      path.resolve(process.cwd(), 'backup_db', 'uploads'),
-      path.resolve(__dirname, '..', '..', 'uploads'),
-      path.resolve(__dirname, '..', '..', 'backend', 'uploads'),
-      path.resolve(__dirname, '..', '..', 'backup_db', 'uploads'),
+      path.resolve(panelRoot, 'uploads'),
+      path.resolve(panelRoot, 'backup_db', 'uploads'),
+      path.resolve(backendDir, 'uploads'),
     ];
 
     targetDirs.forEach((dir) => {

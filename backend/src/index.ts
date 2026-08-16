@@ -23,15 +23,14 @@ app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 // Robust upload directory resolution
+const panelRoot = path.resolve(__dirname, '..', '..');
+const backendDir = path.resolve(__dirname, '..');
 const uploadPaths = [
   ENV.UPLOADS_DIR,
+  path.resolve(panelRoot, 'uploads'),
+  path.resolve(panelRoot, 'backup_db', 'uploads'),
+  path.resolve(backendDir, 'uploads'),
   path.resolve(process.cwd(), 'uploads'),
-  path.resolve(process.cwd(), 'backend', 'uploads'),
-  path.resolve(process.cwd(), 'backup_db', 'uploads'),
-  path.resolve(__dirname, '..', 'uploads'),
-  path.resolve(__dirname, '..', 'backup_db', 'uploads'),
-  path.resolve(__dirname, '..', '..', 'uploads'),
-  path.resolve(__dirname, '..', '..', 'backup_db', 'uploads'),
 ];
 
 uploadPaths.forEach((p) => {
