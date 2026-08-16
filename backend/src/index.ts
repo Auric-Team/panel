@@ -22,10 +22,35 @@ app.options('*', cors());
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
-if (!fs.existsSync(ENV.UPLOADS_DIR)) {
-  fs.mkdirSync(ENV.UPLOADS_DIR, { recursive: true });
-}
-app.use('/uploads', express.static(ENV.UPLOADS_DIR));
+// Robust upload directory resolution
+const uploadPaths = [
+  ENV.UPLOADS_DIR,
+  path.resolve(process.cwd(), 'uploads'),
+  path.resolve(process.cwd(), 'backend', 'uploads'),
+  path.resolve(process.cwd(), 'backup_db', 'uploads'),
+  path.resolve(__dirname, '..', 'uploads'),
+  path.resolve(__dirname, '..', 'backup_db', 'uploads'),
+  path.resolve(__dirname, '..', '..', 'uploads'),
+  path.resolve(__dirname, '..', '..', 'backup_db', 'uploads'),
+];
+
+uploadPaths.forEach((p) => {
+  if (fs.existsSync(p)) {
+    app.use('/uploads', express.static(p));
+  }
+});
+
+// Explicit robust fallback handler for any /uploads/:filename
+app.get('/uploads/:filename', (req, res) => {
+  const filename = path.basename(req.params.filename);
+  for (const p of uploadPaths) {
+    const fullPath = path.join(p, filename);
+    if (fs.existsSync(fullPath)) {
+      return res.sendFile(fullPath);
+    }
+  }
+  return res.status(404).send(`Screenshot ${filename} not found`);
+});
 
 app.get('/', (req, res) => {
   res.json({

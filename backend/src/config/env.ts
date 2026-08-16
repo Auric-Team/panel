@@ -1,7 +1,39 @@
 import dotenv from 'dotenv';
+import fs from 'fs';
 import path from 'path';
 
 dotenv.config();
+
+function findUploadsDir(): string {
+  const candidates = [
+    path.resolve(process.cwd(), 'uploads'),
+    path.resolve(process.cwd(), 'backend', 'uploads'),
+    path.resolve(__dirname, '..', '..', 'uploads'),
+    path.resolve(process.cwd(), 'backup_db', 'uploads'),
+    path.resolve(__dirname, '..', '..', 'backup_db', 'uploads'),
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c;
+  }
+  const fallback = path.resolve(__dirname, '..', '..', 'uploads');
+  try {
+    fs.mkdirSync(fallback, { recursive: true });
+  } catch {}
+  return fallback;
+}
+
+function findDbPath(): string {
+  const candidates = [
+    path.resolve(process.cwd(), 'data', 'axios.db'),
+    path.resolve(process.cwd(), 'backend', 'data', 'axios.db'),
+    path.resolve(__dirname, '..', '..', 'data', 'axios.db'),
+    path.resolve(process.cwd(), 'backup_db', 'axios.db'),
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c;
+  }
+  return path.resolve(__dirname, '..', '..', 'data', 'axios.db');
+}
 
 export const ENV = {
   PORT: parseInt(process.env.PORT || '20067', 10),
@@ -15,6 +47,6 @@ export const ENV = {
 
   MANAGER_2FA_PIN: process.env.MANAGER_2FA_PIN || '654321',
 
-  DB_PATH: path.resolve(process.cwd(), 'data', 'axios.db'),
-  UPLOADS_DIR: path.resolve(process.cwd(), 'uploads'),
+  DB_PATH: findDbPath(),
+  UPLOADS_DIR: findUploadsDir(),
 };

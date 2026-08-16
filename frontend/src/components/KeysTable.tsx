@@ -558,18 +558,18 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                       {k.paymentScreenshot ? (
                         <button
                           onClick={() => onOpenProofModal(k)}
-                          className="flex items-center space-x-2 group p-1.5 bg-slate-950 hover:bg-slate-800/90 border border-emerald-800/60 rounded-xl transition shadow-sm"
+                          className="flex items-center space-x-2 group px-2 py-1 bg-slate-950 hover:bg-slate-800 border border-emerald-800/70 hover:border-emerald-500 rounded-xl transition shadow-sm cursor-pointer"
                           title="Click to view full receipt screenshot"
                         >
-                          <img
-                            src={getReceiptImageUrl(k.paymentScreenshot)}
-                            alt="Receipt"
-                            className="w-8 h-8 object-cover rounded-lg border border-slate-700 group-hover:scale-105 transition bg-slate-900"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = k.paymentScreenshot || '';
-                            }}
-                          />
-                          <span className="text-[10px] font-bold text-emerald-400 font-mono flex items-center space-x-1 pr-1">
+                          <div className="w-8 h-8 rounded-lg overflow-hidden border border-emerald-800/60 bg-slate-900 shrink-0 flex items-center justify-center">
+                            <img
+                              src={getReceiptImageUrl(k.paymentScreenshot)}
+                              alt="Receipt"
+                              className="w-full h-full object-cover group-hover:scale-110 transition duration-150"
+                              loading="lazy"
+                            />
+                          </div>
+                          <span className="text-[11px] font-bold text-emerald-400 font-mono flex items-center space-x-1 pr-1">
                             <FileImage className="w-3.5 h-3.5 text-emerald-400" />
                             <span>Proof</span>
                           </span>

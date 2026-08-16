@@ -1,8 +1,10 @@
-import { KeyItem, UserItem } from '@/types/key';
-import { TelemetryData } from '@/types/key';
+import { KeyItem, UserItem, TelemetryData } from '@/types/key';
 
 export function getBackendBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067';
+  if (typeof window !== 'undefined') {
+    return '';
+  }
+  return process.env.BACKEND_INTERNAL_URL || 'http://localhost:20067';
 }
 
 export function getReceiptImageUrl(path: string | null | undefined): string {
@@ -10,12 +12,10 @@ export function getReceiptImageUrl(path: string | null | undefined): string {
   if (path.startsWith('data:') || path.startsWith('http://') || path.startsWith('https://')) {
     return path;
   }
-  const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  const base = getBackendBaseUrl();
-  return `${base}${cleanPath}`;
+  return path.startsWith('/') ? path : `/${path}`;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:20067';
+const API_BASE_URL = typeof window !== 'undefined' ? '' : (process.env.BACKEND_INTERNAL_URL || 'http://localhost:20067');
 
 let localKeysStore: KeyItem[] = [];
 let localUsersStore: UserItem[] = [];

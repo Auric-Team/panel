@@ -123,14 +123,23 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
     setIsDragging(false);
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!activeSrc) return;
-    const a = document.createElement('a');
-    a.href = activeSrc;
-    a.download = keyItem ? `receipt-${keyItem.key}-${Date.now()}.jpg` : `axios_payment_proof_${Date.now()}.jpg`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    try {
+      const response = await fetch(activeSrc);
+      if (!response.ok) throw new Error('Download failed');
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = keyItem ? `receipt-${keyItem.key}.jpg` : `axios_payment_proof_${Date.now()}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.open(activeSrc, '_blank');
+    }
   };
 
   return (
