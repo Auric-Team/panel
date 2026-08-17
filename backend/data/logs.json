@@ -1,5 +1,2419 @@
 [
   {
+    "id": "91105837-d086-4838-8b45-b1dbdefa682e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-WVQN-X9GP-LXXR authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-WVQN-X9GP-LXXR",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-17T09:08:07.831Z"
+  },
+  {
+    "id": "339ac148-151c-41c7-b884-3a63225cbde2",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-WVQN-X9GP-LXXR authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-WVQN-X9GP-LXXR",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-17T09:08:07.473Z"
+  },
+  {
+    "id": "10ce225a-3416-4a78-b30a-0049cf61575b",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-WVQN-X9GP-LXXR authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-WVQN-X9GP-LXXR",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-17T08:55:28.549Z"
+  },
+  {
+    "id": "6753fa07-8c6c-4bed-bc99-7d6815e007a9",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-WVQN-X9GP-LXXR authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-WVQN-X9GP-LXXR",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-17T08:55:28.365Z"
+  },
+  {
+    "id": "4de4ef75-9f00-457f-8223-c51c5648be09",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T07:42:56.535Z"
+  },
+  {
+    "id": "936cba76-f308-4a2f-9162-2e0246bd3f8e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T07:42:53.740Z"
+  },
+  {
+    "id": "d6a490fb-47ac-4ce3-a261-190bbdfdeb28",
+    "userId": "50ab95b7-8107-45ab-a6a8-cae811f62fd2",
+    "username": "mohit67",
+    "action": "KEYS_GENERATED",
+    "details": "Issued 1 Key(s) [AXIOS-0FY0-HBZN-D4ST] • Duration: 7 Days • Cost: 70 Tokens • Note: \"@Leo888z\"",
+    "metadata": {
+      "count": 1,
+      "costTokens": 70,
+      "isMasterKey": false,
+      "note": "@Leo888z"
+    },
+    "timestamp": "2026-08-17T07:35:25.321Z"
+  },
+  {
+    "id": "e1e1d0a0-f83d-43ce-abd4-c6f689abd233",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T07:33:21.360Z"
+  },
+  {
+    "id": "2454240b-2c15-4c3d-ba89-e5b0dbe48cb0",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T07:33:21.285Z"
+  },
+  {
+    "id": "58a0803e-2ec2-4eda-88bc-c59cef814363",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-FPZ4-1GLS-FM4Q\"",
+    "metadata": {
+      "key": "AXIOS-FPZ4-1GLS-FM4Q",
+      "hwid": "HWID-c84b7988c77845b3"
+    },
+    "timestamp": "2026-08-17T07:29:00.035Z"
+  },
+  {
+    "id": "66383a6e-6d87-4a54-8545-54f763c77c51",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-FPZ4-1GLS-FM4Q\"",
+    "metadata": {
+      "key": "AXIOS-FPZ4-1GLS-FM4Q",
+      "hwid": "HWID-c84b7988c77845b3"
+    },
+    "timestamp": "2026-08-17T07:28:59.969Z"
+  },
+  {
+    "id": "fd153617-9c65-40d8-96cc-dbc175523a0c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T07:24:23.164Z"
+  },
+  {
+    "id": "6ac46c5a-e986-4a43-9a6c-d86849dabc8f",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T07:24:23.145Z"
+  },
+  {
+    "id": "177ecc2b-bd75-42e9-bbd6-5079608053e2",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-FPZ4-1GLS-FM4Q\"",
+    "metadata": {
+      "key": "AXIOS-FPZ4-1GLS-FM4Q",
+      "hwid": "HWID-c84b7988c77845b3"
+    },
+    "timestamp": "2026-08-17T07:10:56.501Z"
+  },
+  {
+    "id": "bf00b28f-68c5-4d40-8798-a18ba76d984a",
+    "userId": "system",
+    "username": "Client Device",
+    "action": "KEY_VERIFY_FAILED",
+    "details": "Failed verification attempt for non-existent key: \"AXIOS-FPZ4-1GLS-FM4Q\"",
+    "metadata": {
+      "key": "AXIOS-FPZ4-1GLS-FM4Q",
+      "hwid": "HWID-c84b7988c77845b3"
+    },
+    "timestamp": "2026-08-17T07:10:56.418Z"
+  },
+  {
+    "id": "c9a41686-f329-4699-b402-56dd6076824b",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T07:08:00.783Z"
+  },
+  {
+    "id": "e8097fe0-de21-4063-af96-08ed2f281af4",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T07:08:00.704Z"
+  },
+  {
+    "id": "9584e9fb-258c-48ab-aeae-3bcb338a4754",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T07:00:41.755Z"
+  },
+  {
+    "id": "00fa106a-ae5d-47af-893d-3513c4277a84",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T07:00:41.636Z"
+  },
+  {
+    "id": "2c770286-c92b-4d2e-9f46-d7a267de3279",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T06:29:05.498Z"
+  },
+  {
+    "id": "d268d31f-d48a-405d-8eca-d109b1d90096",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T06:29:05.453Z"
+  },
+  {
+    "id": "63c6cc5b-4300-40e2-8166-bb7f283b98e0",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-17T06:25:10.664Z"
+  },
+  {
+    "id": "e646df62-66c5-40c0-8d2f-1fee050e4031",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-17T06:25:10.555Z"
+  },
+  {
+    "id": "03fd71fa-c8c6-478e-9548-48aaea29e730",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:14:15.615Z"
+  },
+  {
+    "id": "968ed783-310a-4260-9a0b-7d44da68c2bc",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:14:15.507Z"
+  },
+  {
+    "id": "42b6690d-b16b-4a07-a914-9f16fa4a7c26",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:09:44.630Z"
+  },
+  {
+    "id": "8ef29a70-b63c-45b7-af02-c30206fa0437",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:09:44.519Z"
+  },
+  {
+    "id": "57756d5e-dbcb-44fe-854f-42b971ec78cf",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:07:52.048Z"
+  },
+  {
+    "id": "3df41f88-edf8-46c6-948d-5f0c54c09a29",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:07:51.970Z"
+  },
+  {
+    "id": "a221d895-cce6-4739-97bd-af0fbfe832cd",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:04:17.952Z"
+  },
+  {
+    "id": "c8564fdc-99ce-4942-a8f2-a6e201454a83",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:04:17.863Z"
+  },
+  {
+    "id": "79748bd3-76f6-4a77-8107-24d88f8cb48f",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:03:51.753Z"
+  },
+  {
+    "id": "74c7b048-5f68-480c-bf51-3aad7d8d9466",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T06:03:51.684Z"
+  },
+  {
+    "id": "bcd5183d-e1ee-4846-9a20-f794cbcd557e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T06:00:14.152Z"
+  },
+  {
+    "id": "999afce8-a061-4f71-8730-4286e2bc8eb9",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T06:00:14.108Z"
+  },
+  {
+    "id": "22f37780-f57d-4c30-87c1-236abecdaa15",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-17T05:57:09.339Z"
+  },
+  {
+    "id": "07e98193-a571-4d8a-be84-a1c48b0f26c3",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-17T05:57:08.399Z"
+  },
+  {
+    "id": "76f19c6e-144a-4ff3-91fc-d7222c7bb2a0",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:57:07.746Z"
+  },
+  {
+    "id": "c1fd1b34-c5da-41ae-a7fe-748b43681e1d",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:57:07.661Z"
+  },
+  {
+    "id": "c2507640-311d-4a45-a29d-e5fafc0029e1",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:56:16.905Z"
+  },
+  {
+    "id": "07452148-5228-4ccc-a9c2-a807da837bb4",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:56:16.381Z"
+  },
+  {
+    "id": "3fbcf691-cebd-44fc-b81f-c3c75be262cc",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:54:34.092Z"
+  },
+  {
+    "id": "47966816-94c5-4ea2-bbf9-e2eeffdb72d5",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:54:33.365Z"
+  },
+  {
+    "id": "f2cbb2a0-136c-4213-b234-202d4f73bc31",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T05:53:02.359Z"
+  },
+  {
+    "id": "3b2a764c-7ea9-4414-a3c1-40796cfff6d0",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T05:53:02.295Z"
+  },
+  {
+    "id": "810ab7c4-f7bd-4843-a854-341b16211db1",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T05:45:04.314Z"
+  },
+  {
+    "id": "4abdf9c1-f3db-4e4a-ad0e-79969647fade",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-17T05:45:04.285Z"
+  },
+  {
+    "id": "1851fc70-00ee-4464-afc7-32af3d11d3fd",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:33:08.803Z"
+  },
+  {
+    "id": "059a3ccf-daf9-4f2b-a433-1f612ba85f83",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:33:08.761Z"
+  },
+  {
+    "id": "d7047388-5de2-496b-a93c-6083f2965ab1",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:17:11.901Z"
+  },
+  {
+    "id": "16877cc6-cd1d-4c16-936c-c0bee4ca2e33",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T05:17:11.784Z"
+  },
+  {
+    "id": "ef99fe3f-abc6-4d31-b39f-1d71183d01ff",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T05:15:41.689Z"
+  },
+  {
+    "id": "aaf9c6dc-7019-40db-a93a-344d64c80cf7",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T05:15:41.680Z"
+  },
+  {
+    "id": "70745788-48bf-4adb-8826-9c4a8cc2116f",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T04:43:45.570Z"
+  },
+  {
+    "id": "b3679a13-7b13-4e9b-b820-466da14e81ed",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T04:43:45.509Z"
+  },
+  {
+    "id": "b5556081-f762-4bfe-8d98-13201ee52315",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T04:39:24.916Z"
+  },
+  {
+    "id": "23ac893c-1443-45e7-a067-28dbc596160e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T04:39:24.858Z"
+  },
+  {
+    "id": "63b39084-5ded-4349-8301-f41bc39045a7",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T04:07:09.147Z"
+  },
+  {
+    "id": "3e10ae58-911e-4dcd-a57f-fbe4fa15da49",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T04:07:09.086Z"
+  },
+  {
+    "id": "91b8c96f-6282-4ca3-bb9c-529da34dce9a",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T03:03:53.577Z"
+  },
+  {
+    "id": "993abff2-37d0-4e5c-9da5-8a49fea99107",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T03:03:53.497Z"
+  },
+  {
+    "id": "f2b814cc-ad81-4055-8294-d1c9524e0a87",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T02:59:43.302Z"
+  },
+  {
+    "id": "cddc9289-de38-41f9-85b6-d37185734427",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T02:59:43.086Z"
+  },
+  {
+    "id": "9d39cafb-0413-4fe6-84ba-3d6612c12068",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T02:56:05.548Z"
+  },
+  {
+    "id": "17816a11-4eb9-4624-bab9-6a54d785eabf",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T02:56:04.697Z"
+  },
+  {
+    "id": "8867dc7c-f84d-4959-9ca3-8e016cbd029e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T02:45:49.585Z"
+  },
+  {
+    "id": "75665433-a3c8-447f-8420-f98b8f9c7efa",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T02:45:48.766Z"
+  },
+  {
+    "id": "dc59b238-52fe-41fe-aee2-afcac4c580a7",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T02:21:39.777Z"
+  },
+  {
+    "id": "23c2700f-d876-4cbe-9f8a-6518ab92aa97",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T02:21:39.772Z"
+  },
+  {
+    "id": "3f0e76df-67d7-4ead-a5ae-9720b8d7f9f8",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T02:02:29.172Z"
+  },
+  {
+    "id": "bb9ce298-bca2-4c7c-96e4-1d550a737f25",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T02:02:29.148Z"
+  },
+  {
+    "id": "02c301cd-ace2-494b-bc8a-d492ddd7263c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T01:54:00.285Z"
+  },
+  {
+    "id": "93dbc276-7e10-4ad9-900d-40a95b21bb3b",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T01:54:00.253Z"
+  },
+  {
+    "id": "32761b2a-0493-4001-abc3-a3a81fa5f350",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T01:30:54.605Z"
+  },
+  {
+    "id": "57d780c0-7bc4-4633-a61d-f262ce13a2ee",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T01:30:54.446Z"
+  },
+  {
+    "id": "987a92d6-5b35-4876-987c-954b8a8f5382",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-17T00:55:59.204Z"
+  },
+  {
+    "id": "597529f2-512e-4998-ba36-794f90f7eec6",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-17T00:55:59.110Z"
+  },
+  {
+    "id": "1fc5e1ef-c210-441c-b427-8b722485fcb6",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T00:50:52.211Z"
+  },
+  {
+    "id": "12e77056-3a52-4db1-b51a-03619bb95e1e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T00:50:52.141Z"
+  },
+  {
+    "id": "acf86d83-5d6e-4ab6-ab38-a684922e9f09",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T00:39:19.540Z"
+  },
+  {
+    "id": "5e6878bb-d0af-429b-85b7-97bbe2c18368",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T00:39:19.423Z"
+  },
+  {
+    "id": "1bf1ca96-5475-4b2e-ad7a-a2174a801ab1",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-17T00:39:07.135Z"
+  },
+  {
+    "id": "6082f1fa-83c1-4533-9125-37321cff300d",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-17T00:39:07.001Z"
+  },
+  {
+    "id": "dff35d8c-4f33-45af-ad74-d7ff1f3f451e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T00:38:33.904Z"
+  },
+  {
+    "id": "877abdf6-f7e3-477d-9368-704379c1a3e8",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-17T00:38:33.823Z"
+  },
+  {
+    "id": "b8eefeb6-724d-471b-9bc2-c99aff9cc034",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T00:26:25.297Z"
+  },
+  {
+    "id": "2189c0ff-6c41-49c1-bb11-5a5c7587a549",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T00:26:25.080Z"
+  },
+  {
+    "id": "292f76c1-40f1-4050-9137-2c1dbf197da9",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T00:11:08.966Z"
+  },
+  {
+    "id": "a196a174-3292-4d1e-a1dc-06cedfdfbe81",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-17T00:11:08.933Z"
+  },
+  {
+    "id": "5819ebf1-d96e-4541-840d-3ad2d0d28b1f",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T23:55:04.177Z"
+  },
+  {
+    "id": "8f383eb7-c0f2-4315-939e-c5331ad02423",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T23:55:03.828Z"
+  },
+  {
+    "id": "9168ca4e-b96a-45ea-ab6e-500d9ca72983",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T23:45:11.240Z"
+  },
+  {
+    "id": "648e0b75-3fd8-491f-b8ae-1484340af797",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T23:45:11.061Z"
+  },
+  {
+    "id": "154eeaf0-df11-4112-845f-efdf6b104756",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T23:18:35.206Z"
+  },
+  {
+    "id": "bb2cb66a-676f-49ba-b120-ecaea18fbce1",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T23:18:35.137Z"
+  },
+  {
+    "id": "aa3e2536-3dbc-4e87-a49a-f88e7ac6fd64",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T23:18:08.666Z"
+  },
+  {
+    "id": "2bbf50d6-a646-409f-9ae5-fd3e8493e25a",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T23:18:08.661Z"
+  },
+  {
+    "id": "99caef1d-bdff-4177-82f9-392e99869d9c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T23:12:26.292Z"
+  },
+  {
+    "id": "1155ce27-9362-4539-b63a-f0c9237e318c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T23:12:26.063Z"
+  },
+  {
+    "id": "a3089033-b814-4287-adbf-0db4f73edc1c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T23:06:44.159Z"
+  },
+  {
+    "id": "46e7b255-baf0-4b28-8d05-3491f4004b5b",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T23:06:44.003Z"
+  },
+  {
+    "id": "310ecb91-fa7f-4e8e-b904-77be0c00920b",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:55:23.582Z"
+  },
+  {
+    "id": "c89be13a-f1c3-4a23-8740-53ba633e6d71",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:55:23.523Z"
+  },
+  {
+    "id": "bb1a07e8-5bec-4b92-96b3-70028ab61c52",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:49:30.650Z"
+  },
+  {
+    "id": "a06a3899-9dad-4a7a-bf36-51ed05cbdfed",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:49:30.469Z"
+  },
+  {
+    "id": "18ba0fec-e5d5-4e7f-a26a-8a30b0e9fd15",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:42:50.620Z"
+  },
+  {
+    "id": "0d6f2e6d-4960-42c0-b50e-e29af4e9c993",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:42:50.492Z"
+  },
+  {
+    "id": "f6dc1649-1af2-494a-9719-224f199625d4",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:42:13.431Z"
+  },
+  {
+    "id": "bb34155c-f6c2-4c35-a350-a6bac2c68ccd",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:42:13.361Z"
+  },
+  {
+    "id": "9c50c533-becf-4c17-952a-fcdc39d7bd25",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:07:55.464Z"
+  },
+  {
+    "id": "7fea8295-1f6b-4825-9672-155071cdf808",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T22:07:55.395Z"
+  },
+  {
+    "id": "ee938850-be8f-41fe-b508-9d3804063722",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T21:55:44.925Z"
+  },
+  {
+    "id": "8c4397ff-3f26-4109-99ac-dcd50815ef4e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-6NYK-FQY4-3565 authenticated for bound HWID: HWID-0dc44b7b1444ce66",
+    "metadata": {
+      "key": "AXIOS-6NYK-FQY4-3565",
+      "hwid": "HWID-0dc44b7b1444ce66"
+    },
+    "timestamp": "2026-08-16T21:55:44.830Z"
+  },
+  {
+    "id": "7e5aadd9-8be7-4063-ad98-4bec7c66deac",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T21:08:19.941Z"
+  },
+  {
+    "id": "2dda5ff9-2d74-452a-b523-8310435ed0cb",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T21:08:19.881Z"
+  },
+  {
+    "id": "1e0e86cd-5ed2-4ac3-864c-ff59ab15cd17",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:46:06.221Z"
+  },
+  {
+    "id": "458e2cb1-4752-4b93-9d41-a37fd9bee6f3",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:46:06.186Z"
+  },
+  {
+    "id": "4d7eee38-8dfe-4456-b9e1-4ca82f2f2fb2",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:45:03.681Z"
+  },
+  {
+    "id": "12a5f3b8-9ef8-4eb7-9d99-285cb0cf704d",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:45:03.522Z"
+  },
+  {
+    "id": "efb50ea1-0e6e-426f-8405-7704d27fbadb",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:41:38.466Z"
+  },
+  {
+    "id": "20a4b1d5-9a51-412f-9aea-cf799baee659",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:41:38.285Z"
+  },
+  {
+    "id": "f86e1502-95cf-4121-b4ad-693290b9133b",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:38:44.587Z"
+  },
+  {
+    "id": "93a39bd8-4392-42c7-8a3a-073dc6e489e6",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:38:44.517Z"
+  },
+  {
+    "id": "b980c1b2-8235-4862-9dfa-19cfd1e49116",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:37:19.890Z"
+  },
+  {
+    "id": "59d6dd94-267c-476a-8835-ce5a202ba32a",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:37:19.823Z"
+  },
+  {
+    "id": "f9564fa0-5016-4363-8437-8c84b93261ef",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:36:19.983Z"
+  },
+  {
+    "id": "6bc9bab6-e23b-49da-9c63-fda59a2005ee",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:36:19.915Z"
+  },
+  {
+    "id": "488f2d43-60d0-42fa-81b3-6ff5321ab140",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:21:47.505Z"
+  },
+  {
+    "id": "567062ec-7fff-4818-acf5-94ed468b37ff",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:21:47.317Z"
+  },
+  {
+    "id": "ff00ab6d-d336-433b-b1f4-520b3f094150",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:21:20.679Z"
+  },
+  {
+    "id": "c6e03342-6cb7-4d72-9087-243efc28e7b6",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:21:20.640Z"
+  },
+  {
+    "id": "91ab4659-44f1-430d-ab02-9c0f3a1e529f",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:09:42.409Z"
+  },
+  {
+    "id": "e6eb4985-aa24-4ef4-af92-1a3f4243f1c5",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:09:42.359Z"
+  },
+  {
+    "id": "2bd61f5b-421e-482c-b8b2-01e1cad61adb",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:08:07.411Z"
+  },
+  {
+    "id": "1bc677a6-2940-4495-a5ec-ae22e49563e5",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T20:08:07.340Z"
+  },
+  {
+    "id": "dfb34821-a0e3-4586-8f95-20f7240d634c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T19:50:59.136Z"
+  },
+  {
+    "id": "6cc04020-22c7-4182-8c0b-df7d7a319e38",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T19:50:59.056Z"
+  },
+  {
+    "id": "46973c1e-56dd-448a-a09a-f359f38e0963",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:57:24.893Z"
+  },
+  {
+    "id": "2aa8c569-7bb0-40ef-b985-3e15882abb9b",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:57:24.872Z"
+  },
+  {
+    "id": "37c59208-586c-4583-8a12-22ccdf9d2edd",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:53:07.004Z"
+  },
+  {
+    "id": "40e587e8-6071-4abf-9b02-7f951753be11",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:53:06.862Z"
+  },
+  {
+    "id": "93663dea-6b03-474b-a4d1-a53c43d1c680",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T18:46:58.031Z"
+  },
+  {
+    "id": "b2c10b2f-da15-47c9-bb61-cc9378ba32b7",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T18:46:57.930Z"
+  },
+  {
+    "id": "8ed701af-0dfc-4ffc-b141-d91466f4b2ff",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:37:06.484Z"
+  },
+  {
+    "id": "6e758f1c-e75c-4a66-8571-ab6c86366103",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:37:06.403Z"
+  },
+  {
+    "id": "8087cfe5-99c4-422a-b978-9d3e4f0f738c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T18:36:42.307Z"
+  },
+  {
+    "id": "c82d862e-009c-46bc-8a38-16dfb9a5713e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T18:36:41.382Z"
+  },
+  {
+    "id": "43bdedde-2116-4790-a8df-06040df50d93",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:33:52.764Z"
+  },
+  {
+    "id": "0a8a3d86-cf01-46fb-82c0-91d9637fe012",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:33:52.723Z"
+  },
+  {
+    "id": "3e42df44-0d69-427f-8b0a-4d7f836a57c8",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:24:55.717Z"
+  },
+  {
+    "id": "e7788dde-6f5e-4987-82e8-b17b3ebc6005",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:24:55.486Z"
+  },
+  {
+    "id": "10702b13-f797-4519-8edf-278f606d340e",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-MVF1-3KZF-5Y94 authenticated for bound HWID: HWID-c088837f7119e093",
+    "metadata": {
+      "key": "AXIOS-MVF1-3KZF-5Y94",
+      "hwid": "HWID-c088837f7119e093"
+    },
+    "timestamp": "2026-08-16T18:15:18.581Z"
+  },
+  {
+    "id": "541e6937-e71d-4e42-89c8-c2021d7c1baf",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-MVF1-3KZF-5Y94 authenticated for bound HWID: HWID-c088837f7119e093",
+    "metadata": {
+      "key": "AXIOS-MVF1-3KZF-5Y94",
+      "hwid": "HWID-c088837f7119e093"
+    },
+    "timestamp": "2026-08-16T18:15:17.221Z"
+  },
+  {
+    "id": "a4ad9400-e9e5-461b-9ad8-c188d44cf0da",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:11:19.802Z"
+  },
+  {
+    "id": "828639ee-29e3-40b4-b96f-90f61c9b0b36",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:11:19.663Z"
+  },
+  {
+    "id": "43af3000-97dd-4534-bf21-d27d4a29d16a",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:10:36.296Z"
+  },
+  {
+    "id": "c45ac0bb-3379-4b85-a560-a6cb297b7114",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T18:10:36.256Z"
+  },
+  {
+    "id": "f0e6f78c-214f-4717-a237-7ae95dab6704",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T18:09:34.463Z"
+  },
+  {
+    "id": "815e97a8-1dc7-4573-9745-d64005951eb8",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T18:09:34.362Z"
+  },
+  {
+    "id": "a141a924-8e26-43a8-8403-f4f7b97f3ff6",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:50:41.247Z"
+  },
+  {
+    "id": "e84c7dc2-501a-40b5-95d8-dfd11d0b9f5d",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:50:41.213Z"
+  },
+  {
+    "id": "12ea4218-1184-4198-bb64-a43ee79903c3",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:49:34.919Z"
+  },
+  {
+    "id": "1970e512-08b9-425e-b41b-950c4f5b37a7",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:49:34.768Z"
+  },
+  {
+    "id": "376b731c-78b9-47fc-8ac6-cde961091bf5",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:48:26.503Z"
+  },
+  {
+    "id": "151b82ff-1e16-4e91-abe6-fc98fc0dc2ae",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:48:25.683Z"
+  },
+  {
+    "id": "ee087b57-b9e6-4b48-afe7-4e67815ee292",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:43:21.304Z"
+  },
+  {
+    "id": "a09b6e25-916e-4645-8f70-dc7a3ce06f32",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:43:21.183Z"
+  },
+  {
+    "id": "f1d9bb30-e86a-46a5-be14-814e67ee0115",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-16T17:34:12.931Z"
+  },
+  {
+    "id": "606f4a45-bde0-4d41-97c6-fa83ae51b1c2",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-16T17:34:12.815Z"
+  },
+  {
+    "id": "28bb177d-5ced-45f9-af04-21a8889d8835",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-MVF1-3KZF-5Y94 authenticated for bound HWID: HWID-c088837f7119e093",
+    "metadata": {
+      "key": "AXIOS-MVF1-3KZF-5Y94",
+      "hwid": "HWID-c088837f7119e093"
+    },
+    "timestamp": "2026-08-16T17:30:55.351Z"
+  },
+  {
+    "id": "5e1bcab6-2ec4-4b28-808d-9dcaa8baefc2",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-MVF1-3KZF-5Y94 authenticated for bound HWID: HWID-c088837f7119e093",
+    "metadata": {
+      "key": "AXIOS-MVF1-3KZF-5Y94",
+      "hwid": "HWID-c088837f7119e093"
+    },
+    "timestamp": "2026-08-16T17:30:31.007Z"
+  },
+  {
+    "id": "63786263-562f-4e98-af66-aa6e6beff5eb",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:23:27.255Z"
+  },
+  {
+    "id": "c85ade8d-81fc-4268-8c70-3bc51d6a0b25",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:23:27.196Z"
+  },
+  {
+    "id": "9548bd35-2b44-4ecc-8877-85c53a720c0f",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-16T17:22:12.850Z"
+  },
+  {
+    "id": "5c9bce93-f82a-4f88-9f9e-0dbb19053026",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-4CHF-YS5M-Z97Y authenticated for bound HWID: HWID-8390518bfd779ecb",
+    "metadata": {
+      "key": "AXIOS-4CHF-YS5M-Z97Y",
+      "hwid": "HWID-8390518bfd779ecb"
+    },
+    "timestamp": "2026-08-16T17:22:12.805Z"
+  },
+  {
+    "id": "c3248f27-269a-49fd-bf76-eca4d7920939",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:20:57.084Z"
+  },
+  {
+    "id": "5ffd8e33-dfb8-4612-a8f4-fe8e4ca5a548",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:20:56.964Z"
+  },
+  {
+    "id": "c56e3720-e785-4de2-a877-dcf02052153a",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:18:24.754Z"
+  },
+  {
+    "id": "18c04509-72f2-444f-8427-1c670f01c4d9",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:18:24.627Z"
+  },
+  {
+    "id": "1878bacb-77b0-470a-bcb2-22aba8b1009c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-WVQN-X9GP-LXXR authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-WVQN-X9GP-LXXR",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-16T17:16:38.829Z"
+  },
+  {
+    "id": "b98a9680-6f16-4884-905f-95d6539262d6",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-WVQN-X9GP-LXXR authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-WVQN-X9GP-LXXR",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-16T17:16:38.672Z"
+  },
+  {
+    "id": "c6f483af-e259-4428-ba6a-e07e7f402dfe",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-WVQN-X9GP-LXXR authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-WVQN-X9GP-LXXR",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-16T17:15:59.706Z"
+  },
+  {
+    "id": "5141f164-8a90-47b1-8a3a-f3f82cc60aef",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-WVQN-X9GP-LXXR authenticated for bound HWID: HWID-1e6702f5de6e5d69",
+    "metadata": {
+      "key": "AXIOS-WVQN-X9GP-LXXR",
+      "hwid": "HWID-1e6702f5de6e5d69"
+    },
+    "timestamp": "2026-08-16T17:15:59.104Z"
+  },
+  {
+    "id": "fdbeca19-9bdf-47a4-8685-6fe1c153ab87",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-MVF1-3KZF-5Y94 authenticated for bound HWID: HWID-c088837f7119e093",
+    "metadata": {
+      "key": "AXIOS-MVF1-3KZF-5Y94",
+      "hwid": "HWID-c088837f7119e093"
+    },
+    "timestamp": "2026-08-16T17:15:45.835Z"
+  },
+  {
+    "id": "af16d9ec-59a5-4b89-8530-46849e109479",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-MVF1-3KZF-5Y94 authenticated for bound HWID: HWID-c088837f7119e093",
+    "metadata": {
+      "key": "AXIOS-MVF1-3KZF-5Y94",
+      "hwid": "HWID-c088837f7119e093"
+    },
+    "timestamp": "2026-08-16T17:15:45.622Z"
+  },
+  {
+    "id": "28c68d19-778f-474f-890c-277e36e68747",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:15:00.931Z"
+  },
+  {
+    "id": "d6e1f8bd-b544-47e1-b7d0-a7004ec3d5a7",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:14:59.887Z"
+  },
+  {
+    "id": "5f38b2b3-5de2-43c6-a246-76bcd6768cba",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:13:05.614Z"
+  },
+  {
+    "id": "53912bb0-0f8c-4889-815f-152056cc62af",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-VATC-G3XF-WS1H authenticated for bound HWID: HWID-5666716f65c8ce3e",
+    "metadata": {
+      "key": "AXIOS-VATC-G3XF-WS1H",
+      "hwid": "HWID-5666716f65c8ce3e"
+    },
+    "timestamp": "2026-08-16T17:13:05.555Z"
+  },
+  {
+    "id": "cbf91b0d-69b7-4c1e-8d04-c8ba4ac683b6",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-MVF1-3KZF-5Y94 authenticated for bound HWID: HWID-c088837f7119e093",
+    "metadata": {
+      "key": "AXIOS-MVF1-3KZF-5Y94",
+      "hwid": "HWID-c088837f7119e093"
+    },
+    "timestamp": "2026-08-16T17:12:43.042Z"
+  },
+  {
+    "id": "d0a51be0-17a2-4663-a215-48717700b726",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-MVF1-3KZF-5Y94 authenticated for bound HWID: HWID-c088837f7119e093",
+    "metadata": {
+      "key": "AXIOS-MVF1-3KZF-5Y94",
+      "hwid": "HWID-c088837f7119e093"
+    },
+    "timestamp": "2026-08-16T17:12:42.882Z"
+  },
+  {
+    "id": "b26d7927-ae4f-431b-aedd-6e3894aeec0f",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:04:16.047Z"
+  },
+  {
+    "id": "32c77eb5-2e95-4de6-a06a-de7cd0e69e7f",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:04:15.878Z"
+  },
+  {
+    "id": "f1c0e7ea-35fc-4b5b-8df0-bd41f33be5ad",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:03:44.082Z"
+  },
+  {
+    "id": "936ea2c0-ee8f-4957-b824-689a0c73f4fa",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:03:44.016Z"
+  },
+  {
+    "id": "36ea2882-59e5-4bd0-8a08-c95d84fdd826",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:02:28.412Z"
+  },
+  {
+    "id": "7afc8d46-0d8f-4e8b-9486-c9255605afd1",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T17:02:28.366Z"
+  },
+  {
+    "id": "acfec3c4-e97a-403c-b820-9bac021cbaa3",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T16:59:49.362Z"
+  },
+  {
+    "id": "b0ed04fb-1b84-4645-b880-3e13f49f3291",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T16:59:49.302Z"
+  },
+  {
+    "id": "c495b68d-e1e3-4945-abbc-b23e6061ac7c",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T16:59:39.711Z"
+  },
+  {
+    "id": "015992ec-df67-4214-8029-4e08d9f1dab9",
+    "userId": "system",
+    "username": "Mod Menu",
+    "action": "KEY_VERIFIED",
+    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
+    "metadata": {
+      "key": "AXIOS-7OCO-QEDU-KKNY",
+      "hwid": "HWID-44587d03b658e96b"
+    },
+    "timestamp": "2026-08-16T16:59:39.631Z"
+  },
+  {
     "id": "05a2540b-4651-4b51-8c1c-5fd07c12f9eb",
     "userId": "system",
     "username": "Mod Menu",
@@ -21794,2451 +24208,5 @@
       "hwid": "HWID-44587d03b658e96b"
     },
     "timestamp": "2026-08-13T16:21:41.943Z"
-  },
-  {
-    "id": "a917a916-9ce8-4b08-9e36-09e2ef24186f",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T16:21:41.892Z"
-  },
-  {
-    "id": "d3af089c-b0b6-4cca-9e72-dd8a4eb91aa4",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T16:21:03.304Z"
-  },
-  {
-    "id": "634fa189-d037-4fde-8df3-dad4a9b80c8d",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T16:21:03.231Z"
-  },
-  {
-    "id": "4c63c67a-8b25-433c-b68b-828355676a69",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T16:18:53.379Z"
-  },
-  {
-    "id": "9af39601-7bef-40c2-b39a-2e433be5c30a",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T16:18:53.303Z"
-  },
-  {
-    "id": "9c517100-b89b-4544-88d7-6ebe2c2d8477",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T16:15:07.229Z"
-  },
-  {
-    "id": "f5c8f66f-1d73-4db9-afef-53ac266735ef",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T16:15:07.175Z"
-  },
-  {
-    "id": "d3db5499-bb21-4297-905e-8244d391f402",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T16:14:24.909Z"
-  },
-  {
-    "id": "951b23bb-17a0-4107-b66c-f56ee785deef",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T16:14:24.886Z"
-  },
-  {
-    "id": "035f7608-977b-4ef6-b592-181b33fdd5fc",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-a30f351b44be4b38",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T16:12:13.160Z"
-  },
-  {
-    "id": "ca931fdc-c6e4-4fb2-b27b-a97738ec1430",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-a30f351b44be4b38",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T16:12:13.119Z"
-  },
-  {
-    "id": "eade181e-8df2-4110-9bd3-77c2a6da2773",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-a8f5b2588fe87252",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T16:11:12.737Z"
-  },
-  {
-    "id": "03a70d00-b5c0-4d20-93d7-21ce9225169a",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-a8f5b2588fe87252",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T16:11:11.631Z"
-  },
-  {
-    "id": "17c824ea-50c9-41a5-8be8-9b2f09ab5920",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 3)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 3
-    },
-    "timestamp": "2026-08-13T16:10:55.473Z"
-  },
-  {
-    "id": "a8efd5b4-0e78-47ea-ae0c-91d35872d0b1",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 3)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 3
-    },
-    "timestamp": "2026-08-13T16:10:55.431Z"
-  },
-  {
-    "id": "566c6a17-d38b-4f98-b3f6-db05e5b8b866",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 3)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 3
-    },
-    "timestamp": "2026-08-13T16:10:12.441Z"
-  },
-  {
-    "id": "ac5df915-b32a-4ed4-9b26-663ef12c3eeb",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 3)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-a30f351b44be4b38",
-      "deviceCount": 3
-    },
-    "timestamp": "2026-08-13T16:09:53.236Z"
-  },
-  {
-    "id": "ec47d1d6-c976-48be-a956-238d4ea7653d",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 3)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-a30f351b44be4b38",
-      "deviceCount": 3
-    },
-    "timestamp": "2026-08-13T16:09:52.190Z"
-  },
-  {
-    "id": "4409040c-6f27-48a7-b4d7-a3639e67b671",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 2)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-dc59fbda3b92e31c",
-      "deviceCount": 2
-    },
-    "timestamp": "2026-08-13T16:09:40.184Z"
-  },
-  {
-    "id": "7c047a22-3653-4cab-b4b7-4c3452315f54",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 2)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-dc59fbda3b92e31c",
-      "deviceCount": 2
-    },
-    "timestamp": "2026-08-13T16:09:38.031Z"
-  },
-  {
-    "id": "03e1656d-6b25-4701-bd0c-69839a0baf68",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 1)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 1
-    },
-    "timestamp": "2026-08-13T16:09:26.581Z"
-  },
-  {
-    "id": "63c2ca5c-2b5f-48c7-8519-dc155258c902",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 1)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-cbbdcbab0858da7b",
-      "deviceCount": 1
-    },
-    "timestamp": "2026-08-13T16:09:26.473Z"
-  },
-  {
-    "id": "ca67a647-b0a4-4686-a4e1-9f35bb76d38e",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "KEY_VERIFY_FAILED",
-    "details": "Failed verification attempt for non-existent key: \"@AvienOffical\"",
-    "metadata": {
-      "key": "@AvienOffical",
-      "hwid": "HWID-a8f5b2588fe87252"
-    },
-    "timestamp": "2026-08-13T16:08:59.318Z"
-  },
-  {
-    "id": "3bc4ac47-ffd3-4618-b0a5-8ae36e2205ca",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "KEY_VERIFY_FAILED",
-    "details": "Failed verification attempt for non-existent key: \"@AvienOffical\"",
-    "metadata": {
-      "key": "@AvienOffical",
-      "hwid": "HWID-a8f5b2588fe87252"
-    },
-    "timestamp": "2026-08-13T16:08:58.267Z"
-  },
-  {
-    "id": "7f49914b-3bfe-4f57-b2c0-95aa5c60a9c6",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "KEY_VERIFY_FAILED",
-    "details": "Failed verification attempt for non-existent key: \"@AvienOffical\"",
-    "metadata": {
-      "key": "@AvienOffical",
-      "hwid": "HWID-a8f5b2588fe87252"
-    },
-    "timestamp": "2026-08-13T16:07:08.995Z"
-  },
-  {
-    "id": "57319372-8521-46f8-a8b9-8a0a128f5477",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "KEY_VERIFY_FAILED",
-    "details": "Failed verification attempt for non-existent key: \"@AvienOffical\"",
-    "metadata": {
-      "key": "@AvienOffical",
-      "hwid": "HWID-a8f5b2588fe87252"
-    },
-    "timestamp": "2026-08-13T16:07:07.427Z"
-  },
-  {
-    "id": "12a8a49c-3c57-4c66-b179-b94378f980eb",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-9FN6-8ZK9-M5WU authenticated for bound HWID: HWID-fefacd261e6e68af",
-    "metadata": {
-      "key": "AXIOS-9FN6-8ZK9-M5WU",
-      "hwid": "HWID-fefacd261e6e68af"
-    },
-    "timestamp": "2026-08-13T15:59:30.075Z"
-  },
-  {
-    "id": "6d14538a-eaf6-46b8-b4a6-5abea05e2248",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-9FN6-8ZK9-M5WU authenticated for bound HWID: HWID-fefacd261e6e68af",
-    "metadata": {
-      "key": "AXIOS-9FN6-8ZK9-M5WU",
-      "hwid": "HWID-fefacd261e6e68af"
-    },
-    "timestamp": "2026-08-13T15:59:29.803Z"
-  },
-  {
-    "id": "cbdef7ac-dbcd-47e4-9d67-d506157da18f",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHMA-YAH7-TJKY authenticated for bound HWID: HWID-765c8f720d688146",
-    "metadata": {
-      "key": "AXIOS-LHMA-YAH7-TJKY",
-      "hwid": "HWID-765c8f720d688146"
-    },
-    "timestamp": "2026-08-13T15:59:06.030Z"
-  },
-  {
-    "id": "e40bf406-0864-42d9-9104-046fb3da007f",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHMA-YAH7-TJKY authenticated for bound HWID: HWID-765c8f720d688146",
-    "metadata": {
-      "key": "AXIOS-LHMA-YAH7-TJKY",
-      "hwid": "HWID-765c8f720d688146"
-    },
-    "timestamp": "2026-08-13T15:59:05.576Z"
-  },
-  {
-    "id": "b38b0599-962a-461a-86b5-63f54f79c0f2",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-IWGK-8BYA-JVB1 authenticated for bound HWID: HWID-8390518bfd779ecb",
-    "metadata": {
-      "key": "AXIOS-IWGK-8BYA-JVB1",
-      "hwid": "HWID-8390518bfd779ecb"
-    },
-    "timestamp": "2026-08-13T15:58:56.757Z"
-  },
-  {
-    "id": "c98a563a-86b1-458b-a7d2-c62fa6583ac0",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-IWGK-8BYA-JVB1 authenticated for bound HWID: HWID-8390518bfd779ecb",
-    "metadata": {
-      "key": "AXIOS-IWGK-8BYA-JVB1",
-      "hwid": "HWID-8390518bfd779ecb"
-    },
-    "timestamp": "2026-08-13T15:58:56.676Z"
-  },
-  {
-    "id": "fd983005-b13f-4a45-8654-0d6cab6778ba",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T15:56:36.443Z"
-  },
-  {
-    "id": "9d9fc00c-158e-44f4-8c9d-36b8a05e0667",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T15:56:36.352Z"
-  },
-  {
-    "id": "5d9a2c8c-d4d0-4628-b879-f13a54705fde",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T15:56:07.951Z"
-  },
-  {
-    "id": "a823205c-0a67-4b79-841d-432b4412baf8",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T15:56:07.871Z"
-  },
-  {
-    "id": "f411e71c-01fc-4774-af18-eaef921b11b7",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHMA-YAH7-TJKY authenticated for bound HWID: HWID-765c8f720d688146",
-    "metadata": {
-      "key": "AXIOS-LHMA-YAH7-TJKY",
-      "hwid": "HWID-765c8f720d688146"
-    },
-    "timestamp": "2026-08-13T15:54:24.870Z"
-  },
-  {
-    "id": "d8919764-8247-4078-b022-848243bbcf60",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHMA-YAH7-TJKY authenticated for bound HWID: HWID-765c8f720d688146",
-    "metadata": {
-      "key": "AXIOS-LHMA-YAH7-TJKY",
-      "hwid": "HWID-765c8f720d688146"
-    },
-    "timestamp": "2026-08-13T15:54:23.592Z"
-  },
-  {
-    "id": "a181228a-0970-428e-827c-393bdc5b08f9",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-9FN6-8ZK9-M5WU authenticated for bound HWID: HWID-fefacd261e6e68af",
-    "metadata": {
-      "key": "AXIOS-9FN6-8ZK9-M5WU",
-      "hwid": "HWID-fefacd261e6e68af"
-    },
-    "timestamp": "2026-08-13T15:52:55.754Z"
-  },
-  {
-    "id": "e8ce06b2-7496-4b7d-a91d-3b5c98f3d063",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-9FN6-8ZK9-M5WU authenticated for bound HWID: HWID-fefacd261e6e68af",
-    "metadata": {
-      "key": "AXIOS-9FN6-8ZK9-M5WU",
-      "hwid": "HWID-fefacd261e6e68af"
-    },
-    "timestamp": "2026-08-13T15:52:55.431Z"
-  },
-  {
-    "id": "242353eb-bc02-4c1a-b3c0-955ff3cd1b2d",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-IWGK-8BYA-JVB1 authenticated for bound HWID: HWID-8390518bfd779ecb",
-    "metadata": {
-      "key": "AXIOS-IWGK-8BYA-JVB1",
-      "hwid": "HWID-8390518bfd779ecb"
-    },
-    "timestamp": "2026-08-13T15:44:38.143Z"
-  },
-  {
-    "id": "4f8c1d35-9e26-4068-95f7-9a0df555021d",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-IWGK-8BYA-JVB1 authenticated for bound HWID: HWID-8390518bfd779ecb",
-    "metadata": {
-      "key": "AXIOS-IWGK-8BYA-JVB1",
-      "hwid": "HWID-8390518bfd779ecb"
-    },
-    "timestamp": "2026-08-13T15:44:37.995Z"
-  },
-  {
-    "id": "01d62c87-1176-4d7f-bd41-d97f4ac0fa5d",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-0F9R-PLIO-0BCP (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-0F9R-PLIO-0BCP",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:43:28.511Z"
-  },
-  {
-    "id": "f435b70c-15ec-4292-bd21-b57e87bc594e",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-PRHN-ECJR-UIYV (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-PRHN-ECJR-UIYV",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:43:23.910Z"
-  },
-  {
-    "id": "291c4f3a-38d2-47f0-9a49-0bb112be3b77",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-F0VX-WRA8-ZILX (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-F0VX-WRA8-ZILX",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:43:11.665Z"
-  },
-  {
-    "id": "f4c106da-54fc-4855-a920-9610ed414382",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: 97453aeb-7b38-4174-9e3c-7dca3c5139f5 (Original Creator: Unknown)",
-    "metadata": {
-      "key": "97453aeb-7b38-4174-9e3c-7dca3c5139f5",
-      "creator": "Unknown"
-    },
-    "timestamp": "2026-08-13T15:43:08.441Z"
-  },
-  {
-    "id": "6ed63465-e93d-4265-afbf-92d1e3ad26da",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-1M8F-VZY2-E8O0 (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-1M8F-VZY2-E8O0",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:43:06.022Z"
-  },
-  {
-    "id": "fde24fa3-cbd8-41ee-bf5f-02025f730c3b",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-MNGT-54S9-FW60 (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-MNGT-54S9-FW60",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:43:03.740Z"
-  },
-  {
-    "id": "22ff2731-b999-4376-aeb2-e97c0333d91c",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-EMNB-RN80-IVFY (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-EMNB-RN80-IVFY",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:42:57.798Z"
-  },
-  {
-    "id": "e93c0718-fec4-4d6a-b52c-f9b40835aca2",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-Z1CY-LWX0-VOMU (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-Z1CY-LWX0-VOMU",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:42:55.443Z"
-  },
-  {
-    "id": "359af857-3f89-45c6-b251-a0ae21f31c9f",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-X75H-S17R-1XZB (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-X75H-S17R-1XZB",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:42:53.109Z"
-  },
-  {
-    "id": "6c8e02b7-b6c3-4613-8f6b-da0634cf03b1",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-3DLI-ZSGC-CYRB (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-3DLI-ZSGC-CYRB",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:42:49.227Z"
-  },
-  {
-    "id": "b85cb0c7-1d10-4a1f-967d-ce1e257ac138",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: ae1191c4-0f43-4c0f-97b6-27c5d68e0dfd (Original Creator: Unknown)",
-    "metadata": {
-      "key": "ae1191c4-0f43-4c0f-97b6-27c5d68e0dfd",
-      "creator": "Unknown"
-    },
-    "timestamp": "2026-08-13T15:42:46.740Z"
-  },
-  {
-    "id": "62b7f612-7613-473e-a58d-a5369c2a2e59",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-GH6H-LJN8-YFFA (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-GH6H-LJN8-YFFA",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:42:46.264Z"
-  },
-  {
-    "id": "40929909-f847-4e8a-8e28-1ac38a710e02",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-PDQH-SAZJ-BYVG authenticated for bound HWID: HWID-347dff56e6856c2f",
-    "metadata": {
-      "key": "AXIOS-PDQH-SAZJ-BYVG",
-      "hwid": "HWID-347dff56e6856c2f"
-    },
-    "timestamp": "2026-08-13T15:42:34.130Z"
-  },
-  {
-    "id": "56e59e5a-cd21-4e2d-9296-c606b18c7b9d",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-PDQH-SAZJ-BYVG authenticated for bound HWID: HWID-347dff56e6856c2f",
-    "metadata": {
-      "key": "AXIOS-PDQH-SAZJ-BYVG",
-      "hwid": "HWID-347dff56e6856c2f"
-    },
-    "timestamp": "2026-08-13T15:42:33.812Z"
-  },
-  {
-    "id": "9fc3051d-3a99-4ed2-b8f1-abc0b469704c",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-9FN6-8ZK9-M5WU authenticated for bound HWID: HWID-fefacd261e6e68af",
-    "metadata": {
-      "key": "AXIOS-9FN6-8ZK9-M5WU",
-      "hwid": "HWID-fefacd261e6e68af"
-    },
-    "timestamp": "2026-08-13T15:40:34.174Z"
-  },
-  {
-    "id": "405beb6a-d49c-49c8-80f1-310821d31d73",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-9FN6-8ZK9-M5WU authenticated for bound HWID: HWID-fefacd261e6e68af",
-    "metadata": {
-      "key": "AXIOS-9FN6-8ZK9-M5WU",
-      "hwid": "HWID-fefacd261e6e68af"
-    },
-    "timestamp": "2026-08-13T15:40:33.410Z"
-  },
-  {
-    "id": "90634d88-61a8-4bec-bfae-5f7178ab561f",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_HWID_RESET",
-    "details": "Unbound HWID / devices for key @Axiosofficial (Previously bound: Unknown)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "oldHwid": "Unknown"
-    },
-    "timestamp": "2026-08-13T15:39:09.696Z"
-  },
-  {
-    "id": "74774b27-eae3-46dc-b1e2-e043b96ca071",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-PDQH-SAZJ-BYVG authenticated for bound HWID: HWID-347dff56e6856c2f",
-    "metadata": {
-      "key": "AXIOS-PDQH-SAZJ-BYVG",
-      "hwid": "HWID-347dff56e6856c2f"
-    },
-    "timestamp": "2026-08-13T15:37:48.250Z"
-  },
-  {
-    "id": "485a404d-dcb7-4978-9e20-c0876991b7c2",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-PDQH-SAZJ-BYVG authenticated for bound HWID: HWID-347dff56e6856c2f",
-    "metadata": {
-      "key": "AXIOS-PDQH-SAZJ-BYVG",
-      "hwid": "HWID-347dff56e6856c2f"
-    },
-    "timestamp": "2026-08-13T15:37:48.160Z"
-  },
-  {
-    "id": "9c07f560-b795-4b80-bdfa-a004d699913a",
-    "userId": "3a1b080b-7b93-4499-bae5-6aebee857bb0",
-    "username": "ekamx2",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-EMFY-J892-3TES (Original Creator: ekamx2)",
-    "metadata": {
-      "key": "AXIOS-EMFY-J892-3TES",
-      "creator": "ekamx2"
-    },
-    "timestamp": "2026-08-13T15:37:15.870Z"
-  },
-  {
-    "id": "e97253f3-3bec-4d27-a63e-3104f1090f81",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-T2EZ-WPP1-QR5K authenticated for bound HWID: HWID-fa7498777bb6e7ca",
-    "metadata": {
-      "key": "AXIOS-T2EZ-WPP1-QR5K",
-      "hwid": "HWID-fa7498777bb6e7ca"
-    },
-    "timestamp": "2026-08-13T15:36:39.290Z"
-  },
-  {
-    "id": "fe99e850-541b-4ae2-8012-599b83ffa5d3",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-T2EZ-WPP1-QR5K authenticated for bound HWID: HWID-fa7498777bb6e7ca",
-    "metadata": {
-      "key": "AXIOS-T2EZ-WPP1-QR5K",
-      "hwid": "HWID-fa7498777bb6e7ca"
-    },
-    "timestamp": "2026-08-13T15:36:39.196Z"
-  },
-  {
-    "id": "fc925cb5-0b0f-47ff-a2e3-b14ccfdaf29d",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-PDQH-SAZJ-BYVG authenticated for bound HWID: HWID-347dff56e6856c2f",
-    "metadata": {
-      "key": "AXIOS-PDQH-SAZJ-BYVG",
-      "hwid": "HWID-347dff56e6856c2f"
-    },
-    "timestamp": "2026-08-13T15:36:32.920Z"
-  },
-  {
-    "id": "b4488ffa-eafd-4178-8118-79f7d3801f4d",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-PDQH-SAZJ-BYVG authenticated for bound HWID: HWID-347dff56e6856c2f",
-    "metadata": {
-      "key": "AXIOS-PDQH-SAZJ-BYVG",
-      "hwid": "HWID-347dff56e6856c2f"
-    },
-    "timestamp": "2026-08-13T15:36:32.916Z"
-  },
-  {
-    "id": "7479596f-3634-4fdc-b5ca-8dc7b93bb8a9",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-c9167c5d19292e24",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T15:35:52.299Z"
-  },
-  {
-    "id": "9b443666-2c5f-4d72-be32-5078955c29a4",
-    "userId": "3a1b080b-7b93-4499-bae5-6aebee857bb0",
-    "username": "ekamx2",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-EMFY-J892-3TES] • Duration: 1 Days • Cost: 10 Tokens • Note: \"N/A\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 10,
-      "isMasterKey": false,
-      "note": ""
-    },
-    "timestamp": "2026-08-13T15:35:52.232Z"
-  },
-  {
-    "id": "f4290541-79d4-4724-a70b-00857f6cd3e8",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 4)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "HWID-c9167c5d19292e24",
-      "deviceCount": 4
-    },
-    "timestamp": "2026-08-13T15:35:51.892Z"
-  },
-  {
-    "id": "127dc959-2b2a-4835-8d8e-7655f0812de1",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 3)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "AXIOS-FP-3E20A950-5378-4472-802B-F01B0F4FA203-10EC3668",
-      "deviceCount": 3
-    },
-    "timestamp": "2026-08-13T15:35:06.661Z"
-  },
-  {
-    "id": "8e03988a-6e71-4e2e-a660-9b7b4dff711c",
-    "userId": "usr_1786635296910_482",
-    "username": "test24",
-    "action": "LOGIN_SUCCESS",
-    "details": "User logged in successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:35:00.056Z"
-  },
-  {
-    "id": "97956fbd-bd11-453f-92c4-00fbb7d48642",
-    "userId": "usr_1786635296910_482",
-    "username": "test24",
-    "action": "USER_REGISTERED",
-    "details": "New user registered successfully (AXIOS-FP-3E20A950-5378-4472-802B-F01B0F4FA203-10EC3668)",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:34:56.913Z"
-  },
-  {
-    "id": "a25d16c8-b4a4-42e8-9dff-5b6db59bdc28",
-    "userId": "usr_1786599556481_751",
-    "username": "test2",
-    "action": "LOGIN_BLOCKED",
-    "details": "Blocked account attempt",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:34:47.672Z"
-  },
-  {
-    "id": "dfdcd720-c119-40b1-8048-995271306c0b",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-M7WS-SSAT-8ZZP (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-M7WS-SSAT-8ZZP",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:30:11.874Z"
-  },
-  {
-    "id": "a4ba22a5-40c7-410d-9de7-e83785149787",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Master Key(s) [@Axiosofficial] • Duration: 1 Days • Cost: 0 Tokens • Note: \"N/A\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 0,
-      "isMasterKey": true,
-      "note": ""
-    },
-    "timestamp": "2026-08-13T15:29:58.566Z"
-  },
-  {
-    "id": "a327ac05-0d11-41a0-b67d-f47c0707cb51",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T15:29:25.530Z"
-  },
-  {
-    "id": "dd8d27ce-c005-4b13-84a1-3e23c74daa4f",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T15:29:24.642Z"
-  },
-  {
-    "id": "a61ea24c-4802-4c97-ac3f-dd127316cd8f",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 2)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "MASTER-DEV-002",
-      "deviceCount": 2
-    },
-    "timestamp": "2026-08-13T15:25:29.683Z"
-  },
-  {
-    "id": "0d02523d-db6f-44af-a34f-5a6c035825a3",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 1)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "MASTER-DEV-001",
-      "deviceCount": 1
-    },
-    "timestamp": "2026-08-13T15:25:29.677Z"
-  },
-  {
-    "id": "45d23b19-e9b1-40f6-8dd4-3d446ab7fc0c",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Master Key(s) [@Axiosofficial] • Duration: Lifetime • Cost: 0 Tokens • Note: \"Master Key Test\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 0,
-      "isMasterKey": true,
-      "note": "Master Key Test"
-    },
-    "timestamp": "2026-08-13T15:25:29.672Z"
-  },
-  {
-    "id": "478ab04b-11d5-4fc1-9411-c9aa87d02fae",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted USER partner account: @app_customer_1786634729656 (ID: usr_1786634729659_245)",
-    "metadata": {
-      "targetUser": "app_customer_1786634729656",
-      "role": "user"
-    },
-    "timestamp": "2026-08-13T15:25:29.668Z"
-  },
-  {
-    "id": "0b1ca028-b366-40aa-9575-130543273f42",
-    "userId": "usr_1786634729659_245",
-    "username": "app_customer_1786634729656",
-    "action": "USER_REGISTERED",
-    "details": "New user registered successfully (Android_Device_Fingerprint_12345)",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:25:29.661Z"
-  },
-  {
-    "id": "ba8e724b-b392-4711-9f60-b5981b240ec9",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted RESELLER partner account: @reseller_test_1786634729555 (ID: 745e3aed-ae42-43af-ba5a-a12417fe4c5e)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634729555",
-      "role": "reseller"
-    },
-    "timestamp": "2026-08-13T15:25:29.653Z"
-  },
-  {
-    "id": "672d92b0-44e6-441c-aaed-10720849a835",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-0F7S-I5W9-SFE3 (Original Creator: reseller_test_1786634729555)",
-    "metadata": {
-      "key": "AXIOS-0F7S-I5W9-SFE3",
-      "creator": "reseller_test_1786634729555"
-    },
-    "timestamp": "2026-08-13T15:25:29.642Z"
-  },
-  {
-    "id": "b521077f-530d-4b1e-8955-3dc9d863b498",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-0F7S-I5W9-SFE3 bound to device HWID: NEW-HWID-BOUND-1786634729622",
-    "metadata": {
-      "key": "AXIOS-0F7S-I5W9-SFE3",
-      "hwid": "NEW-HWID-BOUND-1786634729622"
-    },
-    "timestamp": "2026-08-13T15:25:29.627Z"
-  },
-  {
-    "id": "e9a89c9f-3b19-4f36-9423-d511048c385f",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_HWID_RESET",
-    "details": "Unbound HWID / devices for key AXIOS-0F7S-I5W9-SFE3 (Previously bound: TEST-HWID-1786634729596)",
-    "metadata": {
-      "key": "AXIOS-0F7S-I5W9-SFE3",
-      "oldHwid": "TEST-HWID-1786634729596"
-    },
-    "timestamp": "2026-08-13T15:25:29.619Z"
-  },
-  {
-    "id": "07dbfff7-b98c-4187-9f80-86c84d38468e",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_MISMATCH",
-    "details": "Key AXIOS-0F7S-I5W9-SFE3 HWID Mismatch! Bound: TEST-HWID-1786634729596, Attempted: DIFFERENT-HWID-9999",
-    "metadata": {
-      "key": "AXIOS-0F7S-I5W9-SFE3",
-      "boundHwid": "TEST-HWID-1786634729596",
-      "attemptedHwid": "DIFFERENT-HWID-9999"
-    },
-    "timestamp": "2026-08-13T15:25:29.611Z"
-  },
-  {
-    "id": "516aeb89-3c09-4904-b08d-c6dd328ef90d",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-0F7S-I5W9-SFE3 authenticated for bound HWID: TEST-HWID-1786634729596",
-    "metadata": {
-      "key": "AXIOS-0F7S-I5W9-SFE3",
-      "hwid": "TEST-HWID-1786634729596"
-    },
-    "timestamp": "2026-08-13T15:25:29.607Z"
-  },
-  {
-    "id": "75919f45-9e4c-4953-8d58-6edbaa667b0b",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-0F7S-I5W9-SFE3 bound to device HWID: TEST-HWID-1786634729596",
-    "metadata": {
-      "key": "AXIOS-0F7S-I5W9-SFE3",
-      "hwid": "TEST-HWID-1786634729596"
-    },
-    "timestamp": "2026-08-13T15:25:29.600Z"
-  },
-  {
-    "id": "eec00e5f-5c85-4114-9891-c32ee2e82960",
-    "userId": "745e3aed-ae42-43af-ba5a-a12417fe4c5e",
-    "username": "reseller_test_1786634729555",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-VZED-3TTP-2M53] • Duration: 4 Days • Cost: 40 Tokens • Note: \"Automated Custom Days Test Key\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 40,
-      "isMasterKey": false,
-      "note": "Automated Custom Days Test Key"
-    },
-    "timestamp": "2026-08-13T15:25:29.593Z"
-  },
-  {
-    "id": "895bac74-728e-4eda-b2eb-f43fca0de772",
-    "userId": "745e3aed-ae42-43af-ba5a-a12417fe4c5e",
-    "username": "reseller_test_1786634729555",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 2 Key(s) [2 Keys (First: AXIOS-0F7S-I5W9-SFE3)] • Duration: 7 Days • Cost: 140 Tokens • Note: \"Automated Test Key\"",
-    "metadata": {
-      "count": 2,
-      "costTokens": 140,
-      "isMasterKey": false,
-      "note": "Automated Test Key"
-    },
-    "timestamp": "2026-08-13T15:25:29.582Z"
-  },
-  {
-    "id": "86acc155-7f76-4700-83f5-fed947e2f534",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "TOKENS_UPDATED",
-    "details": "Added 200 tokens for reseller @reseller_test_1786634729555. New Token Balance: 700",
-    "metadata": {
-      "targetUser": "reseller_test_1786634729555",
-      "amount": 200,
-      "action": "add",
-      "newBalance": 700
-    },
-    "timestamp": "2026-08-13T15:25:29.574Z"
-  },
-  {
-    "id": "e5a9aae5-0f2a-4304-9247-e9867aec46c5",
-    "userId": "745e3aed-ae42-43af-ba5a-a12417fe4c5e",
-    "username": "reseller_test_1786634729555",
-    "action": "LOGIN_SUCCESS",
-    "details": "User logged in successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:25:29.564Z"
-  },
-  {
-    "id": "c38234f0-dd0d-4a1a-a492-5c49e633af73",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_CREATED",
-    "details": "Provisioned new RESELLER account: @reseller_test_1786634729555 (Initial Tokens: 500)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634729555",
-      "role": "reseller",
-      "initialTokens": 500
-    },
-    "timestamp": "2026-08-13T15:25:29.559Z"
-  },
-  {
-    "id": "2346babf-6f53-487f-9638-4d6d36b171ab",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "LOGIN_SUCCESS",
-    "details": "User verified 2FA successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:25:29.546Z"
-  },
-  {
-    "id": "7fb6a52c-a10b-4714-a83d-e735a43d170a",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
-    "metadata": {
-      "key": "AXIOS-LHRO-YH5I-KUNI",
-      "hwid": "HWID-5666716f65c8ce3e"
-    },
-    "timestamp": "2026-08-13T15:24:07.866Z"
-  },
-  {
-    "id": "fc87785a-eeac-4f48-a0b8-8e1ce4f8303a",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
-    "metadata": {
-      "key": "AXIOS-LHRO-YH5I-KUNI",
-      "hwid": "HWID-5666716f65c8ce3e"
-    },
-    "timestamp": "2026-08-13T15:24:07.746Z"
-  },
-  {
-    "id": "0fcaaa4b-7550-452f-93ec-a53afff993fb",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-M7WS-SSAT-8ZZP] • Duration: 1 Days • Cost: 10 Tokens • Note: \"master\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 10,
-      "isMasterKey": false,
-      "note": "master"
-    },
-    "timestamp": "2026-08-13T15:23:14.855Z"
-  },
-  {
-    "id": "80158861-afc6-4403-bf75-b1874d40a51b",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
-    "metadata": {
-      "key": "AXIOS-LHRO-YH5I-KUNI",
-      "hwid": "HWID-5666716f65c8ce3e"
-    },
-    "timestamp": "2026-08-13T15:21:58.015Z"
-  },
-  {
-    "id": "42986d12-56c8-429d-96d0-fcb09fa9c557",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
-    "metadata": {
-      "key": "AXIOS-LHRO-YH5I-KUNI",
-      "hwid": "HWID-5666716f65c8ce3e"
-    },
-    "timestamp": "2026-08-13T15:21:57.966Z"
-  },
-  {
-    "id": "ce8ed244-09dc-4a18-a332-a96f7af9e12d",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_EXPIRED_DELETED",
-    "details": "Deleted all 7 expired license key(s)",
-    "metadata": {
-      "count": 7
-    },
-    "timestamp": "2026-08-13T15:21:37.643Z"
-  },
-  {
-    "id": "8e66df7e-fdfd-40b0-bbdc-dbff8cdad152",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 2)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "MASTER-DEV-002",
-      "deviceCount": 2
-    },
-    "timestamp": "2026-08-13T15:21:37.633Z"
-  },
-  {
-    "id": "f98ad2a7-9e62-4984-86d8-f610152692ce",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 1)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "MASTER-DEV-001",
-      "deviceCount": 1
-    },
-    "timestamp": "2026-08-13T15:21:37.627Z"
-  },
-  {
-    "id": "d8191cde-b51b-4551-953e-f950a94ac5b6",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Master Key(s) [@Axiosofficial] • Duration: Lifetime • Cost: 0 Tokens • Note: \"Master Key Test\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 0,
-      "isMasterKey": true,
-      "note": "Master Key Test"
-    },
-    "timestamp": "2026-08-13T15:21:37.623Z"
-  },
-  {
-    "id": "37114cd3-1cef-472b-bc59-879d9e788e98",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted USER partner account: @app_customer_1786634497611 (ID: usr_1786634497613_210)",
-    "metadata": {
-      "targetUser": "app_customer_1786634497611",
-      "role": "user"
-    },
-    "timestamp": "2026-08-13T15:21:37.618Z"
-  },
-  {
-    "id": "82828201-cf19-49ea-833a-f43fce006ef7",
-    "userId": "usr_1786634497613_210",
-    "username": "app_customer_1786634497611",
-    "action": "USER_REGISTERED",
-    "details": "New user registered successfully (Android_Device_Fingerprint_12345)",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:21:37.614Z"
-  },
-  {
-    "id": "aede0a3e-cab4-4fa7-85ca-e1e9c8c1ed88",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted RESELLER partner account: @reseller_test_1786634497527 (ID: 8e6df279-bbaa-4863-a000-e1e2fa20ccae)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634497527",
-      "role": "reseller"
-    },
-    "timestamp": "2026-08-13T15:21:37.605Z"
-  },
-  {
-    "id": "37017ddd-6e75-4bc0-9942-cfe19925df18",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-K74O-U2U0-LAYS (Original Creator: reseller_test_1786634497527)",
-    "metadata": {
-      "key": "AXIOS-K74O-U2U0-LAYS",
-      "creator": "reseller_test_1786634497527"
-    },
-    "timestamp": "2026-08-13T15:21:37.599Z"
-  },
-  {
-    "id": "1e90cca4-150a-4cf6-aa7d-31d7b16cbfa8",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-K74O-U2U0-LAYS bound to device HWID: NEW-HWID-BOUND-1786634497586",
-    "metadata": {
-      "key": "AXIOS-K74O-U2U0-LAYS",
-      "hwid": "NEW-HWID-BOUND-1786634497586"
-    },
-    "timestamp": "2026-08-13T15:21:37.588Z"
-  },
-  {
-    "id": "f353db10-61da-4eb4-8d59-3d71f9939b12",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_HWID_RESET",
-    "details": "Unbound HWID / devices for key AXIOS-K74O-U2U0-LAYS (Previously bound: TEST-HWID-1786634497571)",
-    "metadata": {
-      "key": "AXIOS-K74O-U2U0-LAYS",
-      "oldHwid": "TEST-HWID-1786634497571"
-    },
-    "timestamp": "2026-08-13T15:21:37.584Z"
-  },
-  {
-    "id": "a92e6287-5d6f-427b-aa9f-625b5946e45d",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_MISMATCH",
-    "details": "Key AXIOS-K74O-U2U0-LAYS HWID Mismatch! Bound: TEST-HWID-1786634497571, Attempted: DIFFERENT-HWID-9999",
-    "metadata": {
-      "key": "AXIOS-K74O-U2U0-LAYS",
-      "boundHwid": "TEST-HWID-1786634497571",
-      "attemptedHwid": "DIFFERENT-HWID-9999"
-    },
-    "timestamp": "2026-08-13T15:21:37.579Z"
-  },
-  {
-    "id": "9cda8772-8098-4f82-9e91-b27331f18ac3",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-K74O-U2U0-LAYS authenticated for bound HWID: TEST-HWID-1786634497571",
-    "metadata": {
-      "key": "AXIOS-K74O-U2U0-LAYS",
-      "hwid": "TEST-HWID-1786634497571"
-    },
-    "timestamp": "2026-08-13T15:21:37.577Z"
-  },
-  {
-    "id": "026d351c-0658-4205-91aa-73e2ac116842",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-K74O-U2U0-LAYS bound to device HWID: TEST-HWID-1786634497571",
-    "metadata": {
-      "key": "AXIOS-K74O-U2U0-LAYS",
-      "hwid": "TEST-HWID-1786634497571"
-    },
-    "timestamp": "2026-08-13T15:21:37.573Z"
-  },
-  {
-    "id": "803be3b3-80c7-452f-87e4-c6735124eae0",
-    "userId": "8e6df279-bbaa-4863-a000-e1e2fa20ccae",
-    "username": "reseller_test_1786634497527",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-89DQ-RUD5-NTS4] • Duration: 4 Days • Cost: 40 Tokens • Note: \"Automated Custom Days Test Key\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 40,
-      "isMasterKey": false,
-      "note": "Automated Custom Days Test Key"
-    },
-    "timestamp": "2026-08-13T15:21:37.564Z"
-  },
-  {
-    "id": "159caf80-faa4-4f76-a772-817bd678c263",
-    "userId": "8e6df279-bbaa-4863-a000-e1e2fa20ccae",
-    "username": "reseller_test_1786634497527",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 2 Key(s) [2 Keys (First: AXIOS-K74O-U2U0-LAYS)] • Duration: 7 Days • Cost: 140 Tokens • Note: \"Automated Test Key\"",
-    "metadata": {
-      "count": 2,
-      "costTokens": 140,
-      "isMasterKey": false,
-      "note": "Automated Test Key"
-    },
-    "timestamp": "2026-08-13T15:21:37.553Z"
-  },
-  {
-    "id": "d16f6746-5214-4773-9a24-77d426bbf82e",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "TOKENS_UPDATED",
-    "details": "Added 200 tokens for reseller @reseller_test_1786634497527. New Token Balance: 700",
-    "metadata": {
-      "targetUser": "reseller_test_1786634497527",
-      "amount": 200,
-      "action": "add",
-      "newBalance": 700
-    },
-    "timestamp": "2026-08-13T15:21:37.545Z"
-  },
-  {
-    "id": "3733b292-b14b-40c1-8dc6-6943921a2607",
-    "userId": "8e6df279-bbaa-4863-a000-e1e2fa20ccae",
-    "username": "reseller_test_1786634497527",
-    "action": "LOGIN_SUCCESS",
-    "details": "User logged in successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:21:37.539Z"
-  },
-  {
-    "id": "410043ab-7c26-41e0-a7ae-f23c19e21f26",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_CREATED",
-    "details": "Provisioned new RESELLER account: @reseller_test_1786634497527 (Initial Tokens: 500)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634497527",
-      "role": "reseller",
-      "initialTokens": 500
-    },
-    "timestamp": "2026-08-13T15:21:37.531Z"
-  },
-  {
-    "id": "63dd05e2-b291-4c0e-aa2e-e623c5b80227",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "LOGIN_SUCCESS",
-    "details": "User verified 2FA successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:21:37.514Z"
-  },
-  {
-    "id": "4c8702cc-cc27-4496-a2f4-81494c8b1e82",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHMA-YAH7-TJKY authenticated for bound HWID: HWID-765c8f720d688146",
-    "metadata": {
-      "key": "AXIOS-LHMA-YAH7-TJKY",
-      "hwid": "HWID-765c8f720d688146"
-    },
-    "timestamp": "2026-08-13T15:20:50.593Z"
-  },
-  {
-    "id": "9bf06286-78fc-4ff5-bfc5-30573778b896",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHMA-YAH7-TJKY authenticated for bound HWID: HWID-765c8f720d688146",
-    "metadata": {
-      "key": "AXIOS-LHMA-YAH7-TJKY",
-      "hwid": "HWID-765c8f720d688146"
-    },
-    "timestamp": "2026-08-13T15:20:46.557Z"
-  },
-  {
-    "id": "51c06afa-1089-4a6d-81f6-d08af63989a7",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
-    "metadata": {
-      "key": "AXIOS-LHRO-YH5I-KUNI",
-      "hwid": "HWID-5666716f65c8ce3e"
-    },
-    "timestamp": "2026-08-13T15:20:18.206Z"
-  },
-  {
-    "id": "7f3e0ac1-8657-4962-b43c-60e84d6bbea9",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
-    "metadata": {
-      "key": "AXIOS-LHRO-YH5I-KUNI",
-      "hwid": "HWID-5666716f65c8ce3e"
-    },
-    "timestamp": "2026-08-13T15:20:18.126Z"
-  },
-  {
-    "id": "a095885e-2757-4c6f-8976-b36fca8d694f",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-IWGK-8BYA-JVB1 authenticated for bound HWID: HWID-8390518bfd779ecb",
-    "metadata": {
-      "key": "AXIOS-IWGK-8BYA-JVB1",
-      "hwid": "HWID-8390518bfd779ecb"
-    },
-    "timestamp": "2026-08-13T15:18:27.431Z"
-  },
-  {
-    "id": "6ba91f8b-ee06-4852-87d0-cadda9452e1e",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-IWGK-8BYA-JVB1 authenticated for bound HWID: HWID-8390518bfd779ecb",
-    "metadata": {
-      "key": "AXIOS-IWGK-8BYA-JVB1",
-      "hwid": "HWID-8390518bfd779ecb"
-    },
-    "timestamp": "2026-08-13T15:18:27.391Z"
-  },
-  {
-    "id": "e14ce353-4d53-472e-be72-24f7a9fb6d4e",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-8P5B-L9AR-U55Q (Original Creator: reseller_test_1786634115182)",
-    "metadata": {
-      "key": "AXIOS-8P5B-L9AR-U55Q",
-      "creator": "reseller_test_1786634115182"
-    },
-    "timestamp": "2026-08-13T15:16:07.815Z"
-  },
-  {
-    "id": "8d8cf5c4-dee4-44b6-8b74-31e3bb2bb131",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T15:15:58.622Z"
-  },
-  {
-    "id": "fca36e0b-c694-4ad9-a330-482f7929d335",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-7OCO-QEDU-KKNY authenticated for bound HWID: HWID-44587d03b658e96b",
-    "metadata": {
-      "key": "AXIOS-7OCO-QEDU-KKNY",
-      "hwid": "HWID-44587d03b658e96b"
-    },
-    "timestamp": "2026-08-13T15:15:58.163Z"
-  },
-  {
-    "id": "7212ace4-8545-4d7f-8a3c-dd0d2c12c274",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "LOGIN_SUCCESS",
-    "details": "User verified 2FA successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:15:44.556Z"
-  },
-  {
-    "id": "0a93b3de-928b-47b5-8039-9adce1f3d912",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-9FN6-8ZK9-M5WU authenticated for bound HWID: HWID-fefacd261e6e68af",
-    "metadata": {
-      "key": "AXIOS-9FN6-8ZK9-M5WU",
-      "hwid": "HWID-fefacd261e6e68af"
-    },
-    "timestamp": "2026-08-13T15:15:42.881Z"
-  },
-  {
-    "id": "824a1ada-9354-451a-92a0-e55cbb20b162",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-9FN6-8ZK9-M5WU authenticated for bound HWID: HWID-fefacd261e6e68af",
-    "metadata": {
-      "key": "AXIOS-9FN6-8ZK9-M5WU",
-      "hwid": "HWID-fefacd261e6e68af"
-    },
-    "timestamp": "2026-08-13T15:15:41.631Z"
-  },
-  {
-    "id": "99bd4d57-a9d5-4a12-a098-b3afcfbae24e",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 2)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "MASTER-DEV-002",
-      "deviceCount": 2
-    },
-    "timestamp": "2026-08-13T15:15:15.304Z"
-  },
-  {
-    "id": "3d7fd9e6-70fd-4c63-9c4c-238182bb8323",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 2)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "MASTER-DEV-001",
-      "deviceCount": 2
-    },
-    "timestamp": "2026-08-13T15:15:15.301Z"
-  },
-  {
-    "id": "0592c288-8373-4519-b56d-4adde7e19ee0",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Master Key(s) [@Axiosofficial] • Duration: Lifetime • Cost: 0 Tokens • Note: \"Master Key Test\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 0,
-      "isMasterKey": true,
-      "note": "Master Key Test"
-    },
-    "timestamp": "2026-08-13T15:15:15.293Z"
-  },
-  {
-    "id": "70ab39a6-35a9-4b64-96a1-5bde14737d54",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted USER partner account: @app_customer_1786634115277 (ID: usr_1786634115278_698)",
-    "metadata": {
-      "targetUser": "app_customer_1786634115277",
-      "role": "user"
-    },
-    "timestamp": "2026-08-13T15:15:15.286Z"
-  },
-  {
-    "id": "0c71ff07-a0bd-4e45-aab8-8733ea21c674",
-    "userId": "usr_1786634115278_698",
-    "username": "app_customer_1786634115277",
-    "action": "USER_REGISTERED",
-    "details": "New user registered successfully (Android_Device_Fingerprint_12345)",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:15:15.280Z"
-  },
-  {
-    "id": "da12c15d-0b9c-4cbf-a8b1-b29b9e97dfe5",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted RESELLER partner account: @reseller_test_1786634115182 (ID: 09c3c197-0831-4d8d-b709-61704856fcd5)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634115182",
-      "role": "reseller"
-    },
-    "timestamp": "2026-08-13T15:15:15.268Z"
-  },
-  {
-    "id": "124fa856-b48a-49aa-aec1-d91740f8b479",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-OMX2-XI7K-NAXP (Original Creator: reseller_test_1786634115182)",
-    "metadata": {
-      "key": "AXIOS-OMX2-XI7K-NAXP",
-      "creator": "reseller_test_1786634115182"
-    },
-    "timestamp": "2026-08-13T15:15:15.260Z"
-  },
-  {
-    "id": "5b998738-109d-4fd5-8f6e-3898c9577c44",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-OMX2-XI7K-NAXP bound to device HWID: NEW-HWID-BOUND-1786634115248",
-    "metadata": {
-      "key": "AXIOS-OMX2-XI7K-NAXP",
-      "hwid": "NEW-HWID-BOUND-1786634115248"
-    },
-    "timestamp": "2026-08-13T15:15:15.252Z"
-  },
-  {
-    "id": "edfd1f2f-81a3-4d89-8124-3f248ba247c2",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_HWID_RESET",
-    "details": "Unbound HWID / devices for key AXIOS-OMX2-XI7K-NAXP (Previously bound: TEST-HWID-1786634115224)",
-    "metadata": {
-      "key": "AXIOS-OMX2-XI7K-NAXP",
-      "oldHwid": "TEST-HWID-1786634115224"
-    },
-    "timestamp": "2026-08-13T15:15:15.246Z"
-  },
-  {
-    "id": "9f6c5a1f-bfdf-4a83-92c9-2556365d3697",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_MISMATCH",
-    "details": "Key AXIOS-OMX2-XI7K-NAXP HWID Mismatch! Bound: TEST-HWID-1786634115224, Attempted: DIFFERENT-HWID-9999",
-    "metadata": {
-      "key": "AXIOS-OMX2-XI7K-NAXP",
-      "boundHwid": "TEST-HWID-1786634115224",
-      "attemptedHwid": "DIFFERENT-HWID-9999"
-    },
-    "timestamp": "2026-08-13T15:15:15.239Z"
-  },
-  {
-    "id": "8fe750c6-7b68-4ecc-ba06-da4413cfc230",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-OMX2-XI7K-NAXP authenticated for bound HWID: TEST-HWID-1786634115224",
-    "metadata": {
-      "key": "AXIOS-OMX2-XI7K-NAXP",
-      "hwid": "TEST-HWID-1786634115224"
-    },
-    "timestamp": "2026-08-13T15:15:15.233Z"
-  },
-  {
-    "id": "9eb3b01c-b9e1-4606-a272-7f43f06d10a3",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-OMX2-XI7K-NAXP bound to device HWID: TEST-HWID-1786634115224",
-    "metadata": {
-      "key": "AXIOS-OMX2-XI7K-NAXP",
-      "hwid": "TEST-HWID-1786634115224"
-    },
-    "timestamp": "2026-08-13T15:15:15.228Z"
-  },
-  {
-    "id": "39f40b7f-df40-4b2f-a870-c60fdf397f63",
-    "userId": "09c3c197-0831-4d8d-b709-61704856fcd5",
-    "username": "reseller_test_1786634115182",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-8P5B-L9AR-U55Q] • Duration: 4 Days • Cost: 40 Tokens • Note: \"Automated Custom Days Test Key\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 40,
-      "isMasterKey": false,
-      "note": "Automated Custom Days Test Key"
-    },
-    "timestamp": "2026-08-13T15:15:15.218Z"
-  },
-  {
-    "id": "117bd557-31b1-4ac3-a0ee-8463360ac691",
-    "userId": "09c3c197-0831-4d8d-b709-61704856fcd5",
-    "username": "reseller_test_1786634115182",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 2 Key(s) [2 Keys (First: AXIOS-OMX2-XI7K-NAXP)] • Duration: 7 Days • Cost: 140 Tokens • Note: \"Automated Test Key\"",
-    "metadata": {
-      "count": 2,
-      "costTokens": 140,
-      "isMasterKey": false,
-      "note": "Automated Test Key"
-    },
-    "timestamp": "2026-08-13T15:15:15.203Z"
-  },
-  {
-    "id": "380595a1-03fc-40df-8b9a-0c7c70c7842b",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "TOKENS_UPDATED",
-    "details": "Added 200 tokens for reseller @reseller_test_1786634115182. New Token Balance: 700",
-    "metadata": {
-      "targetUser": "reseller_test_1786634115182",
-      "amount": 200,
-      "action": "add",
-      "newBalance": 700
-    },
-    "timestamp": "2026-08-13T15:15:15.195Z"
-  },
-  {
-    "id": "35e14c75-399c-426e-bc6a-20a759f47520",
-    "userId": "09c3c197-0831-4d8d-b709-61704856fcd5",
-    "username": "reseller_test_1786634115182",
-    "action": "LOGIN_SUCCESS",
-    "details": "User logged in successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:15:15.189Z"
-  },
-  {
-    "id": "ad909f42-5e97-47eb-a9c9-9a8b4efea9b8",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_CREATED",
-    "details": "Provisioned new RESELLER account: @reseller_test_1786634115182 (Initial Tokens: 500)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634115182",
-      "role": "reseller",
-      "initialTokens": 500
-    },
-    "timestamp": "2026-08-13T15:15:15.185Z"
-  },
-  {
-    "id": "9e3e0bf0-a8d7-466b-b999-f463a0b0546f",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "LOGIN_SUCCESS",
-    "details": "User verified 2FA successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:15:15.173Z"
-  },
-  {
-    "id": "823259dc-bcce-44d1-b5ec-4971bda48f0e",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 2)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "MASTER-DEV-002",
-      "deviceCount": 2
-    },
-    "timestamp": "2026-08-13T15:14:44.242Z"
-  },
-  {
-    "id": "b46660d4-eea4-4e9d-892d-60737be12790",
-    "userId": "system",
-    "username": "Client Device",
-    "action": "MASTER_KEY_VERIFIED",
-    "details": "Master Key @Axiosofficial verified (Bound Devices: 1)",
-    "metadata": {
-      "key": "@Axiosofficial",
-      "hwid": "MASTER-DEV-001",
-      "deviceCount": 1
-    },
-    "timestamp": "2026-08-13T15:14:44.229Z"
-  },
-  {
-    "id": "4c10835e-6437-4475-a9a6-691140568563",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Master Key(s) [@Axiosofficial] • Duration: Lifetime • Cost: 0 Tokens • Note: \"Master Key Test\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 0,
-      "isMasterKey": true,
-      "note": "Master Key Test"
-    },
-    "timestamp": "2026-08-13T15:14:44.222Z"
-  },
-  {
-    "id": "6bfcbdec-a775-4153-ba3d-bb85d58027cd",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted USER partner account: @app_customer_1786634084207 (ID: usr_1786634084208_389)",
-    "metadata": {
-      "targetUser": "app_customer_1786634084207",
-      "role": "user"
-    },
-    "timestamp": "2026-08-13T15:14:44.215Z"
-  },
-  {
-    "id": "5ed225c9-75a8-4526-86e2-a44400cec44a",
-    "userId": "usr_1786634084208_389",
-    "username": "app_customer_1786634084207",
-    "action": "USER_REGISTERED",
-    "details": "New user registered successfully (Android_Device_Fingerprint_12345)",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:14:44.210Z"
-  },
-  {
-    "id": "150686c6-8582-4e20-9fc5-80db0481ff06",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted RESELLER partner account: @reseller_test_1786634084094 (ID: e8dc960c-26bb-4f26-b6fd-6809477a01a6)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634084094",
-      "role": "reseller"
-    },
-    "timestamp": "2026-08-13T15:14:44.201Z"
-  },
-  {
-    "id": "0be6f76a-51b7-491f-94d8-528feeff7053",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-S2J0-PQJY-OHBH (Original Creator: reseller_test_1786634084094)",
-    "metadata": {
-      "key": "AXIOS-S2J0-PQJY-OHBH",
-      "creator": "reseller_test_1786634084094"
-    },
-    "timestamp": "2026-08-13T15:14:44.196Z"
-  },
-  {
-    "id": "1649a4d1-a733-46d0-ad0a-f5b7b723ce2b",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-S2J0-PQJY-OHBH bound to device HWID: NEW-HWID-BOUND-1786634084167",
-    "metadata": {
-      "key": "AXIOS-S2J0-PQJY-OHBH",
-      "hwid": "NEW-HWID-BOUND-1786634084167"
-    },
-    "timestamp": "2026-08-13T15:14:44.170Z"
-  },
-  {
-    "id": "8a15dd24-281d-4cff-b8a9-d6c4db888627",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_HWID_RESET",
-    "details": "Unbound HWID / devices for key AXIOS-S2J0-PQJY-OHBH (Previously bound: TEST-HWID-1786634084139)",
-    "metadata": {
-      "key": "AXIOS-S2J0-PQJY-OHBH",
-      "oldHwid": "TEST-HWID-1786634084139"
-    },
-    "timestamp": "2026-08-13T15:14:44.165Z"
-  },
-  {
-    "id": "e0a2b2ff-7ef6-4861-9de3-140b781f9bda",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_MISMATCH",
-    "details": "Key AXIOS-S2J0-PQJY-OHBH HWID Mismatch! Bound: TEST-HWID-1786634084139, Attempted: DIFFERENT-HWID-9999",
-    "metadata": {
-      "key": "AXIOS-S2J0-PQJY-OHBH",
-      "boundHwid": "TEST-HWID-1786634084139",
-      "attemptedHwid": "DIFFERENT-HWID-9999"
-    },
-    "timestamp": "2026-08-13T15:14:44.155Z"
-  },
-  {
-    "id": "4fb1380d-1b12-45cd-8b68-916f3d56e27e",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-S2J0-PQJY-OHBH authenticated for bound HWID: TEST-HWID-1786634084139",
-    "metadata": {
-      "key": "AXIOS-S2J0-PQJY-OHBH",
-      "hwid": "TEST-HWID-1786634084139"
-    },
-    "timestamp": "2026-08-13T15:14:44.151Z"
-  },
-  {
-    "id": "d3990bde-7f8d-40e9-8915-030b4080fcfa",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-S2J0-PQJY-OHBH bound to device HWID: TEST-HWID-1786634084139",
-    "metadata": {
-      "key": "AXIOS-S2J0-PQJY-OHBH",
-      "hwid": "TEST-HWID-1786634084139"
-    },
-    "timestamp": "2026-08-13T15:14:44.144Z"
-  },
-  {
-    "id": "dda3f270-13b6-4f5b-a3e5-241f333e3edd",
-    "userId": "e8dc960c-26bb-4f26-b6fd-6809477a01a6",
-    "username": "reseller_test_1786634084094",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-AO87-RV64-75GF] • Duration: 4 Days • Cost: 40 Tokens • Note: \"Automated Custom Days Test Key\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 40,
-      "isMasterKey": false,
-      "note": "Automated Custom Days Test Key"
-    },
-    "timestamp": "2026-08-13T15:14:44.134Z"
-  },
-  {
-    "id": "361f22c4-b789-4acc-867e-c77f3c3cc18d",
-    "userId": "e8dc960c-26bb-4f26-b6fd-6809477a01a6",
-    "username": "reseller_test_1786634084094",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 2 Key(s) [2 Keys (First: AXIOS-S2J0-PQJY-OHBH)] • Duration: 7 Days • Cost: 140 Tokens • Note: \"Automated Test Key\"",
-    "metadata": {
-      "count": 2,
-      "costTokens": 140,
-      "isMasterKey": false,
-      "note": "Automated Test Key"
-    },
-    "timestamp": "2026-08-13T15:14:44.124Z"
-  },
-  {
-    "id": "cea84958-e590-4c4d-b7f1-cc9fda027831",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "TOKENS_UPDATED",
-    "details": "Added 200 tokens for reseller @reseller_test_1786634084094. New Token Balance: 700",
-    "metadata": {
-      "targetUser": "reseller_test_1786634084094",
-      "amount": 200,
-      "action": "add",
-      "newBalance": 700
-    },
-    "timestamp": "2026-08-13T15:14:44.108Z"
-  },
-  {
-    "id": "16c1e28e-f989-47a2-8fd2-fa7e7e387349",
-    "userId": "e8dc960c-26bb-4f26-b6fd-6809477a01a6",
-    "username": "reseller_test_1786634084094",
-    "action": "LOGIN_SUCCESS",
-    "details": "User logged in successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:14:44.102Z"
-  },
-  {
-    "id": "22156a46-ccb2-4c45-afba-df7435810cc1",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_CREATED",
-    "details": "Provisioned new RESELLER account: @reseller_test_1786634084094 (Initial Tokens: 500)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634084094",
-      "role": "reseller",
-      "initialTokens": 500
-    },
-    "timestamp": "2026-08-13T15:14:44.097Z"
-  },
-  {
-    "id": "89725910-f43d-4e27-9cfa-0d2fd770b9f0",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "LOGIN_SUCCESS",
-    "details": "User verified 2FA successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:14:44.085Z"
-  },
-  {
-    "id": "978380f8-e459-4278-91df-fbbdae47d7e9",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Master Key(s) [free-key-bgq4] • Duration: Lifetime • Cost: 0 Tokens • Note: \"Master Key Test\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 0,
-      "isMasterKey": true,
-      "note": "Master Key Test"
-    },
-    "timestamp": "2026-08-13T15:14:37.790Z"
-  },
-  {
-    "id": "00dbc440-d97a-4264-95f3-ddea8b21d787",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted USER partner account: @app_customer_1786634077766 (ID: usr_1786634077770_759)",
-    "metadata": {
-      "targetUser": "app_customer_1786634077766",
-      "role": "user"
-    },
-    "timestamp": "2026-08-13T15:14:37.780Z"
-  },
-  {
-    "id": "47943951-aa17-47d9-8904-8fce43888809",
-    "userId": "usr_1786634077770_759",
-    "username": "app_customer_1786634077766",
-    "action": "USER_REGISTERED",
-    "details": "New user registered successfully (Android_Device_Fingerprint_12345)",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:14:37.771Z"
-  },
-  {
-    "id": "9b9daa6c-a731-4bc7-87f3-ad963386b559",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_DELETED",
-    "details": "Deleted RESELLER partner account: @reseller_test_1786634077682 (ID: 4df08f9f-aa86-4c29-bf36-39cb9afe39cb)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634077682",
-      "role": "reseller"
-    },
-    "timestamp": "2026-08-13T15:14:37.761Z"
-  },
-  {
-    "id": "6c104433-6a64-4171-840d-8e7e867aee6f",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-KJIV-4VLO-A7IH (Original Creator: reseller_test_1786634077682)",
-    "metadata": {
-      "key": "AXIOS-KJIV-4VLO-A7IH",
-      "creator": "reseller_test_1786634077682"
-    },
-    "timestamp": "2026-08-13T15:14:37.753Z"
-  },
-  {
-    "id": "289bf1e9-c61c-4000-a245-7c45ff6badcd",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-KJIV-4VLO-A7IH bound to device HWID: NEW-HWID-BOUND-1786634077738",
-    "metadata": {
-      "key": "AXIOS-KJIV-4VLO-A7IH",
-      "hwid": "NEW-HWID-BOUND-1786634077738"
-    },
-    "timestamp": "2026-08-13T15:14:37.740Z"
-  },
-  {
-    "id": "cacae4c7-8fb1-458f-9354-3484cccd5e22",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_HWID_RESET",
-    "details": "Unbound HWID for key AXIOS-KJIV-4VLO-A7IH (Previously bound to: TEST-HWID-1786634077722)",
-    "metadata": {
-      "key": "AXIOS-KJIV-4VLO-A7IH",
-      "oldHwid": "TEST-HWID-1786634077722"
-    },
-    "timestamp": "2026-08-13T15:14:37.736Z"
-  },
-  {
-    "id": "ebfb345f-9511-4854-8995-44c69134b93e",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_MISMATCH",
-    "details": "Key AXIOS-KJIV-4VLO-A7IH HWID Mismatch! Bound: TEST-HWID-1786634077722, Attempted: DIFFERENT-HWID-9999",
-    "metadata": {
-      "key": "AXIOS-KJIV-4VLO-A7IH",
-      "boundHwid": "TEST-HWID-1786634077722",
-      "attemptedHwid": "DIFFERENT-HWID-9999"
-    },
-    "timestamp": "2026-08-13T15:14:37.729Z"
-  },
-  {
-    "id": "c60fa421-3e3c-40f4-8411-1f51d8317ad8",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-KJIV-4VLO-A7IH authenticated for bound HWID: TEST-HWID-1786634077722",
-    "metadata": {
-      "key": "AXIOS-KJIV-4VLO-A7IH",
-      "hwid": "TEST-HWID-1786634077722"
-    },
-    "timestamp": "2026-08-13T15:14:37.727Z"
-  },
-  {
-    "id": "149054c6-4f9b-4d90-b992-47caf48a63b7",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_HWID_BOUND",
-    "details": "Key AXIOS-KJIV-4VLO-A7IH bound to device HWID: TEST-HWID-1786634077722",
-    "metadata": {
-      "key": "AXIOS-KJIV-4VLO-A7IH",
-      "hwid": "TEST-HWID-1786634077722"
-    },
-    "timestamp": "2026-08-13T15:14:37.723Z"
-  },
-  {
-    "id": "fd4fcd2b-99d0-4eaf-bcd2-43944e3603ea",
-    "userId": "4df08f9f-aa86-4c29-bf36-39cb9afe39cb",
-    "username": "reseller_test_1786634077682",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-ZMN5-QPCJ-K3CF] • Duration: 4 Days • Cost: 40 Tokens • Note: \"Automated Custom Days Test Key\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 40,
-      "isMasterKey": false,
-      "note": "Automated Custom Days Test Key"
-    },
-    "timestamp": "2026-08-13T15:14:37.719Z"
-  },
-  {
-    "id": "0236f3c2-391e-4797-b4aa-2b876990ff73",
-    "userId": "4df08f9f-aa86-4c29-bf36-39cb9afe39cb",
-    "username": "reseller_test_1786634077682",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 2 Key(s) [2 Keys (First: AXIOS-KJIV-4VLO-A7IH)] • Duration: 7 Days • Cost: 140 Tokens • Note: \"Automated Test Key\"",
-    "metadata": {
-      "count": 2,
-      "costTokens": 140,
-      "isMasterKey": false,
-      "note": "Automated Test Key"
-    },
-    "timestamp": "2026-08-13T15:14:37.705Z"
-  },
-  {
-    "id": "35b00bf5-ad10-4ef5-b7df-e9aad79a880e",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "TOKENS_UPDATED",
-    "details": "Added 200 tokens for reseller @reseller_test_1786634077682. New Token Balance: 700",
-    "metadata": {
-      "targetUser": "reseller_test_1786634077682",
-      "amount": 200,
-      "action": "add",
-      "newBalance": 700
-    },
-    "timestamp": "2026-08-13T15:14:37.697Z"
-  },
-  {
-    "id": "4980b7f6-9be5-4c07-ad46-7c8a0a280672",
-    "userId": "4df08f9f-aa86-4c29-bf36-39cb9afe39cb",
-    "username": "reseller_test_1786634077682",
-    "action": "LOGIN_SUCCESS",
-    "details": "User logged in successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:14:37.692Z"
-  },
-  {
-    "id": "7847ac35-70f3-407a-8a76-60fe2471a3fc",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "USER_CREATED",
-    "details": "Provisioned new RESELLER account: @reseller_test_1786634077682 (Initial Tokens: 500)",
-    "metadata": {
-      "targetUser": "reseller_test_1786634077682",
-      "role": "reseller",
-      "initialTokens": 500
-    },
-    "timestamp": "2026-08-13T15:14:37.686Z"
-  },
-  {
-    "id": "4660e9cc-d369-4413-b779-002cb0fb81df",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "LOGIN_SUCCESS",
-    "details": "User verified 2FA successfully",
-    "metadata": {},
-    "timestamp": "2026-08-13T15:14:37.673Z"
-  },
-  {
-    "id": "855b7551-4c86-40ae-a96a-f58b64a104b3",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
-    "metadata": {
-      "key": "AXIOS-LHRO-YH5I-KUNI",
-      "hwid": "HWID-5666716f65c8ce3e"
-    },
-    "timestamp": "2026-08-13T15:09:34.471Z"
-  },
-  {
-    "id": "bfe19655-7364-4993-a4ec-bc713f998007",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-LHRO-YH5I-KUNI authenticated for bound HWID: HWID-5666716f65c8ce3e",
-    "metadata": {
-      "key": "AXIOS-LHRO-YH5I-KUNI",
-      "hwid": "HWID-5666716f65c8ce3e"
-    },
-    "timestamp": "2026-08-13T15:09:34.365Z"
-  },
-  {
-    "id": "9af72aaf-9bfe-4a89-8130-e6f6e23ddefe",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 10 Key(s) [10 Keys (First: AXIOS-GH6H-LJN8-YFFA)] • Duration: 1 Days • Cost: 100 Tokens • Note: \"free\"",
-    "metadata": {
-      "count": 10,
-      "costTokens": 100,
-      "isMasterKey": false,
-      "note": "free"
-    },
-    "timestamp": "2026-08-13T15:04:23.775Z"
-  },
-  {
-    "id": "d98e2c54-4eff-42cb-a004-e3c74be7ce10",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-IWGK-8BYA-JVB1 authenticated for bound HWID: HWID-8390518bfd779ecb",
-    "metadata": {
-      "key": "AXIOS-IWGK-8BYA-JVB1",
-      "hwid": "HWID-8390518bfd779ecb"
-    },
-    "timestamp": "2026-08-13T15:04:16.975Z"
-  },
-  {
-    "id": "45f9949e-cca4-4b92-ac5c-5e96795a4957",
-    "userId": "system",
-    "username": "Mod Menu",
-    "action": "KEY_VERIFIED",
-    "details": "Key AXIOS-IWGK-8BYA-JVB1 authenticated for bound HWID: HWID-8390518bfd779ecb",
-    "metadata": {
-      "key": "AXIOS-IWGK-8BYA-JVB1",
-      "hwid": "HWID-8390518bfd779ecb"
-    },
-    "timestamp": "2026-08-13T15:04:16.375Z"
-  },
-  {
-    "id": "cedc2fc1-017b-4dc1-8500-7fa0e1e97eda",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-47Y0-3C6O-FETB (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-47Y0-3C6O-FETB",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:03:43.578Z"
-  },
-  {
-    "id": "e00f6486-d858-4c85-aa1e-68a03c53fc37",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-47Y0-3C6O-FETB] • Duration: 1 Days • Cost: 10 Tokens • Note: \"N/A\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 10,
-      "isMasterKey": false,
-      "note": ""
-    },
-    "timestamp": "2026-08-13T15:03:19.126Z"
-  },
-  {
-    "id": "d2285dba-4b15-47e3-932a-512d2841cbcf",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-FCE3-FGX3-RRWD (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-FCE3-FGX3-RRWD",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:03:04.733Z"
-  },
-  {
-    "id": "2c399024-d134-4af6-85c7-469978fa784d",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-FCE3-FGX3-RRWD] • Duration: 1 Days • Cost: 10 Tokens • Note: \"free\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 10,
-      "isMasterKey": false,
-      "note": "free"
-    },
-    "timestamp": "2026-08-13T15:02:44.815Z"
-  },
-  {
-    "id": "c20e5f67-18ea-4f57-acb0-ba5815897526",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-IB0G-O69D-D5FB (Original Creator: owner)",
-    "metadata": {
-      "key": "AXIOS-IB0G-O69D-D5FB",
-      "creator": "owner"
-    },
-    "timestamp": "2026-08-13T15:02:33.815Z"
-  },
-  {
-    "id": "f3605db9-cd6f-4e54-8006-0247aef9a065",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEYS_GENERATED",
-    "details": "Issued 1 Key(s) [AXIOS-IB0G-O69D-D5FB] • Duration: 1 Days • Cost: 10 Tokens • Note: \"free device\"",
-    "metadata": {
-      "count": 1,
-      "costTokens": 10,
-      "isMasterKey": false,
-      "note": "free device"
-    },
-    "timestamp": "2026-08-13T15:02:27.623Z"
-  },
-  {
-    "id": "6457a6c3-40bc-4937-99d7-51b085c0563e",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-J2WH-MOR6-RI9Q (Original Creator: reseller_test_1786619023211)",
-    "metadata": {
-      "key": "AXIOS-J2WH-MOR6-RI9Q",
-      "creator": "reseller_test_1786619023211"
-    },
-    "timestamp": "2026-08-13T15:01:38.350Z"
-  },
-  {
-    "id": "03793f4a-a845-4c76-96e8-16b3e41eb0c3",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-QNBH-1TE1-0BX9 (Original Creator: reseller_test_1786619114432)",
-    "metadata": {
-      "key": "AXIOS-QNBH-1TE1-0BX9",
-      "creator": "reseller_test_1786619114432"
-    },
-    "timestamp": "2026-08-13T15:01:34.698Z"
-  },
-  {
-    "id": "ba90d836-5655-4be5-9a53-2d675ee17524",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: d24827d9-260c-42ec-9dae-af69d566cf0d (Original Creator: Unknown)",
-    "metadata": {
-      "key": "d24827d9-260c-42ec-9dae-af69d566cf0d",
-      "creator": "Unknown"
-    },
-    "timestamp": "2026-08-13T15:01:31.927Z"
-  },
-  {
-    "id": "0c23e74a-dd89-4e4a-842a-723deafffc50",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-WOJB-JI6Z-WWT2 (Original Creator: reseller_test_1786619023211)",
-    "metadata": {
-      "key": "AXIOS-WOJB-JI6Z-WWT2",
-      "creator": "reseller_test_1786619023211"
-    },
-    "timestamp": "2026-08-13T15:01:28.904Z"
-  },
-  {
-    "id": "570edde6-6aca-40de-b768-019de6eef0d1",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-CZEG-KZC1-QWMX (Original Creator: reseller_test_1786619014953)",
-    "metadata": {
-      "key": "AXIOS-CZEG-KZC1-QWMX",
-      "creator": "reseller_test_1786619014953"
-    },
-    "timestamp": "2026-08-13T15:01:26.257Z"
-  },
-  {
-    "id": "a6a40705-5c31-429b-9a28-5e1eeaa39dca",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: AXIOS-HFU4-A4JU-EW4I (Original Creator: reseller_test_1786619114432)",
-    "metadata": {
-      "key": "AXIOS-HFU4-A4JU-EW4I",
-      "creator": "reseller_test_1786619114432"
-    },
-    "timestamp": "2026-08-13T15:01:18.367Z"
-  },
-  {
-    "id": "f8f260b2-781b-4db4-a578-8881e45a918d",
-    "userId": "owner-root-id",
-    "username": "owner",
-    "action": "KEY_DELETED",
-    "details": "Deleted / revoked key: 3c726e9c-2602-4af2-b404-1a9c8ac41e71 (Original Creator: Unknown)",
-    "metadata": {
-      "key": "3c726e9c-2602-4af2-b404-1a9c8ac41e71",
-      "creator": "Unknown"
-    },
-    "timestamp": "2026-08-13T15:01:15.166Z"
   }
 ]
