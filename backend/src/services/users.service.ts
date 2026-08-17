@@ -1,6 +1,6 @@
 import { db } from '../db/database';
 import { AppError } from '../utils/errors';
-import { generateUUID } from '../utils/crypto';
+import { generateUUID, hashPassword } from '../utils/crypto';
 import { LogsService } from './logs.service';
 import { AuthUserPayload } from '../types/common';
 import { UserRecord } from '../types/auth';
@@ -36,56 +36,84 @@ export class UsersService {
   static createUser(currentUser: AuthUserPayload, payload: any) {
     const { username, password, role, pin2fa, credits, tokens } = payload;
 
-    if (!username || !password || !role) {
+    const cleanUsername = username?.trim();
+    const cleanPassword = password?.trim();
+
+    if (!cleanUsername || !cleanPassword || !role) {
       throw new AppError('Username, password and role are required.', 400);
+    }
+
+    if (cleanUsername.length < 3 || cleanUsername.length > 32) {
+      throw new AppError('Username must be between 3 and 32 characters.', 400);
     }
 
     if (currentUser.role === 'manager' && role !== 'reseller') {
       throw new AppError('Managers can only create Resellers.', 403);
     }
 
-    const existing = db.prepare('SELECT id FROM users WHERE username = ?').get(username);
+    const existing = db.prepare('SELECT id FROM users WHERE LOWER(username) = LOWER(?)').get(cleanUsername);
     if (existing) {
       throw new AppError('Username already exists.', 400);
     }
 
     const userId = generateUUID();
     const now = new Date().toISOString();
-    const tokenVal = parseInt(String(tokens ?? credits), 10) || 0;
+    const tokenVal = Math.max(0, parseInt(String(tokens ?? credits), 10) || 0);
+    const hashedPassword = hashPassword(cleanPassword);
 
     db.prepare(`
       INSERT INTO users (id, username, password, role, createdBy, pin2fa, isBlocked, credits, tokens, createdAt)
       VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?)
-    `).run(userId, username, password, role, currentUser.id, pin2fa || null, tokenVal, tokenVal, now);
+    `).run(userId, cleanUsername, hashedPassword, role, currentUser.id, pin2fa || null, tokenVal, tokenVal, now);
 
     LogsService.logAction(
       currentUser.id,
       currentUser.username,
       'USER_CREATED',
-      `Provisioned new ${role.toUpperCase()} account: @${username} (Initial Tokens: ${tokenVal})`,
-      { targetUser: username, role, initialTokens: tokenVal }
+      `Provisioned new ${role.toUpperCase()} account: @${cleanUsername} (Initial Tokens: ${tokenVal})`,
+      { targetUser: cleanUsername, role, initialTokens: tokenVal }
     );
 
-    return { success: true, message: `${role} created successfully.` };
+    return {
+      success: true,
+      message: `${role.charAt(0).toUpperCase() + role.slice(1)} account created successfully.`,
+      user: {
+        id: userId,
+        username: cleanUsername,
+        role,
+        tokens: tokenVal,
+      },
+    };
   }
 
   static toggleBlockUser(currentUser: AuthUserPayload, userId: string, isBlocked: boolean) {
     if (!userId) throw new AppError('User ID required.', 400);
 
-    const targetUser = db.prepare('SELECT username FROM users WHERE id = ?').get(userId) as { username: string } | undefined;
-    const targetName = targetUser ? targetUser.username : userId;
+    const targetUser = db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as UserRecord | undefined;
+    if (!targetUser) throw new AppError('User not found.', 404);
+
+    if (targetUser.role === 'owner') {
+      throw new AppError('Owner account cannot be suspended.', 403);
+    }
+
+    if (currentUser.role === 'manager' && targetUser.role !== 'reseller') {
+      throw new AppError('Managers can only suspend Reseller accounts.', 403);
+    }
 
     db.prepare('UPDATE users SET isBlocked = ? WHERE id = ?').run(isBlocked ? 1 : 0, userId);
-    
+
     LogsService.logAction(
       currentUser.id,
       currentUser.username,
       'USER_BLOCK_TOGGLED',
-      `Updated status for @${targetName}: ${isBlocked ? 'SUSPENDED (Blocked)' : 'ACTIVE (Unblocked)'}`,
-      { targetUser: targetName, isBlocked }
+      `Updated status for @${targetUser.username}: ${isBlocked ? 'SUSPENDED (Blocked)' : 'ACTIVE (Unblocked)'}`,
+      { targetUser: targetUser.username, isBlocked }
     );
 
-    return { success: true, message: 'User status updated.' };
+    return {
+      success: true,
+      message: `User @${targetUser.username} is now ${isBlocked ? 'suspended' : 'active'}.`,
+    };
   }
 
   static deleteUser(currentUser: AuthUserPayload, userId: string) {
@@ -118,17 +146,17 @@ export class UsersService {
       { targetUser: targetUser.username, role: targetUser.role }
     );
 
-    return { success: true, message: `User ${targetUser.username} deleted successfully.` };
+    return { success: true, message: `User @${targetUser.username} deleted successfully.` };
   }
 
-  static updateTokens(currentUser: AuthUserPayload, userId: string, amount: number | string, action: 'add' | 'deduct' | string) {
+  static updateTokens(currentUser: AuthUserPayload, userId: string, amount: number | string, action: 'add' | 'deduct' | string, note?: string) {
     if (!userId || amount === undefined || !action) {
       throw new AppError('userId, amount, and action are required.', 400);
     }
 
     const parsedAmount = parseInt(String(amount), 10);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      throw new AppError('Amount must be a positive number.', 400);
+      throw new AppError('Amount must be a positive integer.', 400);
     }
 
     if (action !== 'add' && action !== 'deduct') {
@@ -137,11 +165,11 @@ export class UsersService {
 
     const targetUser = db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as UserRecord | undefined;
     if (!targetUser) {
-      throw new AppError('User not found.', 404);
+      throw new AppError('Target user account not found.', 404);
     }
 
     if (currentUser.role === 'owner') {
-      // Owner has full access
+      // Owner has unrestricted authority
     } else if (currentUser.role === 'manager') {
       if (targetUser.role !== 'reseller' || (targetUser.createdBy !== currentUser.id && targetUser.id !== currentUser.id)) {
         throw new AppError('Managers can only update resellers created by them.', 403);
@@ -174,27 +202,25 @@ export class UsersService {
         parsedAmount,
         action === 'add' ? 'add' : 'deduct',
         newBalance,
-        (payload as any)?.note || `${action === 'add' ? 'Added' : 'Deducted'} by ${currentUser.username}`,
+        note || `${action === 'add' ? 'Token grant' : 'Token deduction'} by ${currentUser.username}`,
         currentUser.id,
         currentUser.username,
         new Date().toISOString()
       );
-    } catch (txErr) {
-      // ignore
-    }
+    } catch (_) {}
 
     LogsService.logAction(
       currentUser.id,
       currentUser.username,
       'TOKENS_UPDATED',
-      `${action === 'add' ? 'Added' : 'Deducted'} ${parsedAmount} tokens for reseller @${targetUser.username}. New Token Balance: ${newBalance.toLocaleString()}`,
-      { targetUser: targetUser.username, amount: parsedAmount, action, newBalance }
+      `${action === 'add' ? 'Added' : 'Deducted'} ${parsedAmount} tokens for partner @${targetUser.username}. New Balance: ${newBalance.toLocaleString()}`,
+      { targetUser: targetUser.username, amount: parsedAmount, action, newBalance, note }
     );
 
     return {
       success: true,
       newBalance,
-      message: `Successfully ${action === 'add' ? 'added' : 'deducted'} ${parsedAmount} tokens.`,
+      message: `Successfully ${action === 'add' ? 'added' : 'deducted'} ${parsedAmount} tokens for @${targetUser.username}.`,
     };
   }
 
@@ -209,7 +235,7 @@ export class UsersService {
       SELECT * FROM token_transactions 
       WHERE userId = ? 
       ORDER BY createdAt DESC 
-      LIMIT 100
+      LIMIT 200
     `).all(userId);
 
     return txs;

@@ -15,6 +15,10 @@ import {
   Hash,
   Sliders,
   ShieldCheck,
+  Download,
+  Share2,
+  Crown,
+  FileText,
 } from 'lucide-react';
 import { UserItem } from '@/types/key';
 import { useToast } from '@/components/ui/ToastContext';
@@ -82,23 +86,23 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
 
   const totalCost = useMemo(() => costPerKey * genCount, [costPerKey, genCount]);
   const isUnlimited = user?.role === 'owner' || user?.role === 'manager';
-  const userTokens = user?.tokens ?? 0;
+  const userTokens = user?.tokens !== undefined ? user.tokens : (user?.credits || 0);
   const isInsufficientTokens = !isUnlimited && userTokens < totalCost;
 
   const processImageFile = (file: File) => {
     if (!file.type.startsWith('image/')) {
-      toast.error('Please upload a valid image file (PNG, JPG, JPEG).');
+      toast.error('Please upload a valid image file (PNG, JPG, WEBP).');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size exceeds 5MB limit.');
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('File size exceeds 10MB limit.');
       return;
     }
     setFileName(file.name);
     const reader = new FileReader();
     reader.onloadend = () => {
       setPaymentScreenshot(reader.result as string);
-      toast.info('Payment screenshot attached.');
+      toast.info('Payment receipt proof attached.');
     };
     reader.readAsDataURL(file);
   };
@@ -125,265 +129,322 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
     if (file) processImageFile(file);
   };
 
+  const handleRemoveImage = () => {
+    setPaymentScreenshot(null);
+    setFileName(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isInsufficientTokens) {
-      toast.error(`Insufficient tokens. Required: ${totalCost}, Current: ${userTokens}`);
+      toast.error(`Insufficient balance. Required: ${totalCost} tokens.`);
       return;
     }
-    const targetDuration = durationOption === 'Custom' ? `${customDays} Days` : durationOption;
-    await onGenerate(targetDuration, genCount, genNote, paymentScreenshot, isMasterKey, customPrefix, keyFormat);
-    setGenNote('');
-    setPaymentScreenshot(null);
-    setFileName(null);
+
+    const durationVal =
+      durationOption === 'Custom'
+        ? `${Math.max(1, parseInt(customDays, 10) || 1)} Days`
+        : durationOption;
+
+    await onGenerate(
+      durationVal,
+      genCount,
+      genNote,
+      paymentScreenshot,
+      isMasterKey,
+      customPrefix,
+      keyFormat
+    );
   };
 
-  const copyGeneratedKeys = () => {
+  const handleCopyAll = () => {
     if (generatedKeys.length === 0) return;
-    const text = generatedKeys.join('\n');
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(generatedKeys.join('\n'));
     setCopiedSuccess(true);
-    toast.success(`Copied ${generatedKeys.length} generated key(s) to clipboard!`);
+    toast.success(`Copied ${generatedKeys.length} license key(s) to clipboard!`);
     setTimeout(() => setCopiedSuccess(false), 2000);
   };
 
+  const handleExportTxt = () => {
+    if (generatedKeys.length === 0) return;
+    const blob = new Blob([generatedKeys.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `AXIOS_Keys_${Date.now()}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success('Keys exported as .txt file!');
+  };
+
+  const handleExportJson = () => {
+    if (generatedKeys.length === 0) return;
+    const jsonStr = JSON.stringify(
+      generatedKeys.map((k) => ({
+        key: k,
+        duration: durationOption === 'Custom' ? `${customDays} Days` : durationOption,
+        createdAt: new Date().toISOString(),
+        note: genNote,
+      })),
+      null,
+      2
+    );
+    const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `AXIOS_Keys_${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success('Keys exported as JSON!');
+  };
+
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-xl space-y-6 font-sans text-xs">
+    <div className="bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-7 font-sans backdrop-blur-2xl">
       {/* Studio Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-2xl bg-cyan-950/80 border border-cyan-800/60 text-cyan-400">
-            <Key className="w-5 h-5" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
+            <Key className="w-5 h-5 text-cyan-400" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">License Key Generation Studio</h2>
+            <h2 className="text-lg font-black text-white font-mono tracking-tight flex items-center gap-2">
+              KEY GENERATION STUDIO
+              <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-800/80 rounded-full">
+                CRYPTOGRAPHIC RNG
+              </span>
+            </h2>
             <p className="text-xs text-slate-400 font-mono">
-              Issue secure activation keys with custom prefixes & duration presets
+              Issue tamper-proof hardware license keys with custom prefixes and durations
             </p>
           </div>
         </div>
 
-        {/* Master Key Toggle (Admin only) */}
-        {isUnlimited && (
-          <label className="inline-flex items-center space-x-2 cursor-pointer bg-slate-950 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded-2xl transition">
-            <input
-              type="checkbox"
-              checked={isMasterKey}
-              onChange={(e) => setIsMasterKey(e.target.checked)}
-              className="rounded bg-slate-900 border-slate-700 text-cyan-500 focus:ring-0 w-4 h-4 cursor-pointer"
-            />
-            <span className="text-xs font-mono font-bold text-cyan-300">
-              Master Key (@Axiosofficial)
-            </span>
-          </label>
-        )}
+        {/* Live Token Wallet Gauge */}
+        <div className="flex items-center space-x-3 bg-slate-950/90 border border-slate-800 px-4 py-2 rounded-2xl font-mono text-xs shadow-inner">
+          <Coins className="w-4 h-4 text-amber-400" />
+          <span className="text-slate-400">Available:</span>
+          <span className="font-extrabold text-amber-300 text-sm">
+            {isUnlimited ? '∞ UNLIMITED' : `${userTokens.toLocaleString()} T`}
+          </span>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* 1. Duration Presets */}
-        <div>
-          <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2 font-mono">
-            1. Select License Duration
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Row 1: Duration Presets */}
+        <div className="space-y-2.5">
+          <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block">
+            Select License Validity Period
           </label>
-          <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2">
-            {durationPresets.map((p) => {
-              const isSelected = durationOption === p.label;
-              return (
-                <button
-                  key={p.label}
-                  type="button"
-                  onClick={() => setDurationOption(p.label)}
-                  className={`py-2 px-2 rounded-2xl border text-center transition-all flex flex-col items-center justify-center ${
-                    isSelected
-                      ? 'bg-cyan-950/90 border-cyan-500 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.2)]'
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
-                  }`}
-                >
-                  <span className="text-xs font-bold font-mono">{p.label}</span>
-                  {!isMasterKey && p.days !== -1 && (
-                    <span className="text-[10px] text-amber-400 font-mono mt-0.5">{p.cost}T</span>
-                  )}
-                </button>
-              );
-            })}
+          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
+            {durationPresets.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                onClick={() => setDurationOption(preset.label)}
+                className={`py-3 px-2 rounded-2xl border text-center transition-all duration-200 font-mono text-xs flex flex-col items-center justify-center space-y-1 ${
+                  durationOption === preset.label
+                    ? 'bg-cyan-950/60 border-cyan-500/80 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50'
+                    : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                <span className="font-bold">{preset.label}</span>
+                <span className="text-[10px] text-amber-400/90 font-semibold">
+                  {preset.cost > 0 ? `${preset.cost}T` : preset.days === -1 ? 'Custom' : 'Free'}
+                </span>
+              </button>
+            ))}
           </div>
+
+          {durationOption === 'Custom' && (
+            <div className="pt-2 animate-in fade-in slide-in-from-top-2 duration-150">
+              <label className="text-[11px] font-mono text-cyan-400 block mb-1">
+                Custom Duration (in Days):
+              </label>
+              <div className="relative max-w-xs">
+                <input
+                  type="number"
+                  min="1"
+                  max="3650"
+                  value={customDays}
+                  onChange={(e) => setCustomDays(e.target.value)}
+                  className="w-full bg-slate-950 border border-cyan-500/50 rounded-2xl px-4 py-2.5 text-white font-mono outline-none focus:ring-1 focus:ring-cyan-400 text-xs"
+                />
+                <span className="absolute right-4 top-2.5 text-slate-400 font-mono text-xs">Days</span>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Custom Days Input if Custom selected */}
-        {durationOption === 'Custom' && (
-          <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl animate-in fade-in duration-150">
-            <label className="text-[10px] uppercase font-mono font-semibold text-slate-400 block mb-1">
-              Custom Days (10 Tokens / Day)
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="1000"
-              value={customDays}
-              onChange={(e) => setCustomDays(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 focus:border-cyan-500 rounded-xl px-3 py-2 text-white font-mono text-xs outline-none"
-              placeholder="e.g. 45"
-            />
-          </div>
-        )}
-
-        {/* 2. Format & Prefix Options */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Row 2: Customization Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
           {/* Key Prefix */}
           <div>
-            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5 font-mono">
-              Key Prefix
+            <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+              Custom Key Prefix
             </label>
             <input
               type="text"
-              maxLength={8}
+              maxLength={10}
+              placeholder="e.g. AXIOS, VIP, PRO"
               value={customPrefix}
               onChange={(e) => setCustomPrefix(e.target.value.toUpperCase())}
-              placeholder="AXIOS"
-              className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl px-3.5 py-2.5 text-white font-mono text-xs outline-none transition uppercase"
+              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 text-xs"
             />
           </div>
 
-          {/* Key Pattern */}
+          {/* Key Format */}
           <div>
-            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5 font-mono">
-              Format Pattern
+            <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+              Key Format
             </label>
             <select
               value={keyFormat}
-              onChange={(e: any) => setKeyFormat(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl px-3.5 py-2.5 text-white font-mono text-xs outline-none transition"
+              onChange={(e) => setKeyFormat(e.target.value as any)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 text-xs cursor-pointer"
             >
-              <option value="hyphenated">Hyphenated (XXXX-XXXX-XXXX)</option>
-              <option value="raw16">Alphanumeric 16-Char</option>
-              <option value="uuid">Standard UUID</option>
+              <option value="hyphenated">Formatted (XXXX-XXXX-XXXX)</option>
+              <option value="raw16">Raw 16 (XXXXXXXXXXXXXXXX)</option>
+              <option value="uuid">UUID (Standard GUID)</option>
             </select>
           </div>
 
-          {/* Batch Count */}
+          {/* Quantity */}
           <div>
-            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5 font-mono">
-              Quantity to Issue
+            <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+              Quantity ({genCount} Keys)
             </label>
             <input
               type="number"
               min="1"
               max="100"
               value={genCount}
-              onChange={(e) => setGenCount(Math.max(1, Math.min(100, parseInt(e.target.value, 10) || 1)))}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl px-3.5 py-2.5 text-white font-mono text-xs outline-none transition"
+              onChange={(e) => setGenCount(Math.max(1, parseInt(e.target.value, 10) || 1))}
+              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 text-xs"
+            />
+          </div>
+
+          {/* Note / Customer Tag */}
+          <div>
+            <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+              Customer Note / Tag
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. VIP Customer @telegram"
+              value={genNote}
+              onChange={(e) => setGenNote(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 text-xs"
             />
           </div>
         </div>
 
-        {/* 3. Customer Note */}
-        <div>
-          <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5 font-mono">
-            Customer Reference / Note (Optional)
-          </label>
-          <input
-            type="text"
-            value={genNote}
-            onChange={(e) => setGenNote(e.target.value)}
-            placeholder="e.g. Discord VIP @Alex #382"
-            className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl px-3.5 py-2.5 text-white font-mono text-xs outline-none transition"
-          />
-        </div>
+        {/* Executive Master Key Toggle (Only Owner / Manager) */}
+        {isUnlimited && (
+          <div className="bg-gradient-to-r from-purple-950/40 via-slate-950 to-slate-950 border border-purple-900/60 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4 shadow-xl">
+            <div className="flex items-center space-x-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-purple-950/80 border border-purple-700/60 flex items-center justify-center text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                <Crown className="w-5 h-5 text-purple-400" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h4 className="text-sm font-black text-white font-mono">
+                    Executive Master Key Mode (@Axiosofficial)
+                  </h4>
+                  <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-purple-950 text-purple-300 border border-purple-800 rounded-full uppercase">
+                    UNLIMITED HWID
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 font-mono mt-0.5">
+                  Allows multiple concurrent devices on a single master license key with zero token cost.
+                </p>
+              </div>
+            </div>
 
-        {/* 4. Payment Proof Drag-and-Drop */}
-        <div>
-          <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5 font-mono">
-            Payment Screenshot Attachment (Optional)
+            <button
+              type="button"
+              onClick={() => setIsMasterKey(!isMasterKey)}
+              className={`px-4 py-2.5 rounded-2xl font-mono font-bold text-xs transition-all shadow-md ${
+                isMasterKey
+                  ? 'bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/30'
+                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+              }`}
+            >
+              {isMasterKey ? 'ENABLED' : 'DISABLED'}
+            </button>
+          </div>
+        )}
+
+        {/* Drag & Drop Payment Screenshot Area */}
+        <div className="space-y-2">
+          <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block">
+            Payment Screenshot Proof (Optional)
           </label>
           <div
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-1.5 ${
+            className={`border-2 border-dashed rounded-3xl p-5 sm:p-6 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center space-y-2.5 ${
               isDragging
-                ? 'border-cyan-500 bg-cyan-950/20'
+                ? 'border-cyan-400 bg-cyan-950/20'
                 : paymentScreenshot
-                ? 'border-emerald-500/50 bg-emerald-950/20'
-                : 'border-slate-800 hover:border-slate-700 bg-slate-950'
+                ? 'border-emerald-500/60 bg-emerald-950/10'
+                : 'border-slate-800 hover:border-slate-700 bg-slate-950/40'
             }`}
           >
             <input
-              ref={fileInputRef}
               type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
               accept="image/*"
               className="hidden"
-              onChange={handleFileSelect}
             />
 
             {paymentScreenshot ? (
-              <div className="flex items-center space-x-3">
-                <img
-                  src={paymentScreenshot}
-                  alt="Proof Preview"
-                  className="w-12 h-12 object-cover rounded-xl border border-slate-700"
-                />
-                <div className="text-left">
-                  <div className="text-emerald-400 font-semibold text-xs flex items-center space-x-1 font-mono">
-                    <Check className="w-3.5 h-3.5" />
-                    <span>Proof Image Attached</span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-mono truncate max-w-[200px]">
-                    {fileName || 'screenshot.png'}
-                  </div>
-                </div>
+              <div className="flex items-center space-x-3 text-xs font-mono text-emerald-400">
+                <FileImage className="w-5 h-5 text-emerald-400" />
+                <span className="font-bold">{fileName || 'Payment receipt proof attached'}</span>
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setPaymentScreenshot(null);
-                    setFileName(null);
+                    handleRemoveImage();
                   }}
-                  className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition"
+                  className="p-1 rounded-full bg-slate-800 hover:bg-rose-900 text-slate-400 hover:text-white transition"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
               <>
-                <Upload className="w-5 h-5 text-slate-400" />
-                <span className="text-xs text-slate-300 font-mono">
-                  Drag & Drop or <span className="text-cyan-400 underline">Browse File</span>
-                </span>
-                <span className="text-[10px] text-slate-500">PNG, JPG, WEBP up to 5MB</span>
+                <Upload className="w-6 h-6 text-cyan-400" />
+                <div className="text-xs text-slate-300 font-mono">
+                  <strong className="text-cyan-400">Click to upload</strong> or drag & drop payment proof
+                </div>
+                <div className="text-[10px] text-slate-500 font-mono">PNG, JPG, WEBP up to 10MB</div>
               </>
             )}
           </div>
         </div>
 
-        {/* 5. Summary & Action Bar */}
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-slate-950 border border-slate-800 rounded-2xl">
-          {/* Cost breakdown */}
-          <div className="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start font-mono">
-            <div>
-              <span className="text-[10px] text-slate-500 uppercase block">Total Cost</span>
-              <span className="text-base font-bold text-amber-400">
-                {isMasterKey ? '0 Tokens (Admin)' : `${totalCost.toLocaleString()} Tokens`}
-              </span>
-            </div>
-
-            {!isUnlimited && (
-              <div className="border-l border-slate-800 pl-4">
-                <span className="text-[10px] text-slate-500 uppercase block">Your Balance</span>
-                <span className={`text-base font-bold ${isInsufficientTokens ? 'text-rose-400' : 'text-slate-200'}`}>
-                  {userTokens.toLocaleString()} Tokens
-                </span>
-              </div>
-            )}
+        {/* Generate Button & Cost Indicator */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          <div className="flex items-center space-x-2 font-mono text-xs">
+            <span className="text-slate-400">Total Transaction Cost:</span>
+            <span className="font-black text-base text-amber-400">
+              {isMasterKey ? '0 Tokens (Master Key)' : `${totalCost.toLocaleString()} Tokens`}
+            </span>
           </div>
 
           <button
             type="submit"
             disabled={isGenerating || isInsufficientTokens}
-            className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition text-xs flex items-center justify-center space-x-2 disabled:opacity-50 shadow-lg shadow-cyan-600/20"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-cyan-600/25 disabled:opacity-50 flex items-center justify-center space-x-2 active:scale-95"
           >
             {isGenerating ? (
-              <span className="animate-pulse">Issuing {genCount} Key(s)...</span>
+              <span>Issuing Cryptographic Keys...</span>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
@@ -394,28 +455,67 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
         </div>
       </form>
 
-      {/* Generated Keys Live Output Bar */}
+      {/* Generated Keys Display Box */}
       {generatedKeys.length > 0 && (
-        <div className="p-4 bg-slate-950 border border-cyan-500/40 rounded-2xl space-y-2.5 animate-in fade-in duration-200 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-cyan-400 font-mono flex items-center space-x-1.5">
-              <Check className="w-4 h-4" />
-              <span>Successfully Generated {generatedKeys.length} Key(s)</span>
-            </span>
+        <div className="bg-slate-950 border border-cyan-500/50 rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+            <div className="flex items-center space-x-2">
+              <Check className="w-4 h-4 text-emerald-400" />
+              <h4 className="text-sm font-black text-white font-mono">
+                {generatedKeys.length} License Key{generatedKeys.length > 1 ? 's' : ''} Issued Successfully
+              </h4>
+            </div>
 
-            <button
-              onClick={copyGeneratedKeys}
-              className="flex items-center space-x-1 px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-mono font-semibold transition"
-            >
-              {copiedSuccess ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedSuccess ? 'Copied All!' : 'Copy All Keys'}</span>
-            </button>
+            <div className="flex items-center space-x-2 font-mono text-xs">
+              <button
+                type="button"
+                onClick={handleCopyAll}
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/40 text-cyan-300 font-bold transition flex items-center gap-1.5"
+              >
+                {copiedSuccess ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedSuccess ? 'Copied!' : 'Copy All'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportTxt}
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition flex items-center gap-1.5"
+                title="Export as Text"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>.TXT</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportJson}
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition flex items-center gap-1.5"
+                title="Export as JSON"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>JSON</span>
+              </button>
+            </div>
           </div>
 
-          <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl max-h-36 overflow-y-auto font-mono text-xs text-white space-y-1">
-            {generatedKeys.map((k, i) => (
-              <div key={i} className="select-all hover:text-cyan-300">
-                {k}
+          <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+            {generatedKeys.map((k, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between bg-slate-900/80 border border-slate-800 rounded-2xl px-4 py-2.5 font-mono text-xs text-cyan-300 select-all"
+              >
+                <span className="font-bold">{k}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(k);
+                    toast.success(`Copied key: ${k}`);
+                  }}
+                  className="p-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-cyan-300 transition"
+                  title="Copy Key"
+                >
+                  <Copy className="w-3 h-3" />
+                </button>
               </div>
             ))}
           </div>
