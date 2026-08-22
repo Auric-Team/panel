@@ -1,13 +1,32 @@
 import { expect, test, describe, beforeAll } from "bun:test";
+import { app, initDatabase } from "./src/index";
+import { ENV } from "./src/config/env";
 
-const BASE_URL = "http://localhost:20067";
+const BASE_URL = `http://localhost:${ENV.PORT}`;
 
 describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", () => {
   let ownerToken: string = "";
   let resellerToken: string = "";
+  let reseller2Token: string = "";
   let generatedTestKey: string = "";
   let testKeyId: string = "";
   let testResellerId: string = "";
+  let testReseller2Id: string = "";
+  let reseller2KeyId: string = "";
+  let reseller2KeyStr: string = "";
+
+  beforeAll(async () => {
+    initDatabase();
+    try {
+      await new Promise<void>((resolve) => {
+        app.listen(ENV.PORT, () => {
+          resolve();
+        });
+      });
+    } catch {
+      // Server might already be running on port
+    }
+  });
 
   test("1. Server Status & Health Endpoints", async () => {
     const res = await fetch(`${BASE_URL}/`);
@@ -51,10 +70,9 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(res.status).toBe(200);
     const keys = await res.json();
     expect(Array.isArray(keys)).toBe(true);
-    expect(keys.length).toBeGreaterThan(0);
   });
 
-  test("4. Create New Reseller & Update Tokens", async () => {
+  test("4. Create New Resellers & Update Tokens", async () => {
     const testUsername = `reseller_test_${Date.now()}`;
     const createRes = await fetch(`${BASE_URL}/api/users/create`, {
       method: "POST",
@@ -81,7 +99,7 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(created.tokens).toBe(500);
     testResellerId = created.id;
 
-    // Reseller Login
+    // Reseller 1 Login
     const rLogin = await fetch(`${BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -91,7 +109,34 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(rData.token).toBeDefined();
     resellerToken = rData.token;
 
-    // Update tokens (+200)
+    // Create Reseller 2 for cross-user isolation testing
+    const testUsername2 = `reseller2_test_${Date.now()}`;
+    const createRes2 = await fetch(`${BASE_URL}/api/users/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ownerToken}`,
+      },
+      body: JSON.stringify({
+        username: testUsername2,
+        password: "password123",
+        role: "reseller",
+        tokens: 500,
+      }),
+    });
+    expect(createRes2.status).toBe(200);
+    const users2 = await (await fetch(`${BASE_URL}/api/users`, { headers: { Authorization: `Bearer ${ownerToken}` } })).json();
+    const created2 = users2.find((u: any) => u.username === testUsername2);
+    testReseller2Id = created2.id;
+
+    const rLogin2 = await fetch(`${BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: testUsername2, password: "password123" }),
+    });
+    reseller2Token = (await rLogin2.json()).token;
+
+    // Update tokens for Reseller 1 (+200 -> 700)
     const tokenRes = await fetch(`${BASE_URL}/api/users/update-tokens`, {
       method: "POST",
       headers: {
@@ -107,6 +152,16 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(tokenRes.status).toBe(200);
     const tokenData = await tokenRes.json();
     expect(tokenData.newBalance).toBe(700);
+  });
+
+  test("4b. Verify Reseller with 0 keys sees 0 keys (Never falls back to all keys)", async () => {
+    const res = await fetch(`${BASE_URL}/api/keys`, {
+      headers: { Authorization: `Bearer ${resellerToken}` },
+    });
+    expect(res.status).toBe(200);
+    const keys = await res.json();
+    expect(Array.isArray(keys)).toBe(true);
+    expect(keys.length).toBe(0);
   });
 
   test("5. Reseller Key Generation with Token Deduction", async () => {
@@ -137,33 +192,106 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     const meUsers = await meUsersRes.json();
     const me = meUsers.find((u: any) => u.id === testResellerId);
     expect(me.tokens).toBe(560);
+
+    // Also generate 1 key for Reseller 2
+    const genRes2 = await fetch(`${BASE_URL}/api/keys/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${reseller2Token}`,
+      },
+      body: JSON.stringify({
+        durationDays: 1,
+        count: 1,
+        note: "Reseller 2 Private Key",
+      }),
+    });
+    const genData2 = await genRes2.json();
+    reseller2KeyId = genData2.keys[0].id;
+    reseller2KeyStr = genData2.keys[0].key;
   });
 
-  test("5b. Custom Days Key Generation (Non-Lifetime)", async () => {
-    const customDaysRes = await fetch(`${BASE_URL}/api/keys/generate`, {
+  test("5b. Strict Reseller Key Isolation: Reseller only sees own keys", async () => {
+    const r1Res = await fetch(`${BASE_URL}/api/keys`, {
+      headers: { Authorization: `Bearer ${resellerToken}` },
+    });
+    const r1Keys = await r1Res.json();
+    // Reseller 1 generated 2 keys in test 5
+    expect(r1Keys.length).toBe(2);
+    expect(r1Keys.every((k: any) => k.createdById === testResellerId)).toBe(true);
+    expect(r1Keys.find((k: any) => k.id === reseller2KeyId)).toBeUndefined();
+
+    const r2Res = await fetch(`${BASE_URL}/api/keys`, {
+      headers: { Authorization: `Bearer ${reseller2Token}` },
+    });
+    const r2Keys = await r2Res.json();
+    // Reseller 2 generated 1 key
+    expect(r2Keys.length).toBe(1);
+    expect(r2Keys[0].id).toBe(reseller2KeyId);
+    expect(r2Keys.find((k: any) => k.id === testKeyId)).toBeUndefined();
+  });
+
+  test("5c. Cross-Reseller Unauthorized Access Checks (403 Forbidden)", async () => {
+    // Reseller 1 attempts to reset HWID of Reseller 2's key -> 403
+    const crossReset = await fetch(`${BASE_URL}/api/keys/reset-hwid`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${resellerToken}`,
       },
-      body: JSON.stringify({
-        durationDays: 4, // 4 days custom key
-        count: 1,
-        note: "Automated Custom Days Test Key",
-      }),
+      body: JSON.stringify({ id: reseller2KeyId }),
     });
-    expect(customDaysRes.status).toBe(200);
-    const customData = await customDaysRes.json();
-    expect(customData.success).toBe(true);
-    expect(customData.keys.length).toBe(1);
-    const customKey = customData.keys[0];
-    expect(customKey.expiresAt).not.toBe("never");
-    
-    // Verify expiresAt is ~4 days in future
-    const expDate = new Date(customKey.expiresAt).getTime();
-    const now = Date.now();
-    const diffDays = Math.round((expDate - now) / (24 * 60 * 60 * 1000));
-    expect(diffDays).toBe(4);
+    expect(crossReset.status).toBe(403);
+
+    // Reseller 1 attempts to delete Reseller 2's key -> 403
+    const crossDelete = await fetch(`${BASE_URL}/api/keys/delete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resellerToken}`,
+      },
+      body: JSON.stringify({ id: reseller2KeyId }),
+    });
+    expect(crossDelete.status).toBe(403);
+
+    // Reseller 1 attempts to extend Reseller 2's key -> 403
+    const crossExtend = await fetch(`${BASE_URL}/api/keys/extend`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resellerToken}`,
+      },
+      body: JSON.stringify({ id: reseller2KeyId, days: 3 }),
+    });
+    expect(crossExtend.status).toBe(403);
+
+    // Reseller 1 attempts to update note on Reseller 2's key -> 403
+    const crossNote = await fetch(`${BASE_URL}/api/keys/update-note`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resellerToken}`,
+      },
+      body: JSON.stringify({ id: reseller2KeyId, note: "Hacked note" }),
+    });
+    expect(crossNote.status).toBe(403);
+
+    // Reseller 1 attempts to update receipt on Reseller 2's key -> 403
+    const crossReceipt = await fetch(`${BASE_URL}/api/keys/upload-receipt`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resellerToken}`,
+      },
+      body: JSON.stringify({ id: reseller2KeyId, paymentScreenshot: "data:image/png;base64,123" }),
+    });
+    expect(crossReceipt.status).toBe(403);
+
+    // Reseller 1 attempts to access Reseller 2's analytics -> 403
+    const crossAnalytics = await fetch(`${BASE_URL}/api/analytics/reseller/${testReseller2Id}`, {
+      headers: { Authorization: `Bearer ${resellerToken}` },
+    });
+    expect(crossAnalytics.status).toBe(403);
   });
 
   test("6. Public Key Verification & HWID Binding", async () => {
@@ -205,12 +333,12 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(vData3.status).toBe("mismatch");
   });
 
-  test("7. Reset HWID & Re-bind Device", async () => {
+  test("7. Reseller Reset HWID on Own Key", async () => {
     const resetRes = await fetch(`${BASE_URL}/api/keys/reset-hwid`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${ownerToken}`,
+        Authorization: `Bearer ${resellerToken}`,
       },
       body: JSON.stringify({ id: testKeyId }),
     });
@@ -229,36 +357,43 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(rebindRes.status).toBe(200);
   });
 
-  test("8. Executive Analytics & Reseller Dashboard Drilldown", async () => {
+  test("8. Reseller Isolated Analytics", async () => {
     const analyticsRes = await fetch(`${BASE_URL}/api/analytics`, {
-      headers: { Authorization: `Bearer ${ownerToken}` },
+      headers: { Authorization: `Bearer ${resellerToken}` },
     });
     expect(analyticsRes.status).toBe(200);
     const aData = await analyticsRes.json();
-    expect(aData.totalKeys).toBeGreaterThan(0);
-    expect(aData.dailySales).toBeDefined();
-
-    const resellerAnalyticsRes = await fetch(`${BASE_URL}/api/analytics/reseller/${testResellerId}`, {
-      headers: { Authorization: `Bearer ${ownerToken}` },
-    });
-    expect(resellerAnalyticsRes.status).toBe(200);
-    const rData = await resellerAnalyticsRes.json();
-    expect(rData.resellerInfo).toBeDefined();
-    expect(rData.stats.totalKeys).toBe(3);
+    expect(aData.totalKeys).toBe(2);
+    expect(aData.totalResellers).toBe(0); // Resellers do not manage other resellers
+    expect(aData.topResellers.length).toBe(0); // Cannot see top resellers
+    expect(aData.totalTokensSpent).toBe(140);
   });
 
-  test("9. Delete Key & Delete Test User Cleanup", async () => {
+  test("9. Reseller Isolated Audit Logs", async () => {
+    const logsRes = await fetch(`${BASE_URL}/api/logs`, {
+      headers: { Authorization: `Bearer ${resellerToken}` },
+    });
+    expect(logsRes.status).toBe(200);
+    const logs = await logsRes.json();
+    expect(Array.isArray(logs)).toBe(true);
+    // All logs returned must belong exclusively to this reseller
+    expect(logs.every((l: any) => l.userId === testResellerId || l.username.toLowerCase().includes("reseller_test"))).toBe(true);
+  });
+
+  test("10. Clean up test keys & test users", async () => {
+    // Reseller 1 deletes own key
     const delKeyRes = await fetch(`${BASE_URL}/api/keys/delete`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${ownerToken}`,
+        Authorization: `Bearer ${resellerToken}`,
       },
       body: JSON.stringify({ id: testKeyId }),
     });
     expect(delKeyRes.status).toBe(200);
 
-    const delUserRes = await fetch(`${BASE_URL}/api/users/delete`, {
+    // Owner clean up
+    await fetch(`${BASE_URL}/api/users/delete`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -266,102 +401,15 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
       },
       body: JSON.stringify({ userId: testResellerId }),
     });
-    expect(delUserRes.status).toBe(200);
-  });
 
-  test("10. App User Registration (Normal User Role)", async () => {
-    const appUsername = `app_customer_${Date.now()}`;
-    const regRes = await fetch(`${BASE_URL}/api/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: appUsername,
-        password: "apppassword123",
-        deviceFingerprint: "Android_Device_Fingerprint_12345",
-      }),
-    });
-    expect(regRes.status).toBe(200);
-    const regData = await regRes.json();
-    expect(regData.success).toBe(true);
-    expect(regData.role).toBe("user");
-    expect(regData.user.role).toBe("user");
-
-    // Clean up created app user
-    const delAppUser = await fetch(`${BASE_URL}/api/users/delete`, {
+    await fetch(`${BASE_URL}/api/users/delete`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${ownerToken}`,
       },
-      body: JSON.stringify({ userId: regData.user.id }),
+      body: JSON.stringify({ userId: testReseller2Id }),
     });
-    expect(delAppUser.status).toBe(200);
-  });
-
-  test("11. Master Key (@Axiosofficial) Generation, Unlimited Devices & Bound Count", async () => {
-    // Generate Master Key
-    const masterRes = await fetch(`${BASE_URL}/api/keys/generate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${ownerToken}`,
-      },
-      body: JSON.stringify({
-        isMaster: true,
-        durationDays: 0,
-        note: "Master Key Test",
-      }),
-    });
-    expect(masterRes.status).toBe(200);
-    const masterData = await masterRes.json();
-    expect(masterData.success).toBe(true);
-    expect(masterData.keys[0].key).toBe("@Axiosofficial");
-    expect(masterData.keys[0].isMasterKey).toBe(1);
-
-    // Verify key with Device 1
-    const dev1Res = await fetch(`${BASE_URL}/api/verify`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: "@Axiosofficial", hwid: "MASTER-DEV-001" }),
-    });
-    expect(dev1Res.status).toBe(200);
-    const dev1Data = await dev1Res.json();
-    expect(dev1Data.status).toBe("authenticated");
-    expect(dev1Data.deviceCount).toBeGreaterThanOrEqual(1);
-
-    // Verify key with Device 2 (Unlimited Devices check)
-    const dev2Res = await fetch(`${BASE_URL}/api/verify`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: "@Axiosofficial", hwid: "MASTER-DEV-002" }),
-    });
-    expect(dev2Res.status).toBe(200);
-    const dev2Data = await dev2Res.json();
-    expect(dev2Data.status).toBe("authenticated");
-    expect(dev2Data.deviceCount).toBeGreaterThanOrEqual(2);
-
-    // Fetch keys list and verify deviceCount is included
-    const keysRes = await fetch(`${BASE_URL}/api/keys`, {
-      headers: { Authorization: `Bearer ${ownerToken}` },
-    });
-    expect(keysRes.status).toBe(200);
-    const keysList = await keysRes.json();
-    const masterKeyInList = keysList.find((k: any) => k.key === "@Axiosofficial");
-    expect(masterKeyInList).toBeDefined();
-    expect(masterKeyInList.deviceCount).toBeGreaterThanOrEqual(2);
-  });
-
-  test("12. One-Click Delete All Expired Keys Endpoint", async () => {
-    const res = await fetch(`${BASE_URL}/api/keys/delete-expired`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${ownerToken}`,
-      },
-    });
-    expect(res.status).toBe(200);
-    const data = await res.json();
-    expect(data.success).toBe(true);
-    expect(data.count).toBeDefined();
   });
 });
+

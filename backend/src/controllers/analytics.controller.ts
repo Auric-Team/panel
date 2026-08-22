@@ -14,7 +14,7 @@ export const getAnalytics = (req: AuthenticatedRequest, res: Response, next: Nex
 export const getResellerAnalytics = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const resellerId = req.params.id;
-    const data = AnalyticsService.getResellerAnalytics(resellerId);
+    const data = AnalyticsService.getResellerAnalytics(req.user!, resellerId);
     return res.json(data);
   } catch (err) {
     next(err);
@@ -23,7 +23,7 @@ export const getResellerAnalytics = (req: AuthenticatedRequest, res: Response, n
 
 export const getTelemetry = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const data = AnalyticsService.getTelemetry();
+    const data = AnalyticsService.getTelemetry(req.user!);
     return res.json(data);
   } catch (err) {
     next(err);

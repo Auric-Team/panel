@@ -152,26 +152,38 @@ export class KeysService {
     }
   }
 
+  static checkKeyAccess(user: AuthUserPayload, keyItem: KeyRecord): boolean {
+    if (user.role === 'owner') return true;
+    if (keyItem.createdById === user.id || keyItem.createdByUsername === user.username) return true;
+    if (user.role === 'manager') {
+      const creator = db.prepare('SELECT createdBy FROM users WHERE id = ?').get(keyItem.createdById) as { createdBy: string } | undefined;
+      if (creator && creator.createdBy === user.id) return true;
+    }
+    return false;
+  }
+
   static getKeys(user: AuthUserPayload): KeyRecord[] {
     const { role, id, username } = user;
     const nowIso = new Date().toISOString();
     db.prepare("UPDATE keys SET status = 'expired' WHERE status = 'active' AND expiresAt != 'never' AND expiresAt <= ?").run(nowIso);
 
     let rawKeys: KeyRecord[] = [];
-    if (role === 'owner' || role === 'manager') {
+    if (role === 'owner') {
       rawKeys = db.prepare('SELECT * FROM keys ORDER BY createdAt DESC').all() as KeyRecord[];
-    } else {
+    } else if (role === 'manager') {
       rawKeys = db.prepare(`
         SELECT DISTINCT k.* FROM keys k
         WHERE k.createdById = ? OR k.createdByUsername = ?
-           OR k.createdById = (SELECT createdBy FROM users WHERE id = ?)
-           OR k.createdByUsername = (SELECT createdBy FROM users WHERE id = ?)
+           OR k.createdById IN (SELECT id FROM users WHERE createdBy = ?)
         ORDER BY k.createdAt DESC
-      `).all(id, username, id, id) as KeyRecord[];
-
-      if (rawKeys.length === 0) {
-        rawKeys = db.prepare('SELECT * FROM keys ORDER BY createdAt DESC').all() as KeyRecord[];
-      }
+      `).all(id, username, id) as KeyRecord[];
+    } else {
+      // Reseller strictly sees ONLY keys they generated themselves
+      rawKeys = db.prepare(`
+        SELECT * FROM keys
+        WHERE createdById = ? OR createdByUsername = ?
+        ORDER BY createdAt DESC
+      `).all(id, username) as KeyRecord[];
     }
 
     return rawKeys.map((k) => {
@@ -359,6 +371,10 @@ export class KeysService {
     const keyItem = db.prepare('SELECT * FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
     if (!keyItem) throw new AppError('License key not found.', 404);
 
+    if (!this.checkKeyAccess(user, keyItem)) {
+      throw new AppError('Permission denied. You can only extend keys you generated.', 403);
+    }
+
     const cost = days * 10;
     if (user.role === 'reseller') {
       const userRow = db.prepare('SELECT COALESCE(tokens, credits, 0) as balance FROM users WHERE id = ?').get(user.id) as { balance: number } | undefined;
@@ -366,7 +382,25 @@ export class KeysService {
       if (userBalance < cost) {
         throw new AppError(`Insufficient tokens to extend key. Required: ${cost} tokens, Available: ${userBalance} tokens.`, 400);
       }
+      const newBalance = userBalance - cost;
       db.prepare('UPDATE users SET tokens = MAX(0, tokens - ?), credits = MAX(0, credits - ?) WHERE id = ?').run(cost, cost, user.id);
+
+      try {
+        db.prepare(`
+          INSERT INTO token_transactions (id, userId, username, amount, type, balanceAfter, note, createdById, createdByUsername, createdAt)
+          VALUES (?, ?, ?, ?, 'key_extension', ?, ?, ?, ?, ?)
+        `).run(
+          generateUUID(),
+          user.id,
+          user.username,
+          cost,
+          newBalance,
+          `Extended key ${keyItem.key} by ${days} Day(s)`,
+          user.id,
+          user.username,
+          new Date().toISOString()
+        );
+      } catch (_) {}
     }
 
     let newExpiresAt: string;
@@ -402,6 +436,10 @@ export class KeysService {
     const keyItem = db.prepare('SELECT * FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
     if (!keyItem) throw new AppError('License key not found.', 404);
 
+    if (!this.checkKeyAccess(user, keyItem)) {
+      throw new AppError('Permission denied. You can only edit notes on keys you generated.', 403);
+    }
+
     db.prepare('UPDATE keys SET note = ? WHERE id = ?').run(note || '', keyItem.id);
 
     LogsService.logAction(
@@ -419,6 +457,10 @@ export class KeysService {
     if (!keyId) throw new AppError('Key ID is required.', 400);
     const keyItem = db.prepare('SELECT * FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
     if (!keyItem) throw new AppError('License key not found.', 404);
+
+    if (!this.checkKeyAccess(user, keyItem)) {
+      throw new AppError('Permission denied. You can only update receipts on keys you generated.', 403);
+    }
 
     let savedUrl: string | null = null;
     if (paymentScreenshot) {
@@ -451,16 +493,18 @@ export class KeysService {
   static resetHwid(user: AuthUserPayload, keyId: string) {
     if (!keyId) throw new AppError('Key ID is required.', 400);
 
-    const keyItem = db.prepare('SELECT id, key, hwid FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
-    const keyStr = keyItem ? keyItem.key : keyId;
-    const oldHwid = keyItem?.hwid || 'Unknown';
+    const keyItem = db.prepare('SELECT id, key, hwid, createdById, createdByUsername FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
+    if (!keyItem) throw new AppError('License key not found.', 404);
 
-    if (keyItem) {
-      db.prepare('UPDATE keys SET hwid = null WHERE id = ?').run(keyItem.id);
-      db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(keyItem.id);
-    } else {
-      db.prepare('UPDATE keys SET hwid = null WHERE key = ?').run(keyId);
+    if (!this.checkKeyAccess(user, keyItem)) {
+      throw new AppError('Permission denied. You can only reset HWID on keys you generated.', 403);
     }
+
+    const keyStr = keyItem.key;
+    const oldHwid = keyItem.hwid || 'Unknown';
+
+    db.prepare('UPDATE keys SET hwid = null WHERE id = ?').run(keyItem.id);
+    db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(keyItem.id);
 
     LogsService.logAction(
       user.id,
@@ -480,8 +524,8 @@ export class KeysService {
 
     let count = 0;
     for (const keyId of keyIds) {
-      const keyItem = db.prepare('SELECT id FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as { id: string } | undefined;
-      if (keyItem) {
+      const keyItem = db.prepare('SELECT id, key, createdById, createdByUsername FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
+      if (keyItem && this.checkKeyAccess(user, keyItem)) {
         db.prepare('UPDATE keys SET hwid = null WHERE id = ?').run(keyItem.id);
         db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(keyItem.id);
         count++;
@@ -502,16 +546,18 @@ export class KeysService {
   static deleteKey(user: AuthUserPayload, keyId: string) {
     if (!keyId) throw new AppError('Key ID is required.', 400);
 
-    const keyItem = db.prepare('SELECT id, key, createdByUsername FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
-    const keyStr = keyItem ? keyItem.key : keyId;
-    const creator = keyItem ? keyItem.createdByUsername : 'Unknown';
+    const keyItem = db.prepare('SELECT id, key, createdById, createdByUsername FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
+    if (!keyItem) throw new AppError('License key not found.', 404);
 
-    if (keyItem) {
-      db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(keyItem.id);
-      db.prepare('DELETE FROM keys WHERE id = ?').run(keyItem.id);
-    } else {
-      db.prepare('DELETE FROM keys WHERE key = ?').run(keyId);
+    if (!this.checkKeyAccess(user, keyItem)) {
+      throw new AppError('Permission denied. You can only delete keys you generated.', 403);
     }
+
+    const keyStr = keyItem.key;
+    const creator = keyItem.createdByUsername || 'Unknown';
+
+    db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(keyItem.id);
+    db.prepare('DELETE FROM keys WHERE id = ?').run(keyItem.id);
 
     LogsService.logAction(
       user.id,
@@ -531,8 +577,8 @@ export class KeysService {
 
     let count = 0;
     for (const keyId of keyIds) {
-      const keyItem = db.prepare('SELECT id FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as { id: string } | undefined;
-      if (keyItem) {
+      const keyItem = db.prepare('SELECT id, key, createdById, createdByUsername FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
+      if (keyItem && this.checkKeyAccess(user, keyItem)) {
         db.prepare('DELETE FROM key_devices WHERE keyId = ?').run(keyItem.id);
         db.prepare('DELETE FROM keys WHERE id = ?').run(keyItem.id);
         count++;
@@ -556,30 +602,72 @@ export class KeysService {
     }
     const days = Math.max(1, parseInt(String(additionalDays), 10) || 1);
 
-    let count = 0;
-    const now = new Date();
+    // Find all valid accessible keys
+    const authorizedKeys: KeyRecord[] = [];
     for (const keyId of keyIds) {
       const keyItem = db.prepare('SELECT * FROM keys WHERE id = ? OR key = ?').get(keyId, keyId) as KeyRecord | undefined;
-      if (keyItem) {
-        let newExpiresAt: string;
-        if (!keyItem.expiresAt || keyItem.expiresAt === 'never') {
-          newExpiresAt = 'never';
-        } else {
-          const currentExp = new Date(keyItem.expiresAt);
-          const baseTime = currentExp > now ? currentExp.getTime() : now.getTime();
-          newExpiresAt = new Date(baseTime + days * 24 * 60 * 60 * 1000).toISOString();
-        }
-        db.prepare("UPDATE keys SET expiresAt = ?, status = 'active' WHERE id = ?").run(newExpiresAt, keyItem.id);
-        count++;
+      if (keyItem && this.checkKeyAccess(user, keyItem)) {
+        authorizedKeys.push(keyItem);
       }
+    }
+
+    if (authorizedKeys.length === 0) {
+      return { success: true, count: 0, message: 'No authorized keys found to extend.' };
+    }
+
+    const costPerKey = days * 10;
+    const totalCost = costPerKey * authorizedKeys.length;
+
+    if (user.role === 'reseller') {
+      const userRow = db.prepare('SELECT COALESCE(tokens, credits, 0) as balance FROM users WHERE id = ?').get(user.id) as { balance: number } | undefined;
+      const userBalance = userRow ? Number(userRow.balance || 0) : 0;
+
+      if (userBalance < totalCost) {
+        throw new AppError(`Insufficient token balance to bulk extend ${authorizedKeys.length} key(s). Required: ${totalCost} tokens, Available: ${userBalance} tokens.`, 400);
+      }
+
+      const newBalance = userBalance - totalCost;
+      db.prepare('UPDATE users SET tokens = MAX(0, tokens - ?), credits = MAX(0, credits - ?) WHERE id = ?').run(totalCost, totalCost, user.id);
+
+      try {
+        db.prepare(`
+          INSERT INTO token_transactions (id, userId, username, amount, type, balanceAfter, note, createdById, createdByUsername, createdAt)
+          VALUES (?, ?, ?, ?, 'key_extension', ?, ?, ?, ?, ?)
+        `).run(
+          generateUUID(),
+          user.id,
+          user.username,
+          totalCost,
+          newBalance,
+          `Bulk extended ${authorizedKeys.length} key(s) by ${days} Day(s)`,
+          user.id,
+          user.username,
+          new Date().toISOString()
+        );
+      } catch (_) {}
+    }
+
+    let count = 0;
+    const now = new Date();
+    for (const keyItem of authorizedKeys) {
+      let newExpiresAt: string;
+      if (!keyItem.expiresAt || keyItem.expiresAt === 'never') {
+        newExpiresAt = 'never';
+      } else {
+        const currentExp = new Date(keyItem.expiresAt);
+        const baseTime = currentExp > now ? currentExp.getTime() : now.getTime();
+        newExpiresAt = new Date(baseTime + days * 24 * 60 * 60 * 1000).toISOString();
+      }
+      db.prepare("UPDATE keys SET expiresAt = ?, status = 'active' WHERE id = ?").run(newExpiresAt, keyItem.id);
+      count++;
     }
 
     LogsService.logAction(
       user.id,
       user.username,
       'BULK_KEYS_EXTENDED',
-      `Bulk extended ${count} keys by ${days} days`,
-      { count, days }
+      `Bulk extended ${count} keys by ${days} days • Total Cost: ${user.role === 'reseller' ? `${totalCost} Tokens` : 'Free'}`,
+      { count, days, totalCost }
     );
 
     return { success: true, count, message: `Successfully extended ${count} keys by ${days} days.` };
@@ -597,9 +685,11 @@ export class KeysService {
     } else if (role === 'manager') {
       expiredKeys = db.prepare(`
         SELECT DISTINCT k.id, k.key FROM keys k
-        LEFT JOIN users u ON k.createdById = u.id
-        WHERE k.status = 'expired' AND (k.createdById = ? OR k.createdByUsername = ? OR u.createdBy = ? OR u.createdBy = ?)
-      `).all(id, username, id, username) as any[];
+        WHERE k.status = 'expired' AND (
+          k.createdById = ? OR k.createdByUsername = ? 
+          OR k.createdById IN (SELECT id FROM users WHERE createdBy = ?)
+        )
+      `).all(id, username, id) as any[];
     } else {
       expiredKeys = db.prepare("SELECT id, key FROM keys WHERE status = 'expired' AND (createdById = ? OR createdByUsername = ?)").all(id, username) as any[];
     }

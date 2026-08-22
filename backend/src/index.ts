@@ -97,7 +97,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', routes);
-
 app.use(errorHandler);
 
 async function bootstrap() {
@@ -112,4 +111,8 @@ async function bootstrap() {
   }
 }
 
-bootstrap();
+export { app, bootstrap, initDatabase };
+
+if (import.meta.main) {
+  bootstrap();
+}

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { generateUUID } from '../utils/crypto';
+import { AuthUserPayload } from '../types/common';
 
 export interface AuditLogRecord {
   id: string;
@@ -69,12 +70,26 @@ export class LogsService {
     return newLog;
   }
 
-  static getLogs(limit: number = 500, action?: string, username?: string): AuditLogRecord[] {
+  static getLogs(user?: AuthUserPayload, limit: number = 500, action?: string, username?: string): AuditLogRecord[] {
     ensureLogsFileExists();
     try {
       const raw = fs.readFileSync(LOGS_FILE_PATH, 'utf-8');
       let logs: AuditLogRecord[] = JSON.parse(raw);
       if (!Array.isArray(logs)) return [];
+
+      if (user && user.role === 'reseller') {
+        // Reseller strictly sees ONLY their own activity logs
+        const myUsername = user.username.toLowerCase();
+        logs = logs.filter(
+          (l) => l.userId === user.id || (l.username && l.username.toLowerCase() === myUsername)
+        );
+      } else if (user && user.role === 'manager') {
+        const { db } = require('../db/database');
+        const managedUsernames = (db.prepare('SELECT LOWER(username) as username FROM users WHERE createdBy = ? OR id = ?').all(user.id, user.id) as any[]).map((u: any) => u.username);
+        logs = logs.filter(
+          (l) => l.userId === user.id || (l.username && managedUsernames.includes(l.username.toLowerCase()))
+        );
+      }
 
       if (action && action !== 'all') {
         logs = logs.filter((l) => l.action.toLowerCase() === action.toLowerCase());

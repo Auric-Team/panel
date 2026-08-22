@@ -8,7 +8,7 @@ export const getLogs = (req: AuthenticatedRequest, res: Response, next: NextFunc
     const action = req.query.action as string;
     const username = req.query.username as string;
 
-    const logs = LogsService.getLogs(limit, action, username);
+    const logs = LogsService.getLogs(req.user!, limit, action, username);
     return res.json(logs);
   } catch (err) {
     next(err);
