@@ -111,7 +111,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only left click drag
+    if (e.button !== 0) return;
     setIsDragging(true);
     setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
   };
@@ -170,9 +170,9 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/90 backdrop-blur-2xl animate-in fade-in duration-200 font-mono text-xs">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-ink/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className={`relative w-full transition-all duration-300 bg-slate-900/95 border border-slate-800/90 rounded-3xl shadow-2xl flex flex-col overflow-hidden ${
+        className={`ref-card relative w-full transition-all duration-300 flex flex-col overflow-hidden shadow-2xl ${
           isFullscreen ? 'max-w-[98vw] h-[96vh]' : 'max-w-4xl h-[90vh]'
         }`}
       >
@@ -186,31 +186,31 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
         />
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800/80 bg-slate-950/70 shrink-0">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-soft bg-surface shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-cyan-950/80 border border-cyan-800/50 text-cyan-400">
-              <FileImage className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-md bg-surface text-accent flex items-center justify-center border border-border-soft shrink-0">
+              <FileImage className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white tracking-wide">
-                High-Res Payment Receipt Lightbox
+              <h3 className="font-display text-base font-normal text-ink leading-tight">
+                Payment Receipt Lightbox
               </h3>
-              <p className="text-[10px] text-slate-400 truncate max-w-md">
+              <p className="text-[11px] text-muted truncate max-w-md font-mono mt-0.5">
                 {activeTitle}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5">
             {/* Re-Upload / Replace Receipt Button */}
             {onUpdateReceipt && keyItem && (
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-700/80 text-emerald-300 hover:bg-emerald-900/90 hover:text-white transition text-xs font-bold shadow-sm cursor-pointer disabled:opacity-50"
+                className="ref-btn ref-btn-sm ref-btn-primary flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
                 title="Upload or Replace Receipt Screenshot"
               >
-                <UploadCloud className={`w-3.5 h-3.5 ${isUploading ? 'animate-bounce text-emerald-400' : ''}`} />
+                <UploadCloud className={`w-3.5 h-3.5 ${isUploading ? 'animate-bounce' : ''}`} />
                 <span>{isUploading ? 'Uploading...' : 'Replace Receipt'}</span>
               </button>
             )}
@@ -218,7 +218,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
             {/* Download Button */}
             <button
               onClick={handleDownload}
-              className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 transition"
+              className="ref-btn-icon"
               title="Download Image"
             >
               <Download className="w-4 h-4" />
@@ -227,7 +227,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
             {/* Toggle Fullscreen Modal */}
             <button
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white hover:bg-slate-700 transition"
+              className="ref-btn-icon"
               title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen View'}
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -236,7 +236,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
             {/* Close Modal (X) */}
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-rose-950/50 border border-rose-800/60 text-rose-300 hover:bg-rose-900/80 hover:text-white transition"
+              className="ref-btn-icon text-muted hover:text-danger hover:border-danger/30"
               title="Close Lightbox"
             >
               <X className="w-4 h-4" />
@@ -246,40 +246,40 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
 
         {/* Metadata Details Strip (if keyItem exists) */}
         {keyItem && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-5 py-2.5 bg-slate-950/40 border-b border-slate-800/60 text-[11px] shrink-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-5 py-2.5 bg-surface border-b border-border-soft text-xs shrink-0">
             <div className="flex items-center space-x-2">
-              <Key className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <Key className="w-3.5 h-3.5 text-muted shrink-0" />
               <div className="truncate">
-                <span className="text-[9px] text-slate-500 uppercase block">License Key</span>
-                <span className="text-slate-200 font-semibold truncate block">{keyItem.key}</span>
+                <span className="text-[9px] text-muted uppercase tracking-wider block">License Key</span>
+                <span className="text-ink font-mono font-medium truncate block">{keyItem.key}</span>
               </div>
             </div>
 
             <div className="flex items-center space-x-2">
-              <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <User className="w-3.5 h-3.5 text-muted shrink-0" />
               <div className="truncate">
-                <span className="text-[9px] text-slate-500 uppercase block">Issued By</span>
-                <span className="text-slate-200 font-medium block">
+                <span className="text-[9px] text-muted uppercase tracking-wider block">Issued By</span>
+                <span className="text-ink font-medium block">
                   {keyItem.createdByUsername || 'System'}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center space-x-2">
-              <Coins className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <Coins className="w-3.5 h-3.5 text-warning shrink-0" />
               <div>
-                <span className="text-[9px] text-slate-500 uppercase block">Cost Tokens</span>
-                <span className="text-amber-400 font-bold block">
+                <span className="text-[9px] text-muted uppercase tracking-wider block">Cost Tokens</span>
+                <span className="text-ink font-semibold font-mono block">
                   {keyItem.costTokens || 0} Tokens
                 </span>
               </div>
             </div>
 
             <div className="flex items-center space-x-2">
-              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <Calendar className="w-3.5 h-3.5 text-muted shrink-0" />
               <div>
-                <span className="text-[9px] text-slate-500 uppercase block">Timestamp</span>
-                <span className="text-slate-300 block">
+                <span className="text-[9px] text-muted uppercase tracking-wider block">Timestamp</span>
+                <span className="text-muted font-mono block">
                   {keyItem.createdAt ? new Date(keyItem.createdAt).toLocaleString() : 'N/A'}
                 </span>
               </div>
@@ -295,7 +295,7 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          className="relative flex-1 bg-slate-950 border-b border-slate-800/80 overflow-hidden flex items-center justify-center p-2 select-none cursor-grab active:cursor-grabbing"
+          className="relative flex-1 bg-surface-solid border-b border-border-soft overflow-hidden flex items-center justify-center p-4 select-none cursor-grab active:cursor-grabbing"
         >
           <div className="w-full h-full flex items-center justify-center">
             <img
@@ -315,88 +315,85 @@ export const PaymentScreenshotModal: React.FC<PaymentScreenshotModalProps> = ({
                 maxHeight: fitMode === 'fit' ? '100%' : 'none',
                 maxWidth: fitMode === 'fit' ? '100%' : 'none',
               }}
-              className="object-contain rounded-xl shadow-2xl pointer-events-auto"
+              className="object-contain rounded-md shadow-lg pointer-events-auto border border-border-soft"
             />
           </div>
 
           {/* Floating Controls Toolbar */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-2 px-4 py-2 rounded-2xl bg-slate-900/90 border border-slate-700/80 backdrop-blur-md shadow-2xl text-slate-200 z-20 font-mono text-xs">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-1.5 px-3 py-1.5 rounded-lg ref-card border border-border-soft shadow-lg text-ink z-20 text-xs font-mono">
             {/* Fit / Actual Size Toggle */}
             <button
               onClick={toggleFitMode}
-              className={`px-2.5 py-1 rounded-lg font-bold text-[10px] uppercase transition flex items-center space-x-1 border ${
-                fitMode === 'fit'
-                  ? 'bg-cyan-950 text-cyan-400 border-cyan-800/60'
-                  : 'bg-slate-800 text-slate-300 border-slate-700'
+              className={`ref-btn ref-btn-sm py-1 px-2.5 font-sans font-medium text-xs flex items-center space-x-1 ${
+                fitMode === 'fit' ? 'ref-btn-primary' : 'ref-btn-ghost'
               }`}
               title="Toggle Auto Fit to Screen"
             >
               <Expand className="w-3 h-3" />
-              <span>{fitMode === 'fit' ? 'Fit Screen' : '100% Size'}</span>
+              <span>{fitMode === 'fit' ? 'Fit Screen' : '100%'}</span>
             </button>
 
-            <div className="w-px h-4 bg-slate-700 mx-0.5" />
+            <div className="w-px h-4 bg-border-soft mx-1" />
 
             {/* Zoom Out Button (-) */}
             <button
               onClick={handleZoomOut}
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center space-x-1"
+              className="ref-btn-icon w-7 h-7"
               title="Zoom Out (-)"
             >
-              <ZoomOut className="w-4 h-4" />
+              <ZoomOut className="w-3.5 h-3.5" />
             </button>
 
-            <span className="text-cyan-400 font-semibold px-1.5 min-w-[45px] text-center">
+            <span className="text-ink font-mono font-medium px-1.5 min-w-[48px] text-center">
               {Math.round(zoomLevel * 100)}%
             </span>
 
             {/* Zoom In Button (+) */}
             <button
               onClick={handleZoomIn}
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center space-x-1"
+              className="ref-btn-icon w-7 h-7"
               title="Zoom In (+)"
             >
-              <ZoomIn className="w-4 h-4" />
+              <ZoomIn className="w-3.5 h-3.5" />
             </button>
 
-            <div className="w-px h-4 bg-slate-700 mx-0.5" />
+            <div className="w-px h-4 bg-border-soft mx-1" />
 
             {/* 90-degree Rotation Button */}
             <button
               onClick={handleRotate}
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center space-x-1"
+              className="ref-btn-icon w-7 h-7"
               title="Rotate 90°"
             >
-              <RotateCw className="w-4 h-4" />
+              <RotateCw className="w-3.5 h-3.5" />
             </button>
 
             {/* Reset View Button */}
             <button
               onClick={handleReset}
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center space-x-1"
+              className="ref-btn-icon w-7 h-7"
               title="Reset Zoom & Position"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span className="text-[10px]">Reset</span>
             </button>
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between px-5 py-3 bg-slate-950/80 shrink-0">
+        <div className="flex items-center justify-between px-5 py-3 bg-surface shrink-0">
           <a
             href={activeSrc}
             target="_blank"
             rel="noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 text-xs font-semibold flex items-center space-x-1.5"
+            className="text-accent hover:underline text-xs font-medium flex items-center space-x-1.5"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            <span>Open Original Image Direct</span>
+            <span>Open Original Direct</span>
           </a>
 
           <button
             onClick={onClose}
-            className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-5 py-2 rounded-xl transition border border-slate-700/80 shadow-sm"
+            className="ref-btn ref-btn-ghost ref-btn-sm"
           >
             Close Viewer
           </button>

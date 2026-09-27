@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldCheck, Lock, ArrowLeft, Delete, KeyRound, Sparkles } from 'lucide-react';
+import { KeyRound, ArrowLeft, Delete } from 'lucide-react';
 
 interface DialPad2FAProps {
   isOpen?: boolean;
@@ -25,12 +25,10 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    // Focus first input on mount
     inputRefs.current[0]?.focus();
   }, []);
 
   const handleDigitChange = (index: number, value: string) => {
-    // Handle multiple characters (e.g. pasted code)
     if (value.length > 1) {
       const clean = value.replace(/\D/g, '').slice(0, 6);
       if (clean.length > 0) {
@@ -105,7 +103,7 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
   };
 
   const handleKeypadBackspace = () => {
-    const lastFilledIndex = digits.reduce((last, curr, idx) => (curr !== '' ? idx : last), -1);
+    const lastFilledIndex = digits.map((d) => d !== '').lastIndexOf(true);
     if (lastFilledIndex !== -1) {
       const newDigits = [...digits];
       newDigits[lastFilledIndex] = '';
@@ -127,20 +125,20 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 backdrop-blur-2xl relative z-10 animate-in fade-in zoom-in-95 duration-200">
-      {/* Top Brand / Security Icon */}
+    <div className="w-full max-w-md ref-card p-6 sm:p-8 space-y-6 relative z-10 animate-in fade-in zoom-in-95 duration-200">
+      {/* Top Security Icon & Header */}
       <div className="text-center space-y-2">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-cyan-950/80 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
-          <KeyRound className="w-7 h-7" />
+        <div className="ref-dialog-icon">
+          <KeyRound className="w-6 h-6 text-accent" />
         </div>
-        <h2 className="text-xl font-bold text-white tracking-tight">Two-Factor Authentication</h2>
-        <p className="text-xs text-slate-400 font-mono">
-          Enter 6-digit security PIN for <strong className="text-white">@{username}</strong> ({role})
+        <h2 className="font-display text-xl font-normal text-ink tracking-tight">Two-Factor Authentication</h2>
+        <p className="text-xs text-muted font-sans">
+          Enter 6-digit security PIN for <strong className="text-ink">@{username}</strong> ({role})
         </p>
       </div>
 
       {errorMsg && (
-        <div className="p-3 rounded-2xl bg-rose-950/70 border border-rose-800/80 text-rose-300 text-xs text-center font-semibold font-mono animate-shake">
+        <div className="p-3 rounded-md bg-danger/10 border border-danger/25 text-danger text-xs text-center font-medium">
           {errorMsg}
         </div>
       )}
@@ -161,10 +159,18 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
             onChange={(e) => handleDigitChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
             disabled={isVerifying}
-            className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-2xl border transition-all outline-none bg-slate-950 ${
+            autoComplete="one-time-code"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            data-lpignore="true"
+            data-1p-ignore="true"
+            data-form-type="other"
+            name={`security_pin_digit_${i}`}
+            className={`w-11 h-12 sm:w-12 sm:h-12 text-center text-lg font-bold font-mono rounded-sm border transition-colors outline-none bg-surface text-ink ${
               digit
-                ? 'border-cyan-500 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
-                : 'border-slate-800 text-white focus:border-cyan-500/70 focus:bg-slate-900'
+                ? 'border-accent shadow-sm'
+                : 'border-border focus:border-focus'
             }`}
           />
         ))}
@@ -172,7 +178,7 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
 
       {/* Verifying Status */}
       {isVerifying && (
-        <div className="text-center text-xs font-mono text-cyan-400 animate-pulse font-semibold">
+        <div className="text-center text-xs font-mono text-accent animate-pulse font-medium">
           Verifying security PIN...
         </div>
       )}
@@ -182,13 +188,13 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
         <button
           type="button"
           onClick={() => setShowKeypad(!showKeypad)}
-          className="text-[11px] font-mono text-slate-400 hover:text-cyan-400 transition underline tracking-wider"
+          className="text-[11px] font-sans text-muted hover:text-ink transition underline tracking-wider"
         >
           {showKeypad ? 'Hide On-Screen Keypad' : 'Show On-Screen Keypad'}
         </button>
       </div>
 
-      {/* Optional Touch Numpad */}
+      {/* Touch Numpad */}
       {showKeypad && (
         <div className="grid grid-cols-3 gap-2 max-w-[240px] mx-auto pt-2 animate-in fade-in duration-150">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((num) => (
@@ -196,7 +202,7 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
               key={num}
               type="button"
               onClick={() => handleKeypadDigit(num)}
-              className="w-16 h-12 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-lg hover:bg-slate-800 active:scale-95 transition flex items-center justify-center shadow-sm"
+              className="ref-btn h-11 text-base font-mono font-bold"
             >
               {num}
             </button>
@@ -205,7 +211,7 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
           <button
             type="button"
             onClick={() => setDigits(['', '', '', '', '', ''])}
-            className="w-16 h-12 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 text-[11px] font-mono font-semibold transition flex items-center justify-center"
+            className="ref-btn h-11 text-[11px] font-sans"
           >
             Clear
           </button>
@@ -213,7 +219,7 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
           <button
             type="button"
             onClick={() => handleKeypadDigit('0')}
-            className="w-16 h-12 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-lg hover:bg-slate-800 active:scale-95 transition flex items-center justify-center"
+            className="ref-btn h-11 text-base font-mono font-bold"
           >
             0
           </button>
@@ -221,7 +227,7 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
           <button
             type="button"
             onClick={handleKeypadBackspace}
-            className="w-16 h-12 rounded-xl bg-slate-950 border border-slate-800 text-rose-400 hover:bg-slate-800 active:scale-95 transition flex items-center justify-center"
+            className="ref-btn h-11 text-danger"
           >
             <Delete className="w-5 h-5" />
           </button>
@@ -233,7 +239,7 @@ export const DialPad2FA: React.FC<DialPad2FAProps> = ({
         <button
           type="button"
           onClick={onCancel}
-          className="w-full py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-white font-semibold text-xs border border-slate-800 transition flex items-center justify-center space-x-2"
+          className="ref-btn w-full py-2.5 text-xs font-medium flex items-center justify-center space-x-2"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Credentials Login</span>

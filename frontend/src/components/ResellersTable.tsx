@@ -94,18 +94,18 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
   };
 
   return (
-    <div className="space-y-6 font-mono text-xs">
+    <div className="space-y-6 font-sans text-xs">
       {/* Create Account Form Card (Owner & Manager) */}
       {(roleString === 'owner' || roleString === 'manager') && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
-          <div className="flex items-center space-x-2 pb-2 border-b border-slate-800">
-            <UserPlus className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold text-white">Create New Reseller / Manager Account</h3>
+        <div className="ref-card p-5 space-y-3">
+          <div className="flex items-center space-x-2 pb-2 border-b border-border-soft">
+            <UserPlus className="w-4 h-4 text-accent" />
+            <h3 className="font-display text-sm font-normal text-ink">Create New Reseller / Manager Account</h3>
           </div>
 
           <form onSubmit={handleCreateSubmit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+              <label className="text-[10px] uppercase font-sans font-medium text-muted block mb-1">
                 Username
               </label>
               <input
@@ -114,12 +114,12 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                 placeholder="Username..."
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-slate-700 transition"
+                className="ref-input w-full font-mono text-xs"
               />
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+              <label className="text-[10px] uppercase font-sans font-medium text-muted block mb-1">
                 Password
               </label>
               <input
@@ -128,19 +128,19 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                 placeholder="Password..."
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-slate-700 transition"
+                className="ref-input w-full font-mono text-xs"
               />
             </div>
 
             {roleString === 'owner' && (
               <div>
-                <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+                <label className="text-[10px] uppercase font-sans font-medium text-muted block mb-1">
                   Account Role
                 </label>
                 <select
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-slate-700 transition cursor-pointer"
+                  className="ref-input w-full font-mono text-xs cursor-pointer"
                 >
                   <option value="reseller">Reseller</option>
                   <option value="manager">Manager</option>
@@ -149,7 +149,7 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
             )}
 
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+              <label className="text-[10px] uppercase font-sans font-medium text-muted block mb-1">
                 Initial Tokens
               </label>
               <input
@@ -157,7 +157,7 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                 min="0"
                 value={newTokens}
                 onChange={(e) => setNewTokens(parseInt(e.target.value, 10) || 0)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none focus:border-slate-700 transition"
+                className="ref-input w-full font-mono text-xs"
               />
             </div>
 
@@ -165,7 +165,7 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
               <button
                 type="submit"
                 disabled={isCreating}
-                className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 rounded-xl transition flex items-center justify-center space-x-1.5 disabled:opacity-50"
+                className="ref-btn ref-btn-primary w-full py-2 flex items-center justify-center space-x-1.5"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>{isCreating ? 'Creating...' : 'Create User'}</span>
@@ -176,30 +176,30 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
       )}
 
       {/* Resellers Directory Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="ref-card p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-soft">
           <div className="flex items-center space-x-2">
-            <h3 className="text-sm font-bold text-white">Managed Accounts Directory</h3>
-            <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 font-semibold text-[11px]">
+            <h3 className="font-display text-sm font-normal text-ink">Managed Accounts Directory</h3>
+            <span className="ref-badge text-[10px] font-mono">
               {filteredUsers.length} Users
             </span>
           </div>
 
           <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-muted absolute left-3 top-2.5" />
             <input
               type="text"
               placeholder="Search username, role, creator..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-white font-mono outline-none focus:border-slate-700 transition"
+              className="ref-input w-full pl-8 py-1.5 text-xs font-mono"
             />
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/40">
+        <div className="overflow-x-auto rounded-md border border-border-soft bg-surface-solid">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800 font-semibold">
+            <thead className="bg-surface text-muted uppercase text-[10px] tracking-wider border-b border-border-soft font-sans font-medium">
               <tr>
                 <th className="p-3">User / Reseller</th>
                 <th className="p-3">Role</th>
@@ -209,19 +209,19 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                 <th className="p-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-mono text-slate-300">
+            <tbody className="divide-y divide-border-soft font-mono text-ink">
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-500 font-sans">
+                  <td colSpan={6} className="p-8 text-center text-muted font-sans">
                     No accounts found.
                   </td>
                 </tr>
               ) : (
                 filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-800/40 transition">
-                    <td className="p-3 font-semibold text-white">
+                  <tr key={u.id} className="hover:bg-surface-hover transition-colors">
+                    <td className="p-3 font-semibold text-ink">
                       <div className="flex items-center space-x-2">
-                        <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 font-bold">
+                        <div className="w-6 h-6 rounded-sm bg-accent/10 border border-accent/20 flex items-center justify-center text-accent font-bold text-[10px]">
                           {u.username.slice(0, 2).toUpperCase()}
                         </div>
                         <span>{u.username}</span>
@@ -229,28 +229,28 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                     </td>
 
                     <td className="p-3">
-                      <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-semibold uppercase border border-slate-700">
+                      <span className="px-2 py-0.5 rounded-sm bg-surface text-muted text-[10px] font-medium uppercase border border-border-soft">
                         {u.role}
                       </span>
                     </td>
 
-                    <td className="p-3 font-bold text-amber-400">
+                    <td className="p-3 font-bold text-warning">
                       <div className="flex items-center space-x-1">
                         <Coins className="w-3.5 h-3.5" />
                         <span>{u.tokens ?? 0}</span>
                       </div>
                     </td>
 
-                    <td className="p-3 text-cyan-300 font-bold">
+                    <td className="p-3 text-ink font-medium">
                       @{u.createdByUsername || u.createdBy || 'System'}
                     </td>
 
                     <td className="p-3">
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                        className={`ref-badge text-[9px] ${
                           u.isBlocked === 1
-                            ? 'bg-rose-950/80 text-rose-400 border border-rose-800/60'
-                            : 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60'
+                            ? 'danger'
+                            : 'success'
                         }`}
                       >
                         {u.isBlocked === 1 ? 'Blocked' : 'Active'}
@@ -262,7 +262,7 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                         {/* Manage Tokens */}
                         <button
                           onClick={() => handleOpenTokens(u)}
-                          className="px-2.5 py-1 rounded-lg bg-amber-950/40 border border-amber-800/50 text-amber-300 hover:bg-amber-900/60 transition flex items-center space-x-1"
+                          className="ref-btn ref-btn-sm text-warning"
                           title="Adjust Token Balance"
                         >
                           <Coins className="w-3 h-3" />
@@ -272,20 +272,20 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                         {/* Drilldown Reseller Dashboard */}
                         <button
                           onClick={() => handleOpenDashboard(u)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700 transition flex items-center space-x-1"
+                          className="ref-btn ref-btn-sm text-accent"
                           title="View Reseller Dashboard"
                         >
-                          <Eye className="w-3 h-3 text-cyan-400" />
+                          <Eye className="w-3 h-3" />
                           <span>Dashboard</span>
                         </button>
 
                         {/* Toggle Block */}
                         <button
                           onClick={() => onToggleBlock(u.id, u.isBlocked === 0)}
-                          className={`p-1.5 rounded-lg border transition ${
+                          className={`ref-btn-icon w-7 h-7 ${
                             u.isBlocked === 1
-                              ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/50 hover:bg-emerald-900/60'
-                              : 'bg-amber-950/40 text-amber-400 border-amber-800/50 hover:bg-amber-900/60'
+                              ? 'text-success hover:border-success/30'
+                              : 'text-warning hover:border-warning/30'
                           }`}
                           title={u.isBlocked === 1 ? 'Unblock User' : 'Block User'}
                         >
@@ -296,7 +296,7 @@ export const ResellersTable: React.FC<ResellersTableProps> = ({
                         {u.role !== 'owner' && u.id !== currentUser?.id && onDeleteUser && (
                           <button
                             onClick={() => onDeleteUser(u.id)}
-                            className="p-1.5 rounded-lg bg-rose-950/50 text-rose-400 border border-rose-800/50 hover:bg-rose-900/60 transition"
+                            className="ref-btn-icon w-7 h-7 text-danger hover:border-danger/30"
                             title="Delete User"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

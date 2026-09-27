@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
+import { Check, AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -71,7 +71,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast, toast }}>
       {children}
-      {/* Stacked Floating Toast Container */}
+      {/* Stacked Floating Notification Container */}
       <div
         aria-live="polite"
         className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[9999] flex flex-col gap-2.5 max-w-sm w-[calc(100vw-2rem)] pointer-events-none"
@@ -85,26 +85,33 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           return (
             <div
               key={t.id}
-              className={`pointer-events-auto flex items-start gap-3 p-3.5 rounded-2xl border backdrop-blur-xl shadow-2xl transition-all duration-300 transform translate-y-0 text-xs font-sans animate-in fade-in slide-in-from-bottom-2 ${
-                isSuccess
-                  ? 'bg-slate-900/95 border-emerald-500/40 text-slate-100 shadow-[0_4px_20px_rgba(16,185,129,0.15)]'
-                  : isError
-                  ? 'bg-slate-900/95 border-rose-500/40 text-slate-100 shadow-[0_4px_20px_rgba(244,63,94,0.15)]'
-                  : isWarning
-                  ? 'bg-slate-900/95 border-amber-500/40 text-slate-100 shadow-[0_4px_20px_rgba(245,158,11,0.15)]'
-                  : 'bg-slate-900/95 border-cyan-500/40 text-slate-100 shadow-[0_4px_20px_rgba(6,182,212,0.15)]'
-              }`}
+              className="pointer-events-auto flex items-start gap-3 p-3.5 rounded-md ref-card shadow-lg transition-all duration-200 transform translate-y-0 text-xs font-sans animate-in fade-in slide-in-from-bottom-2"
             >
-              <div className="shrink-0 mt-0.5">
-                {isSuccess && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
-                {isError && <AlertCircle className="w-4 h-4 text-rose-400" />}
-                {isWarning && <AlertTriangle className="w-4 h-4 text-amber-400" />}
-                {isInfo && <Info className="w-4 h-4 text-cyan-400" />}
+              {/* Circular Status Icon */}
+              <div
+                className={`ref-status-icon ${
+                  isSuccess
+                    ? 'success'
+                    : isError
+                    ? 'error'
+                    : isWarning
+                    ? 'warning'
+                    : 'info'
+                }`}
+              >
+                {isSuccess && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+                {isError && <AlertCircle className="w-3.5 h-3.5 stroke-[2.5]" />}
+                {isWarning && <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5]" />}
+                {isInfo && <Info className="w-3.5 h-3.5 stroke-[2.5]" />}
               </div>
 
               <div className="flex-1 min-w-0 pr-1">
-                {t.title && <div className="font-semibold text-white text-xs mb-0.5">{t.title}</div>}
-                <div className="text-slate-300 break-words leading-relaxed text-[11px] font-mono">{t.message}</div>
+                {t.title ? (
+                  <div className="font-semibold text-ink text-xs mb-0.5">{t.title}</div>
+                ) : (
+                  <div className="font-semibold text-ink text-xs mb-0.5 capitalize">{t.type}</div>
+                )}
+                <div className="text-muted break-words leading-relaxed text-[11px] font-sans">{t.message}</div>
 
                 {t.action && (
                   <button
@@ -112,7 +119,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                       t.action?.onClick();
                       removeToast(t.id);
                     }}
-                    className="mt-2 text-[10px] font-bold uppercase tracking-wider text-cyan-400 hover:text-cyan-300 underline"
+                    className="mt-1.5 text-[10px] font-semibold text-accent hover:underline uppercase tracking-wider"
                   >
                     {t.action.label}
                   </button>
@@ -121,7 +128,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
               <button
                 onClick={() => removeToast(t.id)}
-                className="shrink-0 p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                className="shrink-0 p-1 text-muted hover:text-ink rounded-sm hover:bg-surface transition"
+                aria-label="Dismiss notification"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

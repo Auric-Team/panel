@@ -11,6 +11,7 @@ import { AuditLogsTable, AuditLogItem } from '@/components/AuditLogsTable';
 import { PayloadManager } from '@/components/PayloadManager';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { ToastProvider, useToast } from '@/components/ui/ToastContext';
+import { useTheme } from '@/components/ui/ThemeContext';
 import { api, fetchAllKeys, fetchAllUsers, fetchLogsApi } from '@/lib/api';
 import { UserItem, KeyItem, DashboardStats, SalesDataPoint } from '@/types/key';
 import {
@@ -23,10 +24,15 @@ import {
   Sparkles,
   ShieldCheck,
   FileCode2,
+  Sun,
+  Moon,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 function DashboardContent() {
   const { toast } = useToast();
+  const { theme, toggleTheme } = useTheme();
 
   const [user, setUser] = useState<UserItem | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -37,6 +43,7 @@ function DashboardContent() {
   // Auth State
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [pending2FA, setPending2FA] = useState<{ userId: string; role: string; username: string } | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -347,9 +354,23 @@ function DashboardContent() {
   // Render Login & 2FA Interface
   if (!token) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans text-xs relative overflow-hidden">
-        {/* Subtle Ambient Background */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="min-h-screen bg-canvas text-ink flex items-center justify-center p-4 font-sans text-xs relative">
+        {/* Floating Theme Toggle on Login Screen */}
+        <div className="absolute top-4 right-4 z-20">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="ref-btn-icon"
+            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-warning" />
+            ) : (
+              <Moon className="w-4 h-4 text-muted" />
+            )}
+          </button>
+        </div>
 
         {pending2FA ? (
           <DialPad2FA
@@ -360,26 +381,28 @@ function DashboardContent() {
             errorMsg={authError}
           />
         ) : (
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-7 sm:p-9 shadow-2xl space-y-6 backdrop-blur-2xl relative z-10 animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md ref-card p-7 sm:p-9 space-y-6 relative z-10 animate-in fade-in zoom-in-95 duration-200">
             <div className="text-center space-y-2">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-cyan-400 shadow-inner">
-                <ShieldCheck className="w-7 h-7 text-cyan-400" />
+              <div className="ref-dialog-icon">
+                <ShieldCheck className="w-6 h-6 text-accent" />
               </div>
-              <h1 className="text-2xl font-black text-white tracking-tight font-mono">
-                AXIOS <span className="text-cyan-400">EXECUTIVE</span>
+              <h1 className="font-display text-2xl font-normal text-ink tracking-tight">
+                AXIOS <span className="text-muted text-lg tracking-widest font-sans uppercase">Executive</span>
               </h1>
-              <p className="text-xs text-slate-400 font-mono">Hardware Licensing & Token Management</p>
+              <p className="text-xs text-muted font-sans tracking-wide">
+                Hardware Licensing &amp; Token Management Portal
+              </p>
             </div>
 
             {authError && (
-              <div className="p-3.5 rounded-2xl bg-rose-950/70 border border-rose-800/80 text-rose-300 text-xs text-center font-semibold font-mono">
+              <div className="p-3 rounded-md bg-danger/10 border border-danger/25 text-danger text-xs text-center font-medium">
                 {authError}
               </div>
             )}
 
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="text-[11px] font-mono font-semibold text-slate-400 block mb-1.5 uppercase">
+                <label className="text-[11px] font-sans font-medium text-muted block mb-1.5 uppercase tracking-wider">
                   Account Username
                 </label>
                 <input
@@ -388,28 +411,59 @@ function DashboardContent() {
                   placeholder="Enter username"
                   value={loginUsername}
                   onChange={(e) => setLoginUsername(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 transition"
+                  className="ref-input w-full font-mono text-xs"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-mono font-semibold text-slate-400 block mb-1.5 uppercase">
-                  Security Password
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] font-sans font-medium text-muted uppercase tracking-wider">
+                    Security Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-[11px] text-muted hover:text-ink flex items-center gap-1 transition-colors select-none"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <>
+                        <EyeOff className="w-3.5 h-3.5" />
+                        <span>Hide</span>
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Show</span>
+                      </>
+                    )}
+                  </button>
+                </div>
                 <input
-                  type="password"
+                  type="text"
                   required
                   placeholder="Enter password"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 transition"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck="false"
+                  data-lpignore="true"
+                  data-1p-ignore="true"
+                  data-form-type="other"
+                  name="panel_auth_key"
+                  style={{
+                    WebkitTextSecurity: showPassword ? 'none' : 'disc',
+                  } as React.CSSProperties}
+                  className="ref-input w-full font-mono text-xs"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoggingIn}
-                className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3.5 rounded-2xl transition shadow-lg shadow-cyan-600/20 text-xs flex items-center justify-center space-x-2 disabled:opacity-50 font-mono uppercase tracking-wider"
+                className="ref-btn ref-btn-primary w-full py-3 rounded-md text-xs font-semibold uppercase tracking-wider flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 {isLoggingIn ? (
                   <span>Authenticating...</span>
@@ -431,7 +485,7 @@ function DashboardContent() {
   const isManagerOrOwner = user?.role === 'owner' || user?.role === 'manager';
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans text-xs pb-24 sm:pb-12 selection:bg-cyan-500 selection:text-slate-950">
+    <div className="min-h-screen bg-canvas text-ink font-sans text-xs pb-24 sm:pb-12 transition-colors">
       {/* Top Header */}
       <Header
         user={user}
@@ -443,34 +497,26 @@ function DashboardContent() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 mt-5 space-y-6">
         {/* Desktop Navigation Tabs Bar */}
-        <div className="hidden sm:flex items-center space-x-1.5 bg-slate-900 border border-slate-800 p-1.5 rounded-3xl shadow-xl overflow-x-auto">
+        <div className="hidden sm:flex items-center ref-tab-list overflow-x-auto shadow-sm">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
-              activeTab === 'overview'
-                ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            className={`ref-tab-btn shrink-0 ${activeTab === 'overview' ? 'active' : ''}`}
           >
-            <LayoutDashboard className="w-4 h-4" />
-            <span>Overview & Analytics</span>
-            <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">
+            <LayoutDashboard className="w-4 h-4 text-muted" />
+            <span>Overview &amp; Analytics</span>
+            <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-accent/15 text-accent border border-accent/25">
               LIVE
             </span>
           </button>
 
           <button
             onClick={() => setActiveTab('keys')}
-            className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
-              activeTab === 'keys'
-                ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            className={`ref-tab-btn shrink-0 ${activeTab === 'keys' ? 'active' : ''}`}
           >
-            <Key className="w-4 h-4" />
-            <span>Key Management & Generator</span>
+            <Key className="w-4 h-4 text-muted" />
+            <span>Key Management &amp; Studio</span>
             {keys.length > 0 && (
-              <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-slate-950 text-slate-300 border border-slate-800">
+              <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-surface border border-border-soft text-muted">
                 {keys.length}
               </span>
             )}
@@ -479,16 +525,12 @@ function DashboardContent() {
           {isManagerOrOwner && (
             <button
               onClick={() => setActiveTab('resellers')}
-              className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
-                activeTab === 'resellers'
-                  ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+              className={`ref-tab-btn shrink-0 ${activeTab === 'resellers' ? 'active' : ''}`}
             >
-              <Users className="w-4 h-4" />
+              <Users className="w-4 h-4 text-muted" />
               <span>Reseller Network</span>
               {resellers.filter((r) => r.role === 'reseller' || r.role === 'manager').length > 0 && (
-                <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-slate-950 text-slate-300 border border-slate-800">
+                <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-surface border border-border-soft text-muted">
                   {resellers.filter((r) => r.role === 'reseller' || r.role === 'manager').length}
                 </span>
               )}
@@ -498,28 +540,20 @@ function DashboardContent() {
           {isManagerOrOwner && (
             <button
               onClick={() => setActiveTab('payload')}
-              className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
-                activeTab === 'payload'
-                  ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+              className={`ref-tab-btn shrink-0 ${activeTab === 'payload' ? 'active' : ''}`}
             >
-              <FileCode2 className="w-4 h-4" />
+              <FileCode2 className="w-4 h-4 text-muted" />
               <span>libil2cpp.so Publisher</span>
             </button>
           )}
 
           <button
             onClick={() => setActiveTab('audit')}
-            className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all text-xs whitespace-nowrap ${
-              activeTab === 'audit'
-                ? 'bg-slate-800 text-cyan-400 shadow-sm border border-slate-700'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            className={`ref-tab-btn shrink-0 ${activeTab === 'audit' ? 'active' : ''}`}
           >
-            <Activity className="w-4 h-4" />
+            <Activity className="w-4 h-4 text-muted" />
             <span>Audit Logs</span>
-            <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-slate-950 text-slate-300 border border-slate-800">
+            <span className="px-1.5 py-0.5 text-[9px] rounded-full font-mono bg-surface border border-border-soft text-muted">
               {auditLogs.length}
             </span>
           </button>

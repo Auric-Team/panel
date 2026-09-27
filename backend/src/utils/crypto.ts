@@ -164,6 +164,13 @@ export function saveBase64Image(base64DataStr: string): string | null {
   }
 }
 
+export function generateResponseToken(key: string, hwid: string, expiresAt: string): string {
+  return crypto
+    .createHmac('sha256', ENV.PAYLOAD_SECRET)
+    .update(`${key}:${hwid}:${expiresAt}:authenticated`)
+    .digest('hex');
+}
+
 /**
  * Cryptographic client signature verification with anti-tamper and anti-replay protection.
  */

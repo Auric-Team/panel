@@ -307,6 +307,10 @@ describe("AXIOS Key Management System - Direct Bun Backend Integration Tests", (
     expect(verifyRes.status).toBe(200);
     const vData = await verifyRes.json();
     expect(vData.status).toBe("authenticated");
+    expect(vData.token).toBeDefined();
+    expect(typeof vData.token).toBe("string");
+    expect(vData.token.length).toBe(64); // SHA-256 HMAC is 64 hex chars
+    expect(vData.serverTime).toBeDefined();
 
     // Second verify with SAME HWID -> success
     const vRes2 = await fetch(`${BASE_URL}/api/verify`, {

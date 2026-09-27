@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, RefreshCw, LogOut, Coins, Activity, ShieldAlert, Zap } from 'lucide-react';
+import { ShieldCheck, RefreshCw, LogOut, Coins, Sun, Moon } from 'lucide-react';
 import { UserItem } from '@/types/key';
+import { useTheme } from '@/components/ui/ThemeContext';
 
 export interface NavbarProps {
   user: UserItem | null;
@@ -20,6 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogout,
 }) => {
   const [latency, setLatency] = useState<number | null>(null);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     let isMounted = true;
@@ -43,50 +45,50 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, []);
 
-  const getLatencyColor = (ms: number | null) => {
-    if (ms === null) return 'text-rose-400 border-rose-800/60 bg-rose-950/40';
-    if (ms < 80) return 'text-emerald-400 border-emerald-800/60 bg-emerald-950/40';
-    if (ms < 200) return 'text-amber-400 border-amber-800/60 bg-amber-950/40';
-    return 'text-rose-400 border-rose-800/60 bg-rose-950/40';
+  const getLatencyBadgeClass = (ms: number | null) => {
+    if (ms === null || ms >= 200) return 'text-danger bg-danger/10 border-danger/20';
+    if (ms < 80) return 'text-success bg-success/10 border-success/20';
+    return 'text-warning bg-warning/10 border-warning/20';
   };
 
   const getRoleBadge = (role?: string) => {
     switch (role) {
       case 'owner':
-        return 'bg-purple-950/80 text-purple-300 border-purple-800/80 shadow-[0_0_10px_rgba(168,85,247,0.2)]';
+        return 'bg-accent/15 text-accent border-accent/25';
       case 'manager':
-        return 'bg-cyan-950/80 text-cyan-300 border-cyan-800/80 shadow-[0_0_10px_rgba(6,182,212,0.2)]';
+        return 'bg-info/15 text-info border-info/25';
       case 'reseller':
-        return 'bg-indigo-950/80 text-indigo-300 border-indigo-800/80';
+        return 'bg-muted/15 text-muted border-border';
       default:
-        return 'bg-slate-900 text-slate-300 border-slate-700';
+        return 'bg-surface text-ink border-border-soft';
     }
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-slate-950/85 border-b border-slate-800/80 backdrop-blur-2xl px-4 sm:px-8 py-3 transition-all duration-200 shadow-2xl">
+    <header className="sticky top-0 z-40 w-full bg-surface-solid/85 border-b border-border-soft backdrop-blur-md px-4 sm:px-8 py-3 transition-colors shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-        {/* Brand Logo & System Info */}
+        {/* Brand Logo & Editorial Title */}
         <div className="flex items-center space-x-3.5">
-          <div className="relative group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] group-hover:border-cyan-400 transition-all duration-300">
-              <ShieldCheck className="w-5 h-5 text-cyan-400 animate-pulse" />
-            </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950 shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+          <div className="relative flex items-center justify-center w-9 h-9 rounded-md bg-surface-gradient border border-border-soft text-accent shadow-sm">
+            <ShieldCheck className="w-5 h-5 text-accent" />
+            <div
+              className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-surface-solid ${
+                isConnected ? 'bg-success' : 'bg-danger'
+              }`}
+            />
           </div>
 
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-base sm:text-lg font-black tracking-tight text-white font-mono flex items-center gap-1.5">
-                AXIOS <span className="text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.5)]">EXECUTIVE</span>
-              </span>
-              <span className="px-2 py-0.5 text-[9px] font-mono font-extrabold bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 rounded-full uppercase tracking-wider">
-                v3.0 PRO
+              <h1 className="font-display text-lg sm:text-xl font-normal tracking-tight text-ink flex items-center gap-1.5">
+                AXIOS <span className="text-muted font-sans text-xs tracking-widest uppercase font-semibold">Executive</span>
+              </h1>
+              <span className="px-1.5 py-0.5 text-[9px] font-mono font-semibold rounded border border-border-soft bg-surface text-muted uppercase">
+                v3.0
               </span>
             </div>
-            <p className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-              Hardware License & Cryptographic Armor
+            <p className="hidden sm:block text-[11px] text-muted font-sans tracking-wide">
+              Licensing Control &amp; Cryptographic Armor
             </p>
           </div>
         </div>
@@ -95,35 +97,33 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center space-x-2 sm:space-x-3">
           {/* Real-time Server Ping Indicator */}
           <div
-            className={`hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-xl border text-[11px] font-mono transition-all ${getLatencyColor(
+            className={`hidden md:flex items-center space-x-2 px-2.5 py-1 rounded-sm border text-[11px] font-mono transition-colors ${getLatencyBadgeClass(
               latency
             )}`}
             title="Real-time Server Telemetry"
           >
-            <div
-              className={`w-2 h-2 rounded-full ${
-                isConnected
-                  ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)] animate-pulse'
-                  : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.9)]'
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isConnected ? 'bg-success' : 'bg-danger'
               }`}
             />
-            <span className="font-semibold">
+            <span>
               {isConnected ? (latency !== null ? `${latency}ms` : 'Active') : 'Offline'}
             </span>
           </div>
 
           {/* User Profile & Token Balance */}
           {user && (
-            <div className="flex items-center space-x-2 sm:space-x-3 bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-all rounded-2xl px-3 py-1.5 font-mono text-xs shadow-lg backdrop-blur-md">
+            <div className="flex items-center space-x-2 sm:space-x-3 bg-surface border border-border-soft rounded-md px-3 py-1 font-sans text-xs shadow-sm">
               <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-700 flex items-center justify-center text-[11px] font-black text-white shadow-sm">
+                <div className="w-5 h-5 rounded bg-accent text-accent-ink flex items-center justify-center text-[10px] font-bold font-mono">
                   {user.username.slice(0, 1).toUpperCase()}
                 </div>
-                <span className="font-bold text-white text-xs max-w-[90px] sm:max-w-[150px] truncate">
+                <span className="font-medium text-ink text-xs max-w-[90px] sm:max-w-[140px] truncate">
                   {user.username}
                 </span>
                 <span
-                  className={`hidden sm:inline-block px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase border ${getRoleBadge(
+                  className={`hidden sm:inline-block px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold uppercase border ${getRoleBadge(
                     user.role
                   )}`}
                 >
@@ -132,25 +132,41 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               {/* Tokens Pill */}
-              <div className="flex items-center space-x-1.5 text-amber-400 border-l border-slate-800 pl-2.5 sm:pl-3">
-                <Coins className="w-4 h-4 text-amber-400 animate-bounce" />
-                <span className="font-black text-amber-300 text-xs tracking-tight">
+              <div className="flex items-center space-x-1.5 text-ink border-l border-line pl-2.5 sm:pl-3">
+                <Coins className="w-3.5 h-3.5 text-warning" />
+                <span className="font-mono font-bold text-ink text-xs">
                   {(user.tokens !== undefined ? user.tokens : (user.credits || 0)).toLocaleString()}
                 </span>
-                <span className="hidden sm:inline text-[10px] text-amber-500 font-semibold">T</span>
+                <span className="hidden sm:inline text-[10px] text-muted font-mono">T</span>
               </div>
             </div>
           )}
+
+          {/* Theme Switcher Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="ref-btn-icon"
+            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-warning" />
+            ) : (
+              <Moon className="w-4 h-4 text-muted" />
+            )}
+          </button>
 
           {/* Refresh Action */}
           <button
             type="button"
             onClick={onRefresh}
             disabled={isRefreshing}
-            className="p-2.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-cyan-500/40 text-slate-300 hover:text-white transition-all disabled:opacity-50 shadow-md active:scale-95"
+            className="ref-btn-icon"
             title="Refresh Real-time Data"
+            aria-label="Refresh Data"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-4 h-4 text-muted ${isRefreshing ? 'animate-spin text-accent' : ''}`} />
           </button>
 
           {/* Logout Action */}
@@ -158,8 +174,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={onLogout}
-              className="p-2.5 rounded-2xl bg-rose-950/30 hover:bg-rose-900/60 border border-rose-900/50 hover:border-rose-700 text-rose-300 hover:text-white transition-all shadow-md active:scale-95"
-              title="Secure Sign Out"
+              className="ref-btn-icon hover:text-danger hover:border-danger/30"
+              title="Sign Out"
+              aria-label="Sign Out"
             >
               <LogOut className="w-4 h-4" />
             </button>

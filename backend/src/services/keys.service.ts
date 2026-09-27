@@ -1,6 +1,6 @@
 import { db } from '../db/database';
 import { AppError } from '../utils/errors';
-import { generateUUID, generateKeyString, saveBase64Image, verifyClientSignature } from '../utils/crypto';
+import { generateUUID, generateKeyString, saveBase64Image, verifyClientSignature, generateResponseToken } from '../utils/crypto';
 import { LogsService } from './logs.service';
 import { KeyRecord, VerifyKeyPayload, GenerateKeysPayload } from '../types/keys';
 import { AuthUserPayload } from '../types/common';
@@ -95,6 +95,8 @@ export class KeysService {
         targetGame: defaultTargetGame,
         isMasterKey: true,
         deviceCount,
+        token: generateResponseToken(keyItem.key, reqHwid, keyItem.expiresAt),
+        serverTime: Date.now(),
       };
     }
 
@@ -107,6 +109,8 @@ export class KeysService {
         message: 'Key is active',
         expiresAt: keyItem.expiresAt,
         targetGame: defaultTargetGame,
+        token: generateResponseToken(keyItem.key, reqHwid, keyItem.expiresAt),
+        serverTime: Date.now(),
       };
     }
 
@@ -127,6 +131,8 @@ export class KeysService {
         message: 'Key Authenticated & Bound Successfully!',
         expiresAt: keyItem.expiresAt,
         targetGame: defaultTargetGame,
+        token: generateResponseToken(keyItem.key, reqHwid, keyItem.expiresAt),
+        serverTime: Date.now(),
       };
     }
 
@@ -139,6 +145,8 @@ export class KeysService {
         message: 'Key Authenticated & Bound Successfully!',
         expiresAt: keyItem.expiresAt,
         targetGame: defaultTargetGame,
+        token: generateResponseToken(keyItem.key, reqHwid, keyItem.expiresAt),
+        serverTime: Date.now(),
       };
     } else {
       // Mismatched HWID -> Rejected

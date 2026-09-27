@@ -10,18 +10,11 @@ import {
   FileImage,
   Clock,
   Download,
-  Filter,
   Share2,
   Edit3,
-  ShieldCheck,
   CheckSquare,
   Square,
-  Sparkles,
   Smartphone,
-  ExternalLink,
-  ChevronDown,
-  Layers,
-  MoreVertical,
   UploadCloud,
 } from 'lucide-react';
 import { KeyItem } from '@/types/key';
@@ -59,7 +52,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
   const { toast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'expired' | 'unbound' | 'master' | 'receipts'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'receipts' | 'expired' | 'unbound' | 'master'>('all');
   const [resellerFilter, setResellerFilter] = useState<string>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedKeyIds, setSelectedKeyIds] = useState<Set<string>>(new Set());
@@ -202,7 +195,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
   const keysWithReceiptsCount = useMemo(() => keys.filter((k) => Boolean(k.paymentScreenshot)).length, [keys]);
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-xl space-y-4 font-sans text-xs">
+    <div className="ref-card p-4 sm:p-6 space-y-4 font-sans text-xs">
       {/* Hidden File Input for Key-Level Upload */}
       <input
         ref={tableFileInputRef}
@@ -213,30 +206,28 @@ export const KeysTable: React.FC<KeysTableProps> = ({
       />
 
       {/* Controls & Multi-Filter Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border-soft">
         <div className="flex items-center space-x-3">
-          <h3 className="text-base font-bold text-white tracking-tight">License Keys Registry</h3>
-          <span className="px-2.5 py-0.5 rounded-lg bg-slate-950 text-cyan-400 border border-slate-800 font-mono font-bold text-xs">
+          <h3 className="font-display text-base sm:text-lg font-normal text-ink tracking-tight">License Keys Registry</h3>
+          <span className="ref-badge text-[10px] font-mono">
             {filteredKeys.length} {filteredKeys.length === 1 ? 'Key' : 'Keys'}
           </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Status Filter Tabs */}
-          <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-2xl border border-slate-800 overflow-x-auto">
+          <div className="ref-tab-list overflow-x-auto">
             {(['all', 'active', 'receipts', 'expired', 'unbound', 'master'] as const).map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-xl uppercase text-[10px] font-mono font-bold transition whitespace-nowrap flex items-center space-x-1 ${
-                  statusFilter === st
-                    ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700'
-                    : 'text-slate-400 hover:text-slate-200'
+                className={`ref-tab-btn shrink-0 py-1 px-2.5 text-[10px] uppercase font-mono ${
+                  statusFilter === st ? 'active' : ''
                 }`}
               >
                 <span>{st === 'unbound' ? 'Fresh/Unbound' : st === 'receipts' ? 'With Receipts' : st}</span>
                 {st === 'receipts' && keysWithReceiptsCount > 0 && (
-                  <span className="px-1.5 py-0.2 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-[9px]">
+                  <span className="px-1.5 py-0.5 rounded-full bg-success/20 text-success text-[9px]">
                     {keysWithReceiptsCount}
                   </span>
                 )}
@@ -249,7 +240,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
             <select
               value={resellerFilter}
               onChange={(e) => setResellerFilter(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-slate-300 text-xs font-mono rounded-xl px-2.5 py-1.5 outline-none focus:border-cyan-500"
+              className="ref-input text-xs font-mono h-8 px-2 cursor-pointer"
             >
               <option value="all">All Resellers</option>
               {uniqueResellers.map((r) => (
@@ -263,7 +254,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
           {/* Export CSV Button */}
           <button
             onClick={exportToCSV}
-            className="flex items-center space-x-1 px-3 py-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded-xl text-xs font-mono font-semibold transition"
+            className="ref-btn ref-btn-sm"
           >
             <Download className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Export CSV</span>
@@ -273,68 +264,64 @@ export const KeysTable: React.FC<KeysTableProps> = ({
 
       {/* Search Input */}
       <div className="relative">
-        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by Key, HWID, Reseller @Username, or Customer Note..."
-          className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl pl-10 pr-4 py-2.5 text-white font-mono text-xs outline-none transition"
+          className="ref-input w-full pl-10 text-xs font-mono"
         />
       </div>
 
       {/* Floating Batch Actions Toolbar */}
       {selectedKeyIds.size > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-950 border border-cyan-500/40 rounded-2xl animate-in fade-in duration-150 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+        <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-surface border border-border rounded-md shadow-sm">
           <div className="flex items-center space-x-2 font-mono">
-            <span className="px-2 py-0.5 bg-cyan-950 text-cyan-300 rounded-lg font-bold text-xs border border-cyan-800">
+            <span className="ref-badge info font-bold text-xs">
               {selectedKeyIds.size} Selected
             </span>
             <button
               onClick={() => setSelectedKeyIds(new Set())}
-              className="text-slate-400 hover:text-white text-xs underline"
+              className="text-muted hover:text-ink text-xs underline font-sans"
             >
               Clear
             </button>
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 font-mono">
-            {/* Copy selected keys */}
             <button
               onClick={copySelectedKeys}
-              className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-cyan-400 hover:bg-slate-800 transition text-xs"
+              className="ref-btn ref-btn-sm"
             >
-              <Copy className="w-3 h-3" />
+              <Copy className="w-3 h-3 text-muted" />
               <span>Copy</span>
             </button>
 
-            {/* Bulk HWID Reset */}
             {onBulkResetHwid && (
               <button
                 onClick={() => onBulkResetHwid(Array.from(selectedKeyIds))}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-amber-950/60 border border-amber-800/60 text-amber-300 hover:bg-amber-900/60 transition text-xs"
+                className="ref-btn ref-btn-sm text-warning"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Reset HWID</span>
               </button>
             )}
 
-            {/* Bulk Extend */}
             {onBulkExtendKeys && (
               <button
                 onClick={() => onBulkExtendKeys(Array.from(selectedKeyIds), 7)}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 hover:bg-slate-800 transition text-xs"
+                className="ref-btn ref-btn-sm"
               >
-                <Clock className="w-3 h-3" />
+                <Clock className="w-3 h-3 text-muted" />
                 <span>+7 Days</span>
               </button>
             )}
 
-            {/* Bulk Delete */}
             {onBulkDeleteKeys && (
               <button
                 onClick={() => onBulkDeleteKeys(Array.from(selectedKeyIds))}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-rose-950/60 border border-rose-800/60 text-rose-300 hover:bg-rose-900/60 transition text-xs"
+                className="ref-btn ref-btn-sm ref-btn-danger"
               >
                 <Trash2 className="w-3 h-3" />
                 <span>Delete</span>
@@ -347,7 +334,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
       {/* MOBILE VIEW: Card List */}
       <div className="block md:hidden space-y-3">
         {filteredKeys.length === 0 ? (
-          <div className="text-center py-12 text-slate-500 font-mono">
+          <div className="text-center py-12 text-muted font-sans">
             No matching license keys found.
           </div>
         ) : (
@@ -360,8 +347,8 @@ export const KeysTable: React.FC<KeysTableProps> = ({
             return (
               <div
                 key={k.id}
-                className={`p-4 bg-slate-950 rounded-2xl border transition-all space-y-3 ${
-                  isSelected ? 'border-cyan-500/60 bg-slate-950/90' : 'border-slate-800/90 hover:border-slate-700'
+                className={`p-3.5 bg-surface rounded-md border transition-colors space-y-3 ${
+                  isSelected ? 'border-accent bg-surface-hover' : 'border-border-soft hover:border-border'
                 }`}
               >
                 {/* Top Row: Key & Selection Checkbox */}
@@ -369,28 +356,27 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                   <div className="flex items-center space-x-2 min-w-0">
                     <button
                       onClick={() => toggleSelectKey(k.id)}
-                      className="text-slate-400 hover:text-white"
+                      className="text-muted hover:text-ink"
                     >
                       {isSelected ? (
-                        <CheckSquare className="w-4 h-4 text-cyan-400" />
+                        <CheckSquare className="w-4 h-4 text-accent" />
                       ) : (
-                        <Square className="w-4 h-4 text-slate-600" />
+                        <Square className="w-4 h-4 text-muted" />
                       )}
                     </button>
-                    <span className="font-mono font-bold text-white text-xs select-all truncate">
+                    <span className="font-mono font-bold text-ink text-xs select-all truncate">
                       {k.key}
                     </span>
                   </div>
 
                   <div className="flex items-center space-x-1.5 shrink-0">
-                    {/* Status Badge */}
                     <span
-                      className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold uppercase ${
+                      className={`ref-badge text-[9px] font-mono ${
                         isExpired
-                          ? 'bg-rose-950 text-rose-300 border border-rose-800'
+                          ? 'danger'
                           : isUnbound
-                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                          : 'bg-cyan-950 text-cyan-300 border border-cyan-800'
+                          ? 'success'
+                          : 'info'
                       }`}
                     >
                       {isExpired ? 'Expired' : isUnbound ? 'Fresh' : 'Bound'}
@@ -402,40 +388,40 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                 <ExpirationProgressBar createdAt={k.createdAt} expiresAt={k.expiresAt} />
 
                 {/* Metadata details */}
-                <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-400 pt-1">
+                <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-muted pt-1">
                   <div>
-                    <span className="text-[9px] text-slate-500 uppercase block">Duration</span>
-                    <span className="text-slate-200">{k.duration || 'Custom'}</span>
+                    <span className="text-[9px] uppercase block font-sans text-muted">Duration</span>
+                    <span className="text-ink">{k.duration || 'Custom'}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] text-slate-500 uppercase block">Creator</span>
-                    <span className="text-slate-200">@{k.createdByUsername || 'System'}</span>
+                    <span className="text-[9px] uppercase block font-sans text-muted">Creator</span>
+                    <span className="text-ink">@{k.createdByUsername || 'System'}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-[9px] text-slate-500 uppercase block">Bound Device HWID</span>
-                    <span className="text-slate-300 truncate block">
-                      {k.hwid ? k.hwid : <span className="text-slate-500 italic">No Device Bound (Fresh)</span>}
+                    <span className="text-[9px] uppercase block font-sans text-muted">Bound Device HWID</span>
+                    <span className="text-ink truncate block">
+                      {k.hwid ? k.hwid : <span className="text-muted italic">No Device Bound (Fresh)</span>}
                     </span>
                   </div>
                   {k.note && (
-                    <div className="col-span-2 text-slate-400 bg-slate-900 p-2 rounded-xl border border-slate-800/80">
-                      <span className="text-[9px] text-slate-500 uppercase block font-sans">Customer Note:</span>
-                      <span className="text-slate-200">{k.note}</span>
+                    <div className="col-span-2 bg-surface-solid p-2 rounded-sm border border-border-soft">
+                      <span className="text-[9px] text-muted uppercase block font-sans">Customer Note:</span>
+                      <span className="text-ink font-sans">{k.note}</span>
                     </div>
                   )}
                 </div>
 
-                {/* Prominent Payment Receipt Proof Card (Mobile) */}
+                {/* Payment Receipt Proof Card (Mobile) */}
                 {k.paymentScreenshot && (
                   <div
                     onClick={() => onOpenProofModal(k)}
-                    className="flex items-center justify-between p-2.5 bg-emerald-950/20 hover:bg-emerald-950/40 border border-emerald-800/60 rounded-xl cursor-pointer transition"
+                    className="flex items-center justify-between p-2.5 bg-surface-solid hover:bg-surface-hover border border-success/30 rounded-sm cursor-pointer transition"
                   >
                     <div className="flex items-center space-x-2.5 min-w-0">
                       <img
                         src={getReceiptImageUrl(k.paymentScreenshot)}
                         alt="Payment Receipt"
-                        className="w-10 h-10 object-cover rounded-lg border border-emerald-700/60 shadow-md shrink-0 bg-slate-900"
+                        className="w-10 h-10 object-cover rounded-sm border border-border-soft shrink-0 bg-surface"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           if (!target.dataset.triedFallback && k.paymentScreenshot) {
@@ -445,51 +431,51 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                         }}
                       />
                       <div className="min-w-0">
-                        <span className="text-emerald-300 font-bold text-xs flex items-center space-x-1 font-mono">
-                          <FileImage className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-success font-medium text-xs flex items-center space-x-1 font-sans">
+                          <FileImage className="w-3.5 h-3.5" />
                           <span>Payment Receipt Attached</span>
                         </span>
-                        <span className="text-[10px] text-slate-400 block truncate">Tap to inspect & zoom receipt</span>
+                        <span className="text-[10px] text-muted block truncate font-sans">Tap to inspect &amp; zoom receipt</span>
                       </div>
                     </div>
-                    <span className="text-emerald-400 text-xs font-mono font-bold shrink-0">Open →</span>
+                    <span className="text-accent text-xs font-mono font-medium shrink-0">Open &rarr;</span>
                   </div>
                 )}
 
                 {/* Mobile Action Buttons */}
-                <div className="flex items-center justify-between gap-1.5 pt-2 border-t border-slate-800">
+                <div className="flex items-center justify-between gap-1.5 pt-2 border-t border-border-soft">
                   <button
                     onClick={() => copyToClipboard(k.key, k.id)}
-                    className="flex-1 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded-xl font-mono text-xs font-semibold flex items-center justify-center space-x-1"
+                    className="ref-btn ref-btn-sm flex-1"
                   >
-                    {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {isCopied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{isCopied ? 'Copied' : 'Copy'}</span>
                   </button>
 
                   {onOpenShareModal && (
                     <button
                       onClick={() => onOpenShareModal(k)}
-                      className="p-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded-xl"
+                      className="ref-btn-icon w-8 h-8"
                       title="Share Key"
                     >
-                      <Share2 className="w-4 h-4" />
+                      <Share2 className="w-4 h-4 text-muted" />
                     </button>
                   )}
 
                   {onOpenExtendModal && (
                     <button
                       onClick={() => onOpenExtendModal(k)}
-                      className="p-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 rounded-xl"
+                      className="ref-btn-icon w-8 h-8"
                       title="Extend / Edit Note"
                     >
-                      <Edit3 className="w-4 h-4" />
+                      <Edit3 className="w-4 h-4 text-muted" />
                     </button>
                   )}
 
                   {k.paymentScreenshot && (
                     <button
                       onClick={() => onOpenProofModal(k)}
-                      className="p-1.5 bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-800/60 text-emerald-300 rounded-xl"
+                      className="ref-btn-icon w-8 h-8 text-success"
                       title="View Receipt Screenshot"
                     >
                       <FileImage className="w-4 h-4" />
@@ -499,7 +485,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                   {k.hwid && (
                     <button
                       onClick={() => onResetHwid(k.id)}
-                      className="p-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-amber-400 rounded-xl"
+                      className="ref-btn-icon w-8 h-8 text-warning"
                       title="Reset HWID"
                     >
                       <RotateCcw className="w-4 h-4" />
@@ -508,7 +494,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
 
                   <button
                     onClick={() => onDeleteKey(k.id)}
-                    className="p-1.5 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-900/60 text-rose-400 rounded-xl"
+                    className="ref-btn-icon w-8 h-8 text-danger hover:border-danger/30"
                     title="Delete Key"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -521,32 +507,32 @@ export const KeysTable: React.FC<KeysTableProps> = ({
       </div>
 
       {/* DESKTOP VIEW: High-Density Table */}
-      <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-800">
+      <div className="hidden md:block overflow-x-auto rounded-md border border-border-soft">
         <table className="w-full text-left font-mono text-xs border-collapse">
           <thead>
-            <tr className="bg-slate-950 border-b border-slate-800 text-[10px] text-slate-400 uppercase tracking-wider">
-              <th className="p-3.5 w-10 text-center">
-                <button onClick={toggleSelectAll} className="text-slate-400 hover:text-white">
+            <tr className="bg-surface border-b border-border-soft text-[10px] text-muted font-sans font-medium uppercase tracking-wider">
+              <th className="p-3 w-10 text-center">
+                <button onClick={toggleSelectAll} className="text-muted hover:text-ink">
                   {selectedKeyIds.size === filteredKeys.length && filteredKeys.length > 0 ? (
-                    <CheckSquare className="w-4 h-4 text-cyan-400" />
+                    <CheckSquare className="w-4 h-4 text-accent" />
                   ) : (
-                    <Square className="w-4 h-4 text-slate-600" />
+                    <Square className="w-4 h-4 text-muted" />
                   )}
                 </button>
               </th>
-              <th className="p-3.5">License Key</th>
-              <th className="p-3.5">Receipt Proof</th>
-              <th className="p-3.5">Status & Life</th>
-              <th className="p-3.5">Creator</th>
-              <th className="p-3.5">Device HWID</th>
-              <th className="p-3.5">Note</th>
-              <th className="p-3.5 text-right">Actions</th>
+              <th className="p-3">License Key</th>
+              <th className="p-3">Receipt Proof</th>
+              <th className="p-3">Status &amp; Life</th>
+              <th className="p-3">Creator</th>
+              <th className="p-3">Device HWID</th>
+              <th className="p-3">Note</th>
+              <th className="p-3 text-right font-sans">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60 bg-slate-900/60">
+          <tbody className="divide-y divide-border-soft bg-surface-solid">
             {filteredKeys.length === 0 ? (
               <tr>
-                <td colSpan={8} className="text-center py-12 text-slate-500">
+                <td colSpan={8} className="text-center py-12 text-muted font-sans">
                   No matching license keys found.
                 </td>
               </tr>
@@ -560,36 +546,36 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                 return (
                   <tr
                     key={k.id}
-                    className={`hover:bg-slate-800/40 transition-colors ${
-                      isSelected ? 'bg-cyan-950/20' : ''
+                    className={`hover:bg-surface-hover transition-colors ${
+                      isSelected ? 'bg-surface-hover' : ''
                     }`}
                   >
                     {/* Checkbox */}
-                    <td className="p-3.5 text-center">
-                      <button onClick={() => toggleSelectKey(k.id)} className="text-slate-400 hover:text-white">
+                    <td className="p-3 text-center">
+                      <button onClick={() => toggleSelectKey(k.id)} className="text-muted hover:text-ink">
                         {isSelected ? (
-                          <CheckSquare className="w-4 h-4 text-cyan-400" />
+                          <CheckSquare className="w-4 h-4 text-accent" />
                         ) : (
-                          <Square className="w-4 h-4 text-slate-600" />
+                          <Square className="w-4 h-4 text-muted" />
                         )}
                       </button>
                     </td>
 
                     {/* Key String */}
-                    <td className="p-3.5">
+                    <td className="p-3">
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => copyToClipboard(k.key, k.id)}
-                          className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-cyan-400 transition"
+                          className="ref-btn-icon w-6 h-6"
                           title="Click to copy key"
                         >
-                          {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          {isCopied ? <Check className="w-3 h-3 text-success" /> : <Copy className="w-3 h-3 text-muted" />}
                         </button>
-                        <span className="font-bold text-white font-mono select-all">
+                        <span className="font-bold text-ink font-mono select-all">
                           {k.key}
                         </span>
                         {Boolean(k.isMasterKey) && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-950 text-amber-300 border border-amber-700">
+                          <span className="ref-badge warning text-[9px]">
                             MASTER
                           </span>
                         )}
@@ -597,18 +583,18 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                     </td>
 
                     {/* Prominent Payment Proof / Receipt Column */}
-                    <td className="p-3.5">
+                    <td className="p-3">
                       {k.paymentScreenshot ? (
                         <button
                           onClick={() => onOpenProofModal(k)}
-                          className="flex items-center space-x-2 group px-2 py-1 bg-slate-950 hover:bg-slate-800 border border-emerald-800/70 hover:border-emerald-500 rounded-xl transition shadow-sm cursor-pointer"
+                          className="flex items-center space-x-2 group px-2 py-1 bg-surface hover:bg-surface-hover border border-success/30 rounded-sm transition shadow-sm cursor-pointer"
                           title="Click to view full receipt screenshot or replace"
                         >
-                          <div className="w-8 h-8 rounded-lg overflow-hidden border border-emerald-800/60 bg-slate-900 shrink-0 flex items-center justify-center">
+                          <div className="w-7 h-7 rounded-sm overflow-hidden border border-border-soft bg-surface shrink-0 flex items-center justify-center">
                             <img
                               src={getReceiptImageUrl(k.paymentScreenshot)}
                               alt="Receipt"
-                              className="w-full h-full object-cover group-hover:scale-110 transition duration-150"
+                              className="w-full h-full object-cover group-hover:scale-105 transition duration-150"
                               loading="lazy"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
@@ -619,8 +605,8 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                               }}
                             />
                           </div>
-                          <span className="text-[11px] font-bold text-emerald-400 font-mono flex items-center space-x-1 pr-1">
-                            <FileImage className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-[11px] font-medium text-success font-sans flex items-center space-x-1 pr-1">
+                            <FileImage className="w-3.5 h-3.5" />
                             <span>Proof</span>
                           </span>
                         </button>
@@ -631,25 +617,25 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                             tableFileInputRef.current?.click();
                           }}
                           disabled={isUploadingReceipt}
-                          className="flex items-center space-x-1.5 px-2.5 py-1 bg-slate-950/80 hover:bg-slate-800 border border-dashed border-slate-700 hover:border-emerald-500 rounded-xl text-[10px] text-slate-400 hover:text-emerald-300 transition cursor-pointer disabled:opacity-50"
+                          className="flex items-center space-x-1 px-2 py-1 bg-surface hover:bg-surface-hover border border-dashed border-border-soft rounded-sm text-[10px] text-muted hover:text-ink transition cursor-pointer disabled:opacity-50"
                           title="Click to upload proof for this key"
                         >
-                          <UploadCloud className="w-3 h-3 text-slate-400" />
+                          <UploadCloud className="w-3 h-3 text-muted" />
                           <span>+ Add Proof</span>
                         </button>
                       )}
                     </td>
 
                     {/* Status & Expiry Bar */}
-                    <td className="p-3.5 min-w-[140px]">
+                    <td className="p-3 min-w-[130px]">
                       <div className="space-y-1">
                         <div className="flex items-center space-x-1.5">
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${
-                              isExpired ? 'bg-rose-400' : isUnbound ? 'bg-emerald-400' : 'bg-cyan-400'
+                              isExpired ? 'bg-danger' : isUnbound ? 'bg-success' : 'bg-info'
                             }`}
                           />
-                          <span className="text-[11px] font-bold text-slate-300 font-mono">
+                          <span className="text-[11px] font-medium text-ink font-sans">
                             {isExpired ? 'Expired' : k.duration || 'Active'}
                           </span>
                         </div>
@@ -658,40 +644,40 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                     </td>
 
                     {/* Creator */}
-                    <td className="p-3.5 text-slate-300">
-                      <span className="px-2 py-0.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px]">
+                    <td className="p-3 text-ink">
+                      <span className="px-2 py-0.5 rounded-sm bg-surface border border-border-soft text-[11px]">
                         @{k.createdByUsername || 'System'}
                       </span>
                     </td>
 
                     {/* HWID */}
-                    <td className="p-3.5">
+                    <td className="p-3">
                       {k.hwid ? (
-                        <div className="flex items-center space-x-1 text-slate-300 max-w-[160px] truncate" title={k.hwid}>
-                          <Smartphone className="w-3 h-3 text-cyan-400 shrink-0" />
+                        <div className="flex items-center space-x-1 text-ink max-w-[150px] truncate" title={k.hwid}>
+                          <Smartphone className="w-3 h-3 text-muted shrink-0" />
                           <span className="truncate">{k.hwid}</span>
                         </div>
                       ) : (
-                        <span className="text-slate-500 italic text-[11px]">Unbound</span>
+                        <span className="text-muted italic text-[11px] font-sans">Unbound</span>
                       )}
                     </td>
 
                     {/* Note */}
-                    <td className="p-3.5 text-slate-400 max-w-[140px] truncate">
+                    <td className="p-3 text-muted max-w-[130px] truncate font-sans">
                       {k.note ? (
                         <span title={k.note}>{k.note}</span>
                       ) : (
-                        <span className="text-slate-600">-</span>
+                        <span className="text-muted/60">-</span>
                       )}
                     </td>
 
                     {/* Action Buttons */}
-                    <td className="p-3.5 text-right">
+                    <td className="p-3 text-right">
                       <div className="flex items-center justify-end space-x-1">
                         {onOpenShareModal && (
                           <button
                             onClick={() => onOpenShareModal(k)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition"
+                            className="ref-btn-icon w-7 h-7 text-muted hover:text-ink"
                             title="Share formatted card"
                           >
                             <Share2 className="w-3.5 h-3.5" />
@@ -701,7 +687,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                         {onOpenExtendModal && (
                           <button
                             onClick={() => onOpenExtendModal(k)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition"
+                            className="ref-btn-icon w-7 h-7 text-muted hover:text-ink"
                             title="Extend / Edit Note"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
@@ -711,7 +697,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                         {k.paymentScreenshot && (
                           <button
                             onClick={() => onOpenProofModal(k)}
-                            className="p-1.5 rounded-lg text-emerald-400 hover:bg-slate-800 transition"
+                            className="ref-btn-icon w-7 h-7 text-success"
                             title="View Payment Proof"
                           >
                             <FileImage className="w-3.5 h-3.5" />
@@ -721,7 +707,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
                         {k.hwid && (
                           <button
                             onClick={() => onResetHwid(k.id)}
-                            className="p-1.5 rounded-lg text-amber-400 hover:bg-slate-800 transition"
+                            className="ref-btn-icon w-7 h-7 text-warning"
                             title="Reset HWID"
                           >
                             <RotateCcw className="w-3.5 h-3.5" />
@@ -730,7 +716,7 @@ export const KeysTable: React.FC<KeysTableProps> = ({
 
                         <button
                           onClick={() => onDeleteKey(k.id)}
-                          className="p-1.5 rounded-lg text-rose-400 hover:bg-slate-800 transition"
+                          className="ref-btn-icon w-7 h-7 text-danger hover:border-danger/30"
                           title="Delete Key"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

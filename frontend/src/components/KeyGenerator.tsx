@@ -10,15 +10,9 @@ import {
   Copy,
   FileImage,
   X,
-  Layers,
-  HelpCircle,
-  Hash,
-  Sliders,
-  ShieldCheck,
-  Download,
-  Share2,
   Crown,
   FileText,
+  Download,
 } from 'lucide-react';
 import { UserItem } from '@/types/key';
 import { useToast } from '@/components/ui/ToastContext';
@@ -201,40 +195,42 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-7 font-sans backdrop-blur-2xl">
+    <div className="ref-card p-6 sm:p-8 space-y-6 font-sans">
       {/* Studio Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border-soft">
         <div className="flex items-center space-x-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-            <Key className="w-5 h-5 text-cyan-400" />
+          <div className="w-10 h-10 rounded-md bg-surface border border-border-soft flex items-center justify-center text-accent shadow-sm">
+            <Key className="w-5 h-5 text-accent" />
           </div>
           <div>
-            <h2 className="text-lg font-black text-white font-mono tracking-tight flex items-center gap-2">
-              KEY GENERATION STUDIO
-              <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-800/80 rounded-full">
-                CRYPTOGRAPHIC RNG
+            <div className="flex items-center space-x-2">
+              <h2 className="font-display text-lg sm:text-xl font-normal text-ink tracking-tight">
+                Key Generation Studio
+              </h2>
+              <span className="ref-badge info text-[10px]">
+                Cryptographic RNG
               </span>
-            </h2>
-            <p className="text-xs text-slate-400 font-mono">
-              Issue tamper-proof hardware license keys with custom prefixes and durations
+            </div>
+            <p className="text-xs text-muted font-sans mt-0.5">
+              Issue tamper-proof hardware license keys with custom parameters
             </p>
           </div>
         </div>
 
         {/* Live Token Wallet Gauge */}
-        <div className="flex items-center space-x-3 bg-slate-950/90 border border-slate-800 px-4 py-2 rounded-2xl font-mono text-xs shadow-inner">
-          <Coins className="w-4 h-4 text-amber-400" />
-          <span className="text-slate-400">Available:</span>
-          <span className="font-extrabold text-amber-300 text-sm">
-            {isUnlimited ? '∞ UNLIMITED' : `${userTokens.toLocaleString()} T`}
+        <div className="flex items-center space-x-2 bg-surface border border-border-soft px-3 py-1.5 rounded-md font-mono text-xs shadow-sm">
+          <Coins className="w-4 h-4 text-warning" />
+          <span className="text-muted">Available:</span>
+          <span className="font-bold text-ink">
+            {isUnlimited ? 'Unlimited' : `${userTokens.toLocaleString()} T`}
           </span>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Row 1: Duration Presets */}
-        <div className="space-y-2.5">
-          <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block">
+        <div className="space-y-2">
+          <label className="text-[11px] font-sans font-medium text-muted uppercase tracking-wider block">
             Select License Validity Period
           </label>
           <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
@@ -243,14 +239,14 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
                 key={preset.label}
                 type="button"
                 onClick={() => setDurationOption(preset.label)}
-                className={`py-3 px-2 rounded-2xl border text-center transition-all duration-200 font-mono text-xs flex flex-col items-center justify-center space-y-1 ${
+                className={`py-2 px-2 rounded-sm border text-center transition-colors font-sans text-xs flex flex-col items-center justify-center space-y-0.5 ${
                   durationOption === preset.label
-                    ? 'bg-cyan-950/60 border-cyan-500/80 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50'
-                    : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                    ? 'ref-btn-primary border-accent'
+                    : 'bg-surface border-border-soft text-muted hover:text-ink hover:bg-surface-hover'
                 }`}
               >
-                <span className="font-bold">{preset.label}</span>
-                <span className="text-[10px] text-amber-400/90 font-semibold">
+                <span className="font-medium text-xs">{preset.label}</span>
+                <span className="text-[10px] opacity-80 font-mono">
                   {preset.cost > 0 ? `${preset.cost}T` : preset.days === -1 ? 'Custom' : 'Free'}
                 </span>
               </button>
@@ -258,9 +254,9 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
           </div>
 
           {durationOption === 'Custom' && (
-            <div className="pt-2 animate-in fade-in slide-in-from-top-2 duration-150">
-              <label className="text-[11px] font-mono text-cyan-400 block mb-1">
-                Custom Duration (in Days):
+            <div className="pt-2 animate-in fade-in duration-150">
+              <label className="text-[11px] font-sans text-muted block mb-1">
+                Custom Duration (Days):
               </label>
               <div className="relative max-w-xs">
                 <input
@@ -269,19 +265,19 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
                   max="3650"
                   value={customDays}
                   onChange={(e) => setCustomDays(e.target.value)}
-                  className="w-full bg-slate-950 border border-cyan-500/50 rounded-2xl px-4 py-2.5 text-white font-mono outline-none focus:ring-1 focus:ring-cyan-400 text-xs"
+                  className="ref-input w-full font-mono text-xs"
                 />
-                <span className="absolute right-4 top-2.5 text-slate-400 font-mono text-xs">Days</span>
+                <span className="absolute right-3 top-2.5 text-muted font-mono text-xs">Days</span>
               </div>
             </div>
           )}
         </div>
 
         {/* Row 2: Customization Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Key Prefix */}
           <div>
-            <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+            <label className="text-[11px] font-sans font-medium text-muted uppercase tracking-wider block mb-1.5">
               Custom Key Prefix
             </label>
             <input
@@ -290,19 +286,19 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
               placeholder="e.g. AXIOS, VIP, PRO"
               value={customPrefix}
               onChange={(e) => setCustomPrefix(e.target.value.toUpperCase())}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 text-xs"
+              className="ref-input w-full font-mono text-xs"
             />
           </div>
 
           {/* Key Format */}
           <div>
-            <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+            <label className="text-[11px] font-sans font-medium text-muted uppercase tracking-wider block mb-1.5">
               Key Format
             </label>
             <select
               value={keyFormat}
               onChange={(e) => setKeyFormat(e.target.value as any)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 text-xs cursor-pointer"
+              className="ref-input w-full font-mono text-xs cursor-pointer"
             >
               <option value="hyphenated">Formatted (XXXX-XXXX-XXXX)</option>
               <option value="raw16">Raw 16 (XXXXXXXXXXXXXXXX)</option>
@@ -312,7 +308,7 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
 
           {/* Quantity */}
           <div>
-            <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+            <label className="text-[11px] font-sans font-medium text-muted uppercase tracking-wider block mb-1.5">
               Quantity ({genCount} Keys)
             </label>
             <input
@@ -321,13 +317,13 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
               max="100"
               value={genCount}
               onChange={(e) => setGenCount(Math.max(1, parseInt(e.target.value, 10) || 1))}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 text-xs"
+              className="ref-input w-full font-mono text-xs"
             />
           </div>
 
           {/* Note / Customer Tag */}
           <div>
-            <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+            <label className="text-[11px] font-sans font-medium text-muted uppercase tracking-wider block mb-1.5">
               Customer Note / Tag
             </label>
             <input
@@ -335,50 +331,49 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
               placeholder="e.g. VIP Customer @telegram"
               value={genNote}
               onChange={(e) => setGenNote(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-white font-mono outline-none focus:border-cyan-500/80 text-xs"
+              className="ref-input w-full font-sans text-xs"
             />
           </div>
         </div>
 
         {/* Executive Master Key Toggle (Only Owner / Manager) */}
         {isUnlimited && (
-          <div className="bg-gradient-to-r from-purple-950/40 via-slate-950 to-slate-950 border border-purple-900/60 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4 shadow-xl">
+          <div className="ref-card-subtle p-4 flex items-center justify-between gap-4 shadow-sm">
             <div className="flex items-center space-x-3.5">
-              <div className="w-10 h-10 rounded-2xl bg-purple-950/80 border border-purple-700/60 flex items-center justify-center text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-                <Crown className="w-5 h-5 text-purple-400" />
+              <div className="w-9 h-9 rounded-md bg-surface border border-border-soft flex items-center justify-center text-accent shadow-sm">
+                <Crown className="w-4 h-4 text-accent" />
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h4 className="text-sm font-black text-white font-mono">
-                    Executive Master Key Mode (@Axiosofficial)
+                  <h4 className="font-sans font-semibold text-ink text-xs">
+                    Executive Master Key Mode
                   </h4>
-                  <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-purple-950 text-purple-300 border border-purple-800 rounded-full uppercase">
-                    UNLIMITED HWID
+                  <span className="ref-badge warning text-[9px]">
+                    Unlimited HWID
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 font-mono mt-0.5">
+                <p className="text-[11px] text-muted font-sans mt-0.5">
                   Allows multiple concurrent devices on a single master license key with zero token cost.
                 </p>
               </div>
             </div>
 
+            {/* Reference Switch control */}
             <button
               type="button"
+              role="switch"
+              aria-checked={isMasterKey}
               onClick={() => setIsMasterKey(!isMasterKey)}
-              className={`px-4 py-2.5 rounded-2xl font-mono font-bold text-xs transition-all shadow-md ${
-                isMasterKey
-                  ? 'bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/30'
-                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
-              }`}
+              className="ref-switch"
             >
-              {isMasterKey ? 'ENABLED' : 'DISABLED'}
+              <i />
             </button>
           </div>
         )}
 
         {/* Drag & Drop Payment Screenshot Area */}
-        <div className="space-y-2">
-          <label className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-wider block">
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-sans font-medium text-muted uppercase tracking-wider block">
             Payment Screenshot Proof (Optional)
           </label>
           <div
@@ -386,12 +381,12 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-3xl p-5 sm:p-6 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center space-y-2.5 ${
+            className={`border-2 border-dashed rounded-md p-4 sm:p-5 text-center cursor-pointer transition-colors flex flex-col items-center justify-center space-y-2 ${
               isDragging
-                ? 'border-cyan-400 bg-cyan-950/20'
+                ? 'border-accent bg-accent/5'
                 : paymentScreenshot
-                ? 'border-emerald-500/60 bg-emerald-950/10'
-                : 'border-slate-800 hover:border-slate-700 bg-slate-950/40'
+                ? 'border-success/60 bg-success/5'
+                : 'border-border-soft hover:border-border bg-surface'
             }`}
           >
             <input
@@ -403,37 +398,37 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
             />
 
             {paymentScreenshot ? (
-              <div className="flex items-center space-x-3 text-xs font-mono text-emerald-400">
-                <FileImage className="w-5 h-5 text-emerald-400" />
-                <span className="font-bold">{fileName || 'Payment receipt proof attached'}</span>
+              <div className="flex items-center space-x-3 text-xs font-sans text-success">
+                <FileImage className="w-4 h-4 text-success" />
+                <span className="font-medium">{fileName || 'Payment receipt proof attached'}</span>
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemoveImage();
                   }}
-                  className="p-1 rounded-full bg-slate-800 hover:bg-rose-900 text-slate-400 hover:text-white transition"
+                  className="p-1 rounded bg-surface hover:bg-danger/10 text-muted hover:text-danger transition"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
               <>
-                <Upload className="w-6 h-6 text-cyan-400" />
-                <div className="text-xs text-slate-300 font-mono">
-                  <strong className="text-cyan-400">Click to upload</strong> or drag & drop payment proof
+                <Upload className="w-5 h-5 text-muted" />
+                <div className="text-xs text-ink font-sans">
+                  <span className="text-accent font-medium">Click to upload</span> or drag &amp; drop payment proof
                 </div>
-                <div className="text-[10px] text-slate-500 font-mono">PNG, JPG, WEBP up to 10MB</div>
+                <div className="text-[10px] text-muted font-sans">PNG, JPG, WEBP up to 10MB</div>
               </>
             )}
           </div>
         </div>
 
         {/* Generate Button & Cost Indicator */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-          <div className="flex items-center space-x-2 font-mono text-xs">
-            <span className="text-slate-400">Total Transaction Cost:</span>
-            <span className="font-black text-base text-amber-400">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-border-soft">
+          <div className="flex items-center space-x-2 font-sans text-xs">
+            <span className="text-muted">Total Transaction Cost:</span>
+            <span className="font-mono font-bold text-sm text-warning">
               {isMasterKey ? '0 Tokens (Master Key)' : `${totalCost.toLocaleString()} Tokens`}
             </span>
           </div>
@@ -441,7 +436,7 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
           <button
             type="submit"
             disabled={isGenerating || isInsufficientTokens}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-cyan-600/25 disabled:opacity-50 flex items-center justify-center space-x-2 active:scale-95"
+            className="ref-btn ref-btn-primary w-full sm:w-auto px-7 py-2.5 text-xs font-semibold uppercase tracking-wider"
           >
             {isGenerating ? (
               <span>Issuing Cryptographic Keys...</span>
@@ -457,11 +452,11 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
 
       {/* Generated Keys Display Box */}
       {generatedKeys.length > 0 && (
-        <div className="bg-slate-950 border border-cyan-500/50 rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+        <div className="ref-card-subtle p-5 space-y-4 shadow-sm animate-in fade-in duration-150">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-soft">
             <div className="flex items-center space-x-2">
-              <Check className="w-4 h-4 text-emerald-400" />
-              <h4 className="text-sm font-black text-white font-mono">
+              <Check className="w-4 h-4 text-success" />
+              <h4 className="font-sans font-semibold text-xs text-ink">
                 {generatedKeys.length} License Key{generatedKeys.length > 1 ? 's' : ''} Issued Successfully
               </h4>
             </div>
@@ -470,16 +465,16 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
               <button
                 type="button"
                 onClick={handleCopyAll}
-                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/40 text-cyan-300 font-bold transition flex items-center gap-1.5"
+                className="ref-btn ref-btn-sm"
               >
-                {copiedSuccess ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedSuccess ? 'Copied!' : 'Copy All'}</span>
+                {copiedSuccess ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedSuccess ? 'Copied' : 'Copy All'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleExportTxt}
-                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition flex items-center gap-1.5"
+                className="ref-btn ref-btn-sm"
                 title="Export as Text"
               >
                 <FileText className="w-3.5 h-3.5" />
@@ -489,7 +484,7 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
               <button
                 type="button"
                 onClick={handleExportJson}
-                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition flex items-center gap-1.5"
+                className="ref-btn ref-btn-sm"
                 title="Export as JSON"
               >
                 <Download className="w-3.5 h-3.5" />
@@ -502,19 +497,19 @@ export const KeyGenerator: React.FC<KeyGeneratorProps> = ({
             {generatedKeys.map((k, idx) => (
               <div
                 key={idx}
-                className="flex items-center justify-between bg-slate-900/80 border border-slate-800 rounded-2xl px-4 py-2.5 font-mono text-xs text-cyan-300 select-all"
+                className="flex items-center justify-between bg-surface border border-border-soft rounded-sm px-3.5 py-2 font-mono text-xs text-ink select-all"
               >
-                <span className="font-bold">{k}</span>
+                <span className="font-semibold">{k}</span>
                 <button
                   type="button"
                   onClick={() => {
                     navigator.clipboard.writeText(k);
                     toast.success(`Copied key: ${k}`);
                   }}
-                  className="p-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-cyan-300 transition"
+                  className="ref-btn-icon w-7 h-7"
                   title="Copy Key"
                 >
-                  <Copy className="w-3 h-3" />
+                  <Copy className="w-3 h-3 text-muted" />
                 </button>
               </div>
             ))}

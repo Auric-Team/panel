@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Clock, AlertTriangle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { Clock, CheckCircle2, ShieldAlert } from 'lucide-react';
 
 interface ExpirationProgressBarProps {
   createdAt?: string;
@@ -36,20 +36,20 @@ export const ExpirationProgressBar: React.FC<ExpirationProgressBarProps> = ({
 
   if (isLifetime) {
     return (
-      <div className="space-y-1 w-full font-mono text-[11px]">
+      <div className="space-y-1 w-full font-sans text-[11px]">
         {showTimerText && (
           <div className="flex items-center justify-between text-[10px]">
-            <span className="text-emerald-400 font-bold flex items-center space-x-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-              <span>Lifetime Access</span>
+            <span className="text-success font-medium flex items-center space-x-1">
+              <CheckCircle2 className="w-3 h-3 text-success" />
+              <span>Lifetime License</span>
             </span>
-            <span className="text-emerald-400/80 font-extrabold text-[9px] uppercase tracking-wider">
-              ∞ Never
+            <span className="text-muted font-mono text-[9px] uppercase">
+              Permanent
             </span>
           </div>
         )}
-        <div className="w-full h-2 bg-slate-950 rounded-full border border-emerald-900/60 p-[1px] overflow-hidden shadow-inner">
-          <div className="h-full rounded-full bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-400 w-full animate-pulse opacity-90" />
+        <div className="w-full h-1.5 bg-border-soft rounded-full overflow-hidden">
+          <div className="h-full rounded-full bg-success w-full opacity-80" />
         </div>
       </div>
     );
@@ -62,7 +62,7 @@ export const ExpirationProgressBar: React.FC<ExpirationProgressBarProps> = ({
 
   if (expiresTime !== null) {
     if (isExpired) {
-      fillPercent = 100; // MUST BE FULLY FILLED WHEN EXPIRED
+      fillPercent = 100;
       timeExpiredMs = now - expiresTime;
     } else {
       const totalDurationMs = Math.max(1, expiresTime - createdTime);
@@ -72,7 +72,6 @@ export const ExpirationProgressBar: React.FC<ExpirationProgressBarProps> = ({
     }
   }
 
-  // Format timer text
   const formatTimeSpan = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     const days = Math.floor(totalSeconds / 86400);
@@ -86,56 +85,48 @@ export const ExpirationProgressBar: React.FC<ExpirationProgressBarProps> = ({
     return `${hours.toString().padStart(2, '0')}h ${mins.toString().padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`;
   };
 
-  // Dynamic bar colors based on progress
-  let barGradient = 'from-emerald-500 via-teal-400 to-cyan-500';
-  let barGlow = 'shadow-[0_0_8px_rgba(16,185,129,0.4)]';
-  let textStyle = 'text-cyan-300';
+  let fillColor = 'bg-accent';
+  let textColor = 'text-muted';
 
   if (isExpired) {
-    barGradient = 'from-rose-600 via-red-600 to-rose-500';
-    barGlow = 'shadow-[0_0_12px_rgba(244,63,94,0.7)]';
-    textStyle = 'text-rose-400 font-extrabold';
+    fillColor = 'bg-danger';
+    textColor = 'text-danger font-medium';
   } else if (fillPercent >= 85) {
-    barGradient = 'from-rose-500 via-amber-500 to-red-500';
-    barGlow = 'shadow-[0_0_10px_rgba(244,63,94,0.5)]';
-    textStyle = 'text-rose-300 font-bold';
+    fillColor = 'bg-danger';
+    textColor = 'text-danger';
   } else if (fillPercent >= 60) {
-    barGradient = 'from-amber-500 via-yellow-400 to-amber-400';
-    barGlow = 'shadow-[0_0_8px_rgba(245,158,11,0.4)]';
-    textStyle = 'text-amber-300 font-semibold';
+    fillColor = 'bg-warning';
+    textColor = 'text-warning';
   }
 
   return (
-    <div className="space-y-1.5 w-full font-mono">
+    <div className="space-y-1 w-full font-sans">
       {showTimerText && (
         <div className="flex items-center justify-between text-[10px]">
           {isExpired ? (
-            <span className="text-rose-400 font-extrabold flex items-center space-x-1">
-              <ShieldAlert className="w-3 h-3 text-rose-400 animate-pulse" />
-              <span>KEY EXPIRED ({formatTimeSpan(timeExpiredMs)} ago)</span>
+            <span className="text-danger font-medium flex items-center space-x-1">
+              <ShieldAlert className="w-3 h-3 text-danger" />
+              <span>Expired ({formatTimeSpan(timeExpiredMs)} ago)</span>
             </span>
           ) : (
-            <span className={`${textStyle} flex items-center space-x-1`}>
-              <Clock className="w-3 h-3 text-cyan-400 animate-pulse" />
+            <span className={`${textColor} flex items-center space-x-1 font-sans`}>
+              <Clock className="w-3 h-3 text-muted" />
               <span>{formatTimeSpan(timeRemainingMs)} left</span>
             </span>
           )}
 
-          <span className={`text-[9px] font-extrabold px-1.5 py-0.2 rounded ${isExpired ? 'bg-rose-950/80 text-rose-300 border border-rose-800/80' : 'bg-slate-950 text-slate-400 border border-slate-800'}`}>
+          <span className="text-[9px] font-mono text-muted">
             {Math.round(fillPercent)}%
           </span>
         </div>
       )}
 
-      {/* Horizontal Bar - Fills up as time elapses, 100% full when expired */}
-      <div className="w-full h-2 bg-slate-950 rounded-full border border-slate-800/90 p-[1px] overflow-hidden relative shadow-inner">
+      {/* Horizontal Bar */}
+      <div className="w-full h-1.5 bg-border-soft rounded-full overflow-hidden">
         <div
           style={{ width: `${fillPercent}%` }}
-          className={`h-full rounded-full bg-gradient-to-r ${barGradient} ${barGlow} transition-all duration-500 ease-out relative`}
-        >
-          {/* Subtle animated highlight line inside progress bar */}
-          <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse" />
-        </div>
+          className={`h-full rounded-full ${fillColor} transition-all duration-300`}
+        />
       </div>
     </div>
   );

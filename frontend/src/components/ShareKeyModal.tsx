@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Share2, Copy, Check, X, Send, Sparkles } from 'lucide-react';
+import { Share2, Copy, Check, X } from 'lucide-react';
 import { KeyItem } from '@/types/key';
 
 export interface ShareKeyModalProps {
@@ -47,70 +47,70 @@ export const ShareKeyModal: React.FC<ShareKeyModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150 font-sans text-xs">
-      <div className="w-full sm:max-w-lg bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150 font-sans text-xs">
+      <div className="w-full sm:max-w-lg ref-card p-6 shadow-xl space-y-4 relative animate-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-3 border-b border-border-soft">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-2xl bg-cyan-950/80 border border-cyan-800/60 text-cyan-400">
-              <Share2 className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-md bg-surface border border-border-soft flex items-center justify-center text-accent">
+              <Share2 className="w-4 h-4 text-accent" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">Share License Key</h3>
-              <p className="text-[11px] text-slate-400">Customer Delivery Formats</p>
+              <h3 className="font-display text-base font-normal text-ink">Share License Key</h3>
+              <p className="text-[11px] text-muted font-sans">Customer Delivery Formats</p>
             </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-2 rounded-xl bg-slate-950 border border-slate-800 hover:bg-slate-800 transition"
+            className="ref-btn-icon w-7 h-7 text-muted hover:text-ink"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Formatted Markdown Preview */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-[11px] text-slate-400">
-            <span className="font-semibold uppercase tracking-wider text-[10px]">Telegram / Discord / WhatsApp Format</span>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[11px] text-muted">
+            <span className="font-sans font-medium uppercase tracking-wider text-[10px]">Telegram / Discord / WhatsApp Format</span>
             <button
               onClick={() => copyText(telegramCard, 'tg')}
-              className="flex items-center space-x-1.5 px-3 py-1 bg-cyan-950/80 border border-cyan-800 text-cyan-300 rounded-lg hover:bg-cyan-900 transition font-mono text-[11px]"
+              className="ref-btn ref-btn-sm"
             >
-              {copiedFormat === 'tg' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedFormat === 'tg' ? 'Copied!' : 'Copy Formatted Card'}</span>
+              {copiedFormat === 'tg' ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5 text-muted" />}
+              <span>{copiedFormat === 'tg' ? 'Copied' : 'Copy Card'}</span>
             </button>
           </div>
 
-          <pre className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl text-[11px] font-mono text-slate-300 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
+          <pre className="p-3 bg-surface border border-border-soft rounded-sm text-[11px] font-mono text-ink whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
             {telegramCard}
           </pre>
         </div>
 
         {/* Clean Text Format */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-[11px] text-slate-400">
-            <span className="font-semibold uppercase tracking-wider text-[10px]">Plain Text Format</span>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[11px] text-muted">
+            <span className="font-sans font-medium uppercase tracking-wider text-[10px]">Plain Text Format</span>
             <button
               onClick={() => copyText(cleanText, 'plain')}
-              className="flex items-center space-x-1.5 px-3 py-1 bg-slate-950 border border-slate-800 text-slate-300 rounded-lg hover:bg-slate-800 transition font-mono text-[11px]"
+              className="ref-btn ref-btn-sm"
             >
-              {copiedFormat === 'plain' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedFormat === 'plain' ? 'Copied!' : 'Copy Plain'}</span>
+              {copiedFormat === 'plain' ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5 text-muted" />}
+              <span>{copiedFormat === 'plain' ? 'Copied' : 'Copy Plain'}</span>
             </button>
           </div>
 
-          <div className="p-3 bg-slate-950 border border-slate-800 rounded-2xl text-[11px] font-mono text-slate-300 flex items-center justify-between">
-            <span className="text-cyan-300 font-bold">{keyItem.key}</span>
-            <span className="text-slate-400">{keyItem.duration || 'Custom'}</span>
+          <div className="p-2.5 bg-surface border border-border-soft rounded-sm text-[11px] font-mono text-ink flex items-center justify-between">
+            <span className="font-bold">{keyItem.key}</span>
+            <span className="text-muted font-sans">{keyItem.duration || 'Custom'}</span>
           </div>
         </div>
 
         <button
           type="button"
           onClick={onClose}
-          className="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 font-semibold border border-slate-800 transition"
+          className="ref-btn w-full py-2 text-xs"
         >
           Close
         </button>

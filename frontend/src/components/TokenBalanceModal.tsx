@@ -85,18 +85,18 @@ export const TokenBalanceModal: React.FC<TokenBalanceModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xl animate-in fade-in duration-150 font-mono text-xs">
-      <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="ref-card relative w-full max-w-md p-6 space-y-4 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+        <div className="flex items-center justify-between pb-3 border-b border-border-soft">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-2xl text-amber-400">
+            <div className="w-10 h-10 rounded-md bg-accent/10 text-accent flex items-center justify-center border border-border-soft shrink-0">
               <Coins className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">Adjust Token Balance</h3>
-              <p className="text-[11px] text-slate-400">
-                Reseller: <strong className="text-slate-200">{targetReseller.username}</strong>
+              <h3 className="font-display text-base font-normal text-ink">Adjust Token Balance</h3>
+              <p className="text-xs text-muted">
+                Reseller: <span className="font-medium text-ink">@{targetReseller.username}</span>
               </p>
             </div>
           </div>
@@ -104,22 +104,22 @@ export const TokenBalanceModal: React.FC<TokenBalanceModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-2 rounded-xl bg-slate-950 border border-slate-800 hover:bg-slate-800 transition"
+            className="ref-btn-icon text-muted hover:text-ink"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Current Balance Summary */}
-        <div className="p-3.5 bg-slate-950 border border-slate-800/90 rounded-2xl flex items-center justify-between">
+        <div className="ref-card-subtle p-3.5 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Current Balance</span>
-            <span className="text-lg font-bold text-amber-400">{currentTokens.toLocaleString()} Tokens</span>
+            <span className="text-[10px] text-muted uppercase font-semibold tracking-wider block">Current Balance</span>
+            <span className="font-display text-lg font-normal text-ink">{currentTokens.toLocaleString()} <span className="text-xs font-sans font-normal text-muted">Tokens</span></span>
           </div>
 
           <div className="text-right">
-            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Role</span>
-            <span className="px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-300 text-[10px] uppercase font-semibold border border-slate-700">
+            <span className="text-[10px] text-muted uppercase font-semibold tracking-wider block">Role</span>
+            <span className="ref-badge uppercase">
               {targetReseller.role}
             </span>
           </div>
@@ -128,41 +128,37 @@ export const TokenBalanceModal: React.FC<TokenBalanceModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Action Toggle */}
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
-              Action Mode
+            <label className="text-xs font-medium text-ink block mb-1.5">
+              Operation Mode
             </label>
-            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-950 border border-slate-800 rounded-2xl">
+            <div className="ref-tab-list grid grid-cols-2 p-1">
               <button
                 type="button"
                 onClick={() => setMode('add')}
-                className={`py-2 rounded-xl font-semibold transition flex items-center justify-center space-x-1 border ${
-                  mode === 'add'
-                    ? 'bg-slate-800 text-emerald-400 border-slate-700'
-                    : 'text-slate-400 border-transparent hover:text-slate-200'
+                className={`ref-tab-btn flex items-center justify-center space-x-1.5 py-1.5 ${
+                  mode === 'add' ? 'active' : ''
                 }`}
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Add Tokens</span>
+                <span>Credit Tokens (+)</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setMode('deduct')}
-                className={`py-2 rounded-xl font-semibold transition flex items-center justify-center space-x-1 border ${
-                  mode === 'deduct'
-                    ? 'bg-slate-800 text-rose-400 border-slate-700'
-                    : 'text-slate-400 border-transparent hover:text-slate-200'
+                className={`ref-tab-btn flex items-center justify-center space-x-1.5 py-1.5 ${
+                  mode === 'deduct' ? 'active' : ''
                 }`}
               >
                 <Minus className="w-3.5 h-3.5" />
-                <span>Deduct Tokens</span>
+                <span>Debit Tokens (-)</span>
               </button>
             </div>
           </div>
 
           {/* Quick Presets */}
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
+            <label className="text-xs font-medium text-ink block mb-1.5">
               Quick Presets
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -171,12 +167,10 @@ export const TokenBalanceModal: React.FC<TokenBalanceModalProps> = ({
                   key={val}
                   type="button"
                   onClick={() => setAmount(val.toString())}
-                  className={`py-2 rounded-xl border text-center font-semibold transition ${
+                  className={`py-1.5 rounded-md text-xs font-medium font-mono border transition text-center ${
                     numAmount === val
-                      ? mode === 'add'
-                        ? 'bg-emerald-950/80 border-emerald-500/60 text-emerald-300'
-                        : 'bg-rose-950/80 border-rose-500/60 text-rose-300'
-                      : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                      ? 'bg-accent text-accent-ink border-accent'
+                      : 'bg-surface border-border-soft text-ink hover:bg-surface-hover'
                   }`}
                 >
                   {mode === 'add' ? '+' : '-'}{val}
@@ -187,8 +181,8 @@ export const TokenBalanceModal: React.FC<TokenBalanceModalProps> = ({
 
           {/* Custom Amount */}
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1">
-              Amount
+            <label className="text-xs font-medium text-ink block mb-1.5">
+              Token Quantity
             </label>
             <input
               type="number"
@@ -196,32 +190,32 @@ export const TokenBalanceModal: React.FC<TokenBalanceModalProps> = ({
               required
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs outline-none transition"
+              className="ref-input w-full font-mono text-xs"
               placeholder="Token count..."
             />
           </div>
 
           {/* Projection Bar */}
-          <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl space-y-1">
-            <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold uppercase">
+          <div className="ref-card-subtle p-3.5 space-y-1.5">
+            <div className="flex items-center justify-between text-xs text-muted font-medium">
               <span>Projected Balance</span>
-              <span className={balanceDelta > 0 ? 'text-emerald-400' : balanceDelta < 0 ? 'text-rose-400' : 'text-slate-400'}>
+              <span className={`font-mono font-semibold ${balanceDelta > 0 ? 'text-success' : balanceDelta < 0 ? 'text-danger' : 'text-muted'}`}>
                 {balanceDelta > 0 ? `+${balanceDelta}` : balanceDelta} Tokens
               </span>
             </div>
 
             <div className="flex items-center justify-between pt-1">
-              <span className="text-slate-400">{currentTokens}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
-              <span className={`text-base font-bold ${mode === 'add' ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {calculatedNewBalance.toLocaleString()} Tokens
+              <span className="font-mono text-muted text-xs">{currentTokens.toLocaleString()}</span>
+              <ArrowRight className="w-3.5 h-3.5 text-muted" />
+              <span className={`font-display text-base font-normal ${mode === 'add' ? 'text-success' : 'text-danger'}`}>
+                {calculatedNewBalance.toLocaleString()} <span className="font-sans text-xs font-normal text-muted">Tokens</span>
               </span>
             </div>
           </div>
 
           {errorMsg && (
-            <div className="p-3 bg-rose-950/60 border border-rose-800/60 rounded-xl text-rose-300 text-xs flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+            <div className="p-3 bg-danger/10 border border-danger/25 rounded-md text-danger text-xs flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
@@ -230,7 +224,7 @@ export const TokenBalanceModal: React.FC<TokenBalanceModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-slate-950 hover:bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl border border-slate-800 transition"
+              className="ref-btn ref-btn-ghost flex-1 py-2"
             >
               Cancel
             </button>
@@ -238,14 +232,12 @@ export const TokenBalanceModal: React.FC<TokenBalanceModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`flex-1 font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-1 disabled:opacity-50 ${
-                mode === 'add'
-                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                  : 'bg-rose-600 hover:bg-rose-500 text-white'
+              className={`ref-btn flex-1 py-2 flex items-center justify-center space-x-1.5 disabled:opacity-50 ${
+                mode === 'add' ? 'ref-btn-primary' : 'ref-btn-danger'
               }`}
             >
               <Check className="w-4 h-4" />
-              <span>{isSubmitting ? 'Updating...' : mode === 'add' ? 'Add Tokens' : 'Deduct Tokens'}</span>
+              <span>{isSubmitting ? 'Updating...' : mode === 'add' ? 'Credit Tokens' : 'Debit Tokens'}</span>
             </button>
           </div>
         </form>

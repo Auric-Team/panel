@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Coins, Plus, Minus, X, Check, AlertCircle, ArrowRight, FileText, Sparkles } from 'lucide-react';
+import { Coins, Plus, Minus, X, Check, AlertCircle, ArrowRight, FileText } from 'lucide-react';
 import { UserItem } from '@/types/key';
 
 interface TokenAdjustmentModalProps {
@@ -93,25 +93,20 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xl animate-in fade-in duration-200 font-mono text-xs">
-      <div className="relative w-full max-w-lg bg-slate-900/90 border border-slate-800/90 rounded-3xl p-6 shadow-2xl space-y-5 backdrop-blur-2xl">
-        {/* Decorative Glow */}
-        <div className="absolute -top-12 -right-12 w-44 h-44 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-12 -left-12 w-44 h-44 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="ref-card relative w-full max-w-lg p-6 shadow-2xl space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
+        <div className="flex items-center justify-between pb-4 border-b border-border-soft">
           <div className="flex items-center space-x-3.5">
-            <div className="p-2.5 bg-gradient-to-tr from-amber-500/20 to-cyan-500/20 border border-amber-500/40 rounded-2xl text-amber-400 shadow-md shadow-amber-500/10">
+            <div className="w-10 h-10 rounded-md bg-accent/10 text-accent flex items-center justify-center border border-border-soft shrink-0">
               <Coins className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-white tracking-tight flex items-center space-x-2">
-                <span>Adjust Reseller Tokens</span>
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <h3 className="font-display text-lg font-normal text-ink leading-tight">
+                Adjust Reseller Tokens
               </h3>
-              <p className="text-[11px] text-slate-400">
-                Reseller Partner: <strong className="text-cyan-400">@{reseller.username}</strong> ({reseller.role.toUpperCase()})
+              <p className="text-xs text-muted mt-0.5">
+                Reseller Partner: <span className="font-medium text-ink">@{reseller.username}</span> ({reseller.role.toUpperCase()})
               </p>
             </div>
           </div>
@@ -119,30 +114,29 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-2 rounded-xl bg-slate-950 border border-slate-800 hover:bg-slate-800 transition"
+            className="ref-btn-icon text-muted hover:text-ink"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Current Balance Summary Box */}
-        <div className="p-4 bg-slate-950/80 border border-slate-800/80 rounded-2xl flex items-center justify-between shadow-inner">
+        <div className="ref-card-subtle p-4 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-slate-400 uppercase font-semibold block tracking-wider mb-0.5">
+            <span className="text-[10px] text-muted uppercase font-semibold block tracking-wider mb-0.5">
               Current Token Balance
             </span>
-            <div className="flex items-center space-x-1.5">
-              <Coins className="w-4 h-4 text-amber-400" />
-              <span className="text-xl font-extrabold text-amber-400">{currentTokens.toLocaleString()}</span>
-              <span className="text-slate-400 text-xs">Tokens</span>
+            <div className="flex items-baseline space-x-1.5">
+              <span className="font-display text-2xl font-normal text-ink">{currentTokens.toLocaleString()}</span>
+              <span className="text-muted text-xs">Tokens</span>
             </div>
           </div>
 
           <div className="text-right">
-            <span className="text-[10px] text-slate-400 uppercase font-semibold block tracking-wider mb-0.5">
+            <span className="text-[10px] text-muted uppercase font-semibold block tracking-wider mb-0.5">
               Reseller ID
             </span>
-            <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 text-[10px] font-mono border border-slate-800">
+            <span className="ref-badge font-mono text-[10px]">
               #{reseller.id.slice(0, 8)}
             </span>
           </div>
@@ -151,17 +145,15 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Operation Type Toggle (Credit / Debit) */}
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1.5 tracking-wider">
+            <label className="text-xs font-medium text-ink block mb-1.5">
               Operation Type
             </label>
-            <div className="grid grid-cols-2 gap-2.5 p-1.5 bg-slate-950 border border-slate-800/80 rounded-2xl">
+            <div className="ref-tab-list grid grid-cols-2 p-1">
               <button
                 type="button"
                 onClick={() => setMode('add')}
-                className={`py-2.5 rounded-xl font-bold transition flex items-center justify-center space-x-2 border ${
-                  mode === 'add'
-                    ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 shadow-sm shadow-emerald-500/20'
-                    : 'text-slate-400 border-transparent hover:text-slate-200'
+                className={`ref-tab-btn flex items-center justify-center space-x-2 py-2 ${
+                  mode === 'add' ? 'active' : ''
                 }`}
               >
                 <Plus className="w-4 h-4" />
@@ -171,10 +163,8 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
               <button
                 type="button"
                 onClick={() => setMode('deduct')}
-                className={`py-2.5 rounded-xl font-bold transition flex items-center justify-center space-x-2 border ${
-                  mode === 'deduct'
-                    ? 'bg-rose-500/20 text-rose-400 border-rose-500/40 shadow-sm shadow-rose-500/20'
-                    : 'text-slate-400 border-transparent hover:text-slate-200'
+                className={`ref-tab-btn flex items-center justify-center space-x-2 py-2 ${
+                  mode === 'deduct' ? 'active' : ''
                 }`}
               >
                 <Minus className="w-4 h-4" />
@@ -185,7 +175,7 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
 
           {/* Quick Presets */}
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1.5 tracking-wider">
+            <label className="text-xs font-medium text-ink block mb-1.5">
               Quick Presets
             </label>
             <div className="grid grid-cols-5 gap-2">
@@ -194,12 +184,10 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
                   key={val}
                   type="button"
                   onClick={() => setAmount(val.toString())}
-                  className={`py-2 rounded-xl border text-center font-bold transition text-xs ${
+                  className={`py-1.5 rounded-md text-xs font-medium font-mono border transition text-center ${
                     numAmount === val
-                      ? mode === 'add'
-                        ? 'bg-emerald-950/90 border-emerald-500 text-emerald-300 shadow-sm shadow-emerald-500/20'
-                        : 'bg-rose-950/90 border-rose-500 text-rose-300 shadow-sm shadow-rose-500/20'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                      ? 'bg-accent text-accent-ink border-accent'
+                      : 'bg-surface border-border-soft text-ink hover:bg-surface-hover'
                   }`}
                 >
                   {mode === 'add' ? '+' : '-'}{val}
@@ -210,7 +198,7 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
 
           {/* Token Quantity Input */}
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1.5 tracking-wider">
+            <label className="text-xs font-medium text-ink block mb-1.5">
               Token Quantity
             </label>
             <div className="relative">
@@ -220,59 +208,59 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
                 required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl px-4 py-3 text-white font-mono text-sm outline-none transition shadow-inner"
+                className="ref-input w-full font-mono text-xs pr-8"
                 placeholder="Enter token amount..."
               />
-              <Coins className="w-4 h-4 text-slate-500 absolute right-4 top-3.5 pointer-events-none" />
+              <Coins className="w-4 h-4 text-muted absolute right-3 top-2.5 pointer-events-none" />
             </div>
           </div>
 
           {/* Transaction Note */}
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-400 block mb-1.5 tracking-wider flex items-center space-x-1">
-              <FileText className="w-3 h-3 text-slate-400" />
-              <span>Transaction Audit Note</span>
+            <label className="text-xs font-medium text-ink block mb-1.5 flex items-center space-x-1">
+              <FileText className="w-3.5 h-3.5 text-muted" />
+              <span>Audit Note (Optional)</span>
             </label>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl px-4 py-2.5 text-slate-200 font-mono text-xs outline-none transition placeholder:text-slate-600"
+              className="ref-input w-full text-xs placeholder:text-muted"
               placeholder="e.g. Monthly quota allocation / Manual admin override"
             />
           </div>
 
           {/* Real-time Balance Preview Calculation Box */}
-          <div className="p-4 bg-slate-950/90 border border-slate-800/90 rounded-2xl space-y-2">
-            <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+          <div className="ref-card-subtle p-4 space-y-2">
+            <div className="flex items-center justify-between text-xs text-muted font-medium">
               <span>Real-time Balance Projection</span>
-              <span className={`font-extrabold ${balanceDelta > 0 ? 'text-emerald-400' : balanceDelta < 0 ? 'text-rose-400' : 'text-slate-400'}`}>
+              <span className={`font-mono font-semibold ${balanceDelta > 0 ? 'text-success' : balanceDelta < 0 ? 'text-danger' : 'text-muted'}`}>
                 {balanceDelta > 0 ? `+${balanceDelta}` : balanceDelta} Tokens
               </span>
             </div>
 
             <div className="flex items-center justify-between pt-1">
               <div className="flex flex-col">
-                <span className="text-[10px] text-slate-500">Current</span>
-                <span className="text-sm font-bold text-slate-300">{currentTokens.toLocaleString()}</span>
+                <span className="text-[10px] text-muted uppercase">Current</span>
+                <span className="font-mono text-sm font-semibold text-ink">{currentTokens.toLocaleString()}</span>
               </div>
 
-              <div className="flex items-center space-x-1 px-3 py-1 rounded-full bg-slate-900 border border-slate-800">
-                <ArrowRight className="w-4 h-4 text-cyan-400 animate-pulse" />
+              <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-surface border border-border-soft">
+                <ArrowRight className="w-3.5 h-3.5 text-accent" />
               </div>
 
               <div className="flex flex-col text-right">
-                <span className="text-[10px] text-slate-500">Resulting</span>
-                <span className={`text-base font-extrabold ${mode === 'add' ? 'text-emerald-400' : 'text-rose-400'}`}>
-                  {calculatedNewBalance.toLocaleString()} Tokens
+                <span className="text-[10px] text-muted uppercase">Resulting</span>
+                <span className={`font-display text-base font-normal ${mode === 'add' ? 'text-success' : 'text-danger'}`}>
+                  {calculatedNewBalance.toLocaleString()} <span className="font-sans text-xs font-normal text-muted">Tokens</span>
                 </span>
               </div>
             </div>
           </div>
 
           {errorMsg && (
-            <div className="p-3.5 bg-rose-950/70 border border-rose-800/80 rounded-2xl text-rose-300 text-xs flex items-center space-x-2.5 animate-in fade-in">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+            <div className="p-3 bg-danger/10 border border-danger/25 rounded-md text-danger text-xs flex items-center space-x-2 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
@@ -282,7 +270,7 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-slate-950 hover:bg-slate-800 text-slate-300 font-bold py-3 rounded-2xl border border-slate-800 transition"
+              className="ref-btn ref-btn-ghost flex-1 py-2"
             >
               Cancel
             </button>
@@ -290,14 +278,12 @@ export const TokenAdjustmentModal: React.FC<TokenAdjustmentModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`flex-1 font-extrabold py-3 rounded-2xl transition flex items-center justify-center space-x-2 shadow-lg disabled:opacity-50 ${
-                mode === 'add'
-                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
-                  : 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-600/20'
+              className={`ref-btn flex-1 py-2 flex items-center justify-center space-x-1.5 disabled:opacity-50 ${
+                mode === 'add' ? 'ref-btn-primary' : 'ref-btn-danger'
               }`}
             >
               <Check className="w-4 h-4" />
-              <span>{isSubmitting ? 'Processing...' : mode === 'add' ? 'Confirm Credit (+)' : 'Confirm Debit (-)'}</span>
+              <span>{isSubmitting ? 'Processing...' : mode === 'add' ? 'Credit Tokens (+)' : 'Debit Tokens (-)'}</span>
             </button>
           </div>
         </form>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { Search, ShieldAlert, Clock, Activity, Filter, Download, Trash2, FileText, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Search, Activity, Download, Trash2 } from 'lucide-react';
 import { UserItem } from '@/types/key';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useToast } from '@/components/ui/ToastContext';
@@ -95,16 +95,16 @@ export const AuditLogsTable: React.FC<AuditLogsTableProps> = ({
 
   return (
     <div className="space-y-4 font-sans text-xs">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+      <div className="ref-card p-5 sm:p-6 space-y-4 shadow-sm">
         {/* Header and Controls */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border-soft">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-2xl bg-cyan-950/80 border border-cyan-800/60 text-cyan-400">
-              <Activity className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-md bg-surface border border-border-soft flex items-center justify-center text-accent shadow-sm">
+              <Activity className="w-5 h-5 text-accent" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white tracking-tight">Security & Audit Event Stream</h3>
-              <p className="text-xs text-slate-400 font-mono">
+              <h3 className="font-display text-base sm:text-lg font-normal text-ink tracking-tight">Security &amp; Audit Event Stream</h3>
+              <p className="text-xs text-muted font-sans mt-0.5">
                 Immutable event stream for user authentication, key lifecycles, and token movements
               </p>
             </div>
@@ -116,7 +116,7 @@ export const AuditLogsTable: React.FC<AuditLogsTableProps> = ({
               <select
                 value={actionFilter}
                 onChange={(e) => setActionFilter(e.target.value)}
-                className="bg-slate-950 border border-slate-800 text-slate-300 text-xs font-mono rounded-xl px-3 py-2 outline-none focus:border-cyan-500"
+                className="ref-input text-xs font-mono h-8 px-2 cursor-pointer"
               >
                 <option value="all">All Events ({logs.length})</option>
                 {actionTypes.map((act) => (
@@ -130,7 +130,7 @@ export const AuditLogsTable: React.FC<AuditLogsTableProps> = ({
             {/* Export CSV */}
             <button
               onClick={exportCSV}
-              className="flex items-center space-x-1.5 px-3 py-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded-xl text-xs font-mono font-semibold transition"
+              className="ref-btn ref-btn-sm"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Export CSV</span>
@@ -140,7 +140,7 @@ export const AuditLogsTable: React.FC<AuditLogsTableProps> = ({
             {currentUser?.role === 'owner' && onClearLogs && (
               <button
                 onClick={() => setShowClearConfirm(true)}
-                className="flex items-center space-x-1.5 px-3 py-2 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-900/60 text-rose-300 rounded-xl text-xs font-mono font-semibold transition"
+                className="ref-btn ref-btn-sm ref-btn-danger"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Clear All Logs</span>
@@ -151,31 +151,31 @@ export const AuditLogsTable: React.FC<AuditLogsTableProps> = ({
 
         {/* Search Filter */}
         <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by Username, Action, Parameters, or Details..."
-            className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/80 rounded-2xl pl-10 pr-4 py-2.5 text-white font-mono text-xs outline-none transition"
+            className="ref-input w-full pl-10 text-xs font-mono"
           />
         </div>
 
-        {/* Logs Stream (Cards on Mobile, Table on Desktop) */}
-        <div className="overflow-x-auto rounded-2xl border border-slate-800">
+        {/* Logs Stream (Table) */}
+        <div className="overflow-x-auto rounded-md border border-border-soft">
           <table className="w-full text-left font-mono text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-950 text-slate-400 text-[10px] uppercase border-b border-slate-800">
-                <th className="p-3.5">Timestamp</th>
-                <th className="p-3.5">Account</th>
-                <th className="p-3.5">Event Action</th>
-                <th className="p-3.5">Activity Description</th>
+              <tr className="bg-surface text-muted text-[10px] uppercase font-sans font-medium border-b border-border-soft">
+                <th className="p-3">Timestamp</th>
+                <th className="p-3">Account</th>
+                <th className="p-3">Event Action</th>
+                <th className="p-3">Activity Description</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 bg-slate-900/60">
+            <tbody className="divide-y divide-border-soft bg-surface-solid">
               {filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-12 text-slate-500">
+                  <td colSpan={4} className="text-center py-12 text-muted font-sans">
                     No matching audit records found.
                   </td>
                 </tr>
@@ -186,34 +186,34 @@ export const AuditLogsTable: React.FC<AuditLogsTableProps> = ({
                   const isUser = log.action.includes('USER') || log.action.includes('TOKEN');
 
                   return (
-                    <tr key={log.id} className="hover:bg-slate-800/30 transition">
-                      <td className="p-3.5 text-slate-400 text-[11px] whitespace-nowrap">
+                    <tr key={log.id} className="hover:bg-surface-hover transition-colors">
+                      <td className="p-3 text-muted text-[11px] whitespace-nowrap">
                         {new Date(log.timestamp).toLocaleString()}
                       </td>
 
-                      <td className="p-3.5 whitespace-nowrap">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-950 border border-slate-800 text-slate-200 font-bold">
+                      <td className="p-3 whitespace-nowrap">
+                        <span className="px-2 py-0.5 rounded-sm bg-surface border border-border-soft text-ink font-semibold">
                           @{log.username}
                         </span>
                       </td>
 
-                      <td className="p-3.5 whitespace-nowrap">
+                      <td className="p-3 whitespace-nowrap">
                         <span
-                          className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider ${
+                          className={`ref-badge text-[9px] font-mono ${
                             isAuth
-                              ? 'bg-indigo-950 text-indigo-300 border border-indigo-800'
+                              ? 'info'
                               : isKey
-                              ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
+                              ? 'success'
                               : isUser
-                              ? 'bg-amber-950 text-amber-300 border border-amber-800'
-                              : 'bg-slate-800 text-slate-300 border border-slate-700'
+                              ? 'warning'
+                              : ''
                           }`}
                         >
                           {log.action}
                         </span>
                       </td>
 
-                      <td className="p-3.5 text-slate-300 break-words leading-relaxed font-sans text-xs">
+                      <td className="p-3 text-ink break-words leading-relaxed font-sans text-xs">
                         {log.details}
                       </td>
                     </tr>

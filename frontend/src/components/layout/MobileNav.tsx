@@ -62,7 +62,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   ].filter((item) => item.visible);
 
   return (
-    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/90 border-t border-slate-800/90 backdrop-blur-2xl px-2 py-1.5 shadow-[0_-8px_30px_rgba(0,0,0,0.5)]">
+    <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-solid/90 border-t border-border-soft backdrop-blur-md px-2 py-1.5 shadow-md transition-colors">
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -72,23 +72,23 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`relative flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all duration-200 ${
+              className={`relative flex flex-col items-center justify-center py-1 px-3 rounded-md transition-all duration-150 ${
                 isActive
-                  ? 'text-cyan-400 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'text-accent font-semibold'
+                  : 'text-muted hover:text-ink'
               }`}
             >
               {isActive && (
-                <span className="absolute -top-1.5 w-6 h-1 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+                <span className="absolute -top-1.5 w-6 h-0.5 bg-accent rounded-full" />
               )}
               <div className="relative">
-                <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`} />
+                <Icon className={`w-5 h-5 transition-transform duration-150 ${isActive ? 'scale-105' : ''}`} />
                 {item.badge && (
                   <span
-                    className={`absolute -top-1.5 -right-2.5 px-1 min-w-[14px] h-3.5 text-[8px] font-mono font-black rounded-full flex items-center justify-center ${
+                    className={`absolute -top-1.5 -right-2.5 px-1 min-w-[14px] h-3.5 text-[8px] font-mono font-bold rounded-full flex items-center justify-center ${
                       isActive
-                        ? 'bg-cyan-500 text-slate-950'
-                        : 'bg-slate-800 text-slate-300 border border-slate-700'
+                        ? 'bg-accent text-accent-ink'
+                        : 'bg-surface text-muted border border-border-soft'
                     }`}
                   >
                     {item.badge}
